@@ -1,0 +1,31 @@
+download_location_host: 192.168.137.1
+download_location_port: 8081
+# Download location of DB2 and the licence file
+db2_download_location: "http://{{ download_location_host }}:{{ download_location_port }}/"
+
+# Download location of TDI
+tdi_download_location: "{{ download_location_host }}:{{ download_location_port }}/"
+
+# Download location of Connections Wizards for DB population
+db2_wizards_download_location: "{{ download_location_host }}:{{ download_location_port }}/"
+
+# Download location for IBM Installation manager
+iim_repository_url: "http://{{ download_location_host }}:{{ download_location_port }}/"
+
+# Download location for IBM WebSphere ND & IBM Java
+was_repository_url: "http://{{ download_location_host }}:{{ download_location_port }}/"
+
+# Download location of IBM WAS ND Fixpack 18
+was_fixes_repository_url: "http://{{ download_location_host }}:{{ download_location_port }}/"
+
+# Download location of IBM HTTP Server
+ihs_repository_url: "http://{{ download_location_host }}:{{ download_location_port }}/"
+
+# Download location of IBM HTTP Server fixpacks
+ihs_fixes_repository_url: "http://{{ download_location_host }}:{{ download_location_port }}/"
+
+# Download location of HCL Connections Docs 2.0.1
+cnx_docs_download_location: "http://{{ download_location_host }}:{{ download_location_port }}/"
+
+# Download location for HCL Connections zip file. Used by Connections installation and TDI to get tdisol archive.
+cnx_repository_url: "{{ download_location_host }}:{{ download_location_port }}/"
