@@ -19,10 +19,11 @@ was_password: password
 ldap_server: cnx7-ldap.stoeps.internal
 ldap_alias: cnx7-ldap
 ldap_repo: LDAP_PRODUCTION1
-ldap_tld: internal
 ldap_bind_user: cn=Admin,dc=cnx,dc=stoeps,dc=internal
 ldap_bind_pass: password
 ldap_realm: dc=cnx,dc=stoeps,dc=internal
+# ldap_tld must be first part of ldap_realm!
+# ldap_tld: cnx
 ldap_login_properties: uid;mail
 #
 dmgr_hostname: cnx7-was.stoeps.internal
