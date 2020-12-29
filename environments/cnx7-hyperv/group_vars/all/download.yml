@@ -1,4 +1,4 @@
-download_location_host: 192.168.137.1
+download_location_host: 10.0.11.1
 download_location_port: 8081
 # Download location of DB2 and the licence file
 db2_download_location: "http://{{ download_location_host }}:{{ download_location_port }}/"
