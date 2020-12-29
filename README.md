@@ -296,9 +296,9 @@ To install IBM WebSphere Application Server, you should alraedy have either LDAP
 ldap_server=ldap1.internal.example.com
 ldap_alias=ldap1
 ldap_repo=LDAP_PRODUCTION1
-ldap_bind_user=cn=Admin,dc=cxn,dc=example,dc=com
+ldap_bind_user=cn=Admin,dc=cnx,dc=example,dc=com
 ldap_bind_pass=password
-ldap_realm=dc=cxn,dc=example,dc=com
+ldap_realm=dc=cnx,dc=example,dc=com
 ldap_login_properties=uid;mail
 ```
 
