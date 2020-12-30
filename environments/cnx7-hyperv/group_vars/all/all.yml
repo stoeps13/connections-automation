@@ -51,32 +51,32 @@ sso_domainname: .stoeps.internal
 # Connections admin user. By default it is this one. Doesn't have to exist in the moment of cluster setup.
 connections_admin: fakeuser1
 
-cnx_node_list: ['connections1', 'connections2']
-cnx_hostname_list: ['connections1.stoeps.internal', 'connections2.stoeps.internal']
-ihs_hostname_list: ['ihs1.stoeps.internal', 'ihs2.stoeps.internal']
+cnx_node_list: ['connections1']
+cnx_hostname_list: ['cnx7-was.stoeps.internal']
+ihs_hostname_list: ['cnx7-ihs.stoeps.internal']
 
-common_app: { 'cluster_name': 'Infra', 'nodes':['connections1', 'connections2']}
-communities_app: { 'cluster_name': 'Infra', 'nodes':['connections1', 'connections2']}
-news_app: { 'cluster_name': 'Infra', 'nodes':['connections1', 'connections2']}
-widgets_app: { 'cluster_name': 'Infra', 'nodes':['connections1', 'connections2']}
-profiles_app: { 'cluster_name': 'Infra', 'nodes':['connections1', 'connections2']}
-search_app: { 'cluster_name': 'Infra', 'nodes':['connections1', 'connections2']}
+common_app: { 'cluster_name': 'Infra', 'nodes':['connections1']}
+communities_app: { 'cluster_name': 'Infra', 'nodes':['connections1']}
+news_app: { 'cluster_name': 'Infra', 'nodes':['connections1']}
+widgets_app: { 'cluster_name': 'Infra', 'nodes':['connections1']}
+profiles_app: { 'cluster_name': 'Infra', 'nodes':['connections1']}
+search_app: { 'cluster_name': 'Infra', 'nodes':['connections1']}
 
-homepage_app: { 'cluster_name': 'Util', 'nodes':['connections1', 'connections2']}
-moderation_app: { 'cluster_name': 'Util', 'nodes':['connections1', 'connections2']}
-rte_app: { 'cluster_name': 'Util', 'nodes':['connections1', 'connections2']}
+homepage_app: { 'cluster_name': 'Util', 'nodes':['connections1']}
+moderation_app: { 'cluster_name': 'Util', 'nodes':['connections1']}
+rte_app: { 'cluster_name': 'Util', 'nodes':['connections1']}
 
-activities_app: { 'cluster_name': 'Apps', 'nodes':['connections1', 'connections2']}
-blogs_app: { 'cluster_name': 'Apps', 'nodes':['connections1', 'connections2']}
-dogear_app: { 'cluster_name': 'Apps', 'nodes':['connections1', 'connections2']}
-files_app: { 'cluster_name': 'Apps', 'nodes':['connections1', 'connections2']}
-forums_app: { 'cluster_name': 'Apps', 'nodes':['connections1', 'connections2']}
-metrics_app: { 'cluster_name': 'Apps', 'nodes':['connections1', 'connections2']}
-mobile_app: { 'cluster_name': 'Apps', 'nodes':['connections1', 'connections2']}
-wikis_app: { 'cluster_name': 'Apps', 'nodes':['connections1', 'connections2']}
-ic360_app: { 'cluster_name': 'Apps', 'nodes':['connections1', 'connections2']}
+activities_app: { 'cluster_name': 'Apps', 'nodes':['connections1']}
+blogs_app: { 'cluster_name': 'Apps', 'nodes':['connections1']}
+dogear_app: { 'cluster_name': 'Apps', 'nodes':['connections1']}
+files_app: { 'cluster_name': 'Apps', 'nodes':['connections1']}
+forums_app: { 'cluster_name': 'Apps', 'nodes':['connections1']}
+metrics_app: { 'cluster_name': 'Apps', 'nodes':['connections1']}
+mobile_app: { 'cluster_name': 'Apps', 'nodes':['connections1']}
+wikis_app: { 'cluster_name': 'Apps', 'nodes':['connections1']}
+ic360_app: { 'cluster_name': 'Apps', 'nodes':['connections1']}
 
-push_app: { 'cluster_name': 'Push', 'nodes':['connections1', 'connections2']}
+push_app: { 'cluster_name': 'Push', 'nodes':['connections1']}
 
 
 # Set to true if you want to enable Prometheus JMX exporter and configure WAS to export metrics from one or multiple Connections
