@@ -20,8 +20,8 @@
   mount:
     fstype:                  nfs
     opts:                    defaults
-    dump:                    0
-    passno:                  0
+    dump:                    '0'
+    passno:                  '0'
     state:                   mounted
     src:                     "{{ __cnx_shared_area_files_dest }}"
     path:                    "{{ __cnx_shared_area }}"
@@ -33,8 +33,8 @@
   mount:
     fstype:                  nfs
     opts:                    defaults
-    dump:                    0
-    passno:                  0
+    dump:                    '0'
+    passno:                  '0'
     state:                   mounted
     src:                     "{{ __cnx_messagestore_files_dest }}"
     path:                    "{{ __cnx_message_store }}"

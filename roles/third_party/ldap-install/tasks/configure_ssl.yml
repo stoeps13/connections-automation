@@ -24,14 +24,6 @@
   when:
     - not ldap_ssl_already_created.stat.exists
 
-- name:                     Configure SSL
-  command:                  "{{ __ldap_modify_cmd }} {{ __certs_ldif_location }}"
-  register:                 ldapssl
-  failed_when:              ( ldapssl.rc not in [0] )
-  when:
-    - not ldap_ssl_already_created.stat.exists
-  ignore_errors:            true
-
 - name:                     "Render {{ __certs_ldif_location }}"
   template:
     src:                    "{{ __certs_ldif_rev_template }}"

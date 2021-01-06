@@ -6,5 +6,3 @@ ldap_nr_of_users: 2500
 # ID of user(s) if creating dummy users for the demo purposes. First one becomes Connections admin, and gets ldap_user_admin_password. All others get
 # ldap_user_password as password. Users will be enumerated from ldap_userid1 to ldap_userid2500. Enough for simple performance testing.
 ldap_userid: "fakeuser"
-ldap_user_password: "password"
-ldap_user_admin_password: "password"

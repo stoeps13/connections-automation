@@ -54,6 +54,16 @@
   roles:
     - roles/third_party/nfs-install
 
+- name:                    Configure HTTP Servers
+  hosts:                   ihs_servers
+  serial:                  1
+  become:                  true
+  roles:
+    - roles/third_party/ibm/ihs/ibm-http-config-plgwct
+    - roles/third_party/ibm/ihs/ibm-http-adminctl-restart
+    - roles/third_party/ibm/ihs/ibm-http-httpdconf
+    - roles/third_party/ibm/ihs/ibm-http-server-restart
+
 - name:                    Setup Connections
   hosts:                   dmgr
   become:                  true
@@ -79,17 +89,6 @@
   roles:
     - roles/third_party/ibm/wasnd/was-nodeagent-stop
     - roles/third_party/ibm/wasnd/was-nodeagent-start
-
-
-- name:                    Configure HTTP Servers
-  hosts:                   ihs_servers
-  serial:                  1
-  become:                  true
-  roles:
-    - roles/third_party/ibm/ihs/ibm-http-config-plgwct
-    - roles/third_party/ibm/ihs/ibm-http-adminctl-restart
-    - roles/third_party/ibm/ihs/ibm-http-httpdconf
-    - roles/third_party/ibm/ihs/ibm-http-server-restart
 
 - name:                    Restart CNX Clusters
   hosts:                   dmgr

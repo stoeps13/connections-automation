@@ -8,19 +8,19 @@ cnx_message_store: "/nfs/data/messageStores"
 
 # If enabled, installer will figure out inteligently the the version of Connections you are trying to install. Recommended
 # to keep it this way. Otherwise, can be overwritten with a specific version if disabled.
-cnx_updates_enabled: True
+cnx_updates_enabled: False
 
 # This username and password are going to be set as administrative for IBM WebSphere ND and used as such accross whenever
 # needed.
 was_username: wasadmin
-was_password: password
+docs_username: docsuser
+sudo_group: docsuser
 #
 # This section is used when setting up OpenLDAP, when setting up TDI and when setting up WebSphere.
 ldap_server: cnx7-ldap.stoeps.internal
 ldap_alias: cnx7-ldap
 ldap_repo: LDAP_PRODUCTION1
 ldap_bind_user: cn=Admin,dc=cnx,dc=stoeps,dc=internal
-ldap_bind_pass: password
 ldap_realm: dc=cnx,dc=stoeps,dc=internal
 # ldap_tld must be first part of ldap_realm!
 # ldap_tld: cnx
@@ -32,7 +32,6 @@ domain_name: .stoeps.internal
 cnx_domainname: .stoeps.internal
 smtp_hostname: localhost
 #
-ihs_password: password
 
 # The name of at least one IBM HTTP server attached to DMGR prior to installation of Connections. If none web servers with
 # this name can be found by Connections installer, some black magic can happen.
@@ -51,32 +50,32 @@ sso_domainname: .stoeps.internal
 # Connections admin user. By default it is this one. Doesn't have to exist in the moment of cluster setup.
 connections_admin: fakeuser1
 
-cnx_node_list: ['connections1']
+cnx_node_list: ['cnx7-was']
 cnx_hostname_list: ['cnx7-was.stoeps.internal']
 ihs_hostname_list: ['cnx7-ihs.stoeps.internal']
 
-common_app: { 'cluster_name': 'Infra', 'nodes':['connections1']}
-communities_app: { 'cluster_name': 'Infra', 'nodes':['connections1']}
-news_app: { 'cluster_name': 'Infra', 'nodes':['connections1']}
-widgets_app: { 'cluster_name': 'Infra', 'nodes':['connections1']}
-profiles_app: { 'cluster_name': 'Infra', 'nodes':['connections1']}
-search_app: { 'cluster_name': 'Infra', 'nodes':['connections1']}
+common_app: { 'cluster_name': 'Infra', 'nodes':['cnx7-was']}
+communities_app: { 'cluster_name': 'Infra', 'nodes':['cnx7-was']}
+news_app: { 'cluster_name': 'Infra', 'nodes':['cnx7-was']}
+widgets_app: { 'cluster_name': 'Infra', 'nodes':['cnx7-was']}
+profiles_app: { 'cluster_name': 'Infra', 'nodes':['cnx7-was']}
+search_app: { 'cluster_name': 'Infra', 'nodes':['cnx7-was']}
 
-homepage_app: { 'cluster_name': 'Util', 'nodes':['connections1']}
-moderation_app: { 'cluster_name': 'Util', 'nodes':['connections1']}
-rte_app: { 'cluster_name': 'Util', 'nodes':['connections1']}
+homepage_app: { 'cluster_name': 'Util', 'nodes':['cnx7-was']}
+moderation_app: { 'cluster_name': 'Util', 'nodes':['cnx7-was']}
+rte_app: { 'cluster_name': 'Util', 'nodes':['cnx7-was']}
 
-activities_app: { 'cluster_name': 'Apps', 'nodes':['connections1']}
-blogs_app: { 'cluster_name': 'Apps', 'nodes':['connections1']}
-dogear_app: { 'cluster_name': 'Apps', 'nodes':['connections1']}
-files_app: { 'cluster_name': 'Apps', 'nodes':['connections1']}
-forums_app: { 'cluster_name': 'Apps', 'nodes':['connections1']}
-metrics_app: { 'cluster_name': 'Apps', 'nodes':['connections1']}
-mobile_app: { 'cluster_name': 'Apps', 'nodes':['connections1']}
-wikis_app: { 'cluster_name': 'Apps', 'nodes':['connections1']}
-ic360_app: { 'cluster_name': 'Apps', 'nodes':['connections1']}
+activities_app: { 'cluster_name': 'Apps', 'nodes':['cnx7-was']}
+blogs_app: { 'cluster_name': 'Apps', 'nodes':['cnx7-was']}
+dogear_app: { 'cluster_name': 'Apps', 'nodes':['cnx7-was']}
+files_app: { 'cluster_name': 'Apps', 'nodes':['cnx7-was']}
+forums_app: { 'cluster_name': 'Apps', 'nodes':['cnx7-was']}
+metrics_app: { 'cluster_name': 'Apps', 'nodes':['cnx7-was']}
+mobile_app: { 'cluster_name': 'Apps', 'nodes':['cnx7-was']}
+wikis_app: { 'cluster_name': 'Apps', 'nodes':['cnx7-was']}
+ic360_app: { 'cluster_name': 'Apps', 'nodes':['cnx7-was']}
 
-push_app: { 'cluster_name': 'Push', 'nodes':['connections1']}
+push_app: { 'cluster_name': 'Push', 'nodes':['cnx7-was']}
 
 
 # Set to true if you want to enable Prometheus JMX exporter and configure WAS to export metrics from one or multiple Connections
@@ -91,7 +90,6 @@ connections_auto_start_clusters: 'Apps Push Util Infra'
 
 # This is used by WebSphere, Connections and TDI.
 db_username: LCUSER
-db_password: password
 db_hostname: cnx7-db2.stoeps.internal
 db_port: 50000
 db_jdbc_file: /opt/IBM/db2/V11.1/java

@@ -1,5 +1,5 @@
 ---
-- name:                       Create Docs user accounts and add them to the {{ sudo_group }} group
+- name:                       "Create Docs user accounts and add them to the {{ sudo_group }} group"
   user:
     name:                     "{{ docs_username }}"
     password:                 "{{ docs_password | password_hash('sha512') }}"

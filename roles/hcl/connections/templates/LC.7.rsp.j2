@@ -18,13 +18,13 @@
     <data key='user.job' value='INSTALL'/>
     <data key='user.lcinstallscript.path' value='{{ __tmp_dir }}/CTemp/LCInstallScript'/>
     <!-- <data key='user.nodeslist' value='Node01,'/> -->
-    <data key='user.nodeslist' value='{% for node in cnx_node_list %}{{ node }}-node,{% endfor %}'/>
+    <data key='user.nodeslist' value='{% for node in cnx_node_list %}{{ node }}-node{% if not loop.last %},{% endif %}{% endfor %}'/>
     <!-- <data key='user.nodeAgentList' value='Node01:true;'/> -->
     <data key='user.nodeAgentList' value='{% for node in cnx_node_list %}{{ node }}-node:true;{% endfor %}'/>
     <!-- <data key='user.nodesServerlist' value='{% for node in ihs_hostname_list %}{{ node }}-node:{{ node.split('.')[0] }};{% endfor %}'/> -->
     <data key='user.nodesServerlist' value='{% for node in ihs_hostname_list %}{{ node.split('.')[0] }}-node:{{ node.split('.')[0] }};{% endfor %}'/>
     <!-- <data key='user.nodesHostnamelist' value='example.ibm.com,'/> -->
-     <data key='user.nodesHostnamelist' value='{% for node in cnx_hostname_list %}{{ node }},{% endfor %}'/>
+     <data key='user.nodesHostnamelist' value='{% for node in cnx_hostname_list %}{{ node }}{% if not loop.last %},{% endif %}{% endfor %}'/>
     <data key='user.isGUIMode' value='F'/>
 
 
@@ -74,7 +74,7 @@
     <data key='user.{{ app.name }}.clusterExist' value='false'/>
     <data key='user.{{ app.name }}.clusterName' value='{{ app.cluster_name }}'/>
     <data key='user.{{ app.name }}.firstNodeName' value='{{ app.nodes[0] }}-node'/>
-    <data key='user.{{ app.name }}.secondaryNodesNames' value='{% for node in app.nodes[1:] %}{{ node }}-node,{% endfor %}'/>
+    <data key='user.{{ app.name }}.secondaryNodesNames' value='{% for node in app.nodes[1:] %}{{ node }}-node{% if not loop.last %},{% endif %}{% endfor %}'/>
     <data key='user.{{ app.name }}.serverInfo' value='{% for node in app.nodes %}{{ app.name }}.{{ node }}-node.ServerName={{ app.cluster_name }}-{{ node }};{% endfor %}'/>
     <data key='user.{{ app.name }}.clusterInfo' value='[{% for node in app.nodes %}{&quot;node&quot;: &quot;{{ node }}-node&quot;, &quot;name&quot;: &quot;{{ app.cluster_name }}-{{ node }}&quot;},{% endfor %}]'/>
 {% endfor %}
