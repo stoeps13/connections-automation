@@ -3,3 +3,4 @@ cnx-automation
 
 .DS_Store
 environments/hcl
+environments/cnx7-hyperv/group_vars/all/workspace.code-workspace
