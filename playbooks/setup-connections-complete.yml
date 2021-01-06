@@ -18,3 +18,6 @@
 
 - name:                  Setup Connections
   import_playbook:       hcl/setup-connections.yml
+
+- name:                  Setup Connections Docs
+  import_playbook:       hcl/setup-connections-docs.yml
