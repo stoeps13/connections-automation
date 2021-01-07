@@ -3,14 +3,14 @@
     path:             "{{ __docs_editor_ext_install_success_file }}"
   register:           editor_ext_already_installed
 
-- name:               Get CNX shared data mount target for {{ nfsMasterAddress }}:{{ cnx_data_nfs }}
-  shell:              "findmnt --source {{ nfsMasterAddress }}:{{ cnx_data_nfs }} -o target -n | head -n 1"
+- name:               "Get CNX shared data mount target for {{ nfsMasterAddress }}:{{ __cnx_data_nfs }}"
+  shell:              "findmnt --source {{ nfsMasterAddress }}:{{ __cnx_data_nfs }} -o target -n | head -n 1"
   register:           cnx_data_mount_target
   when:
     - not editor_ext_already_installed.stat.exists
 
 - set_fact:
-    local_cnx_data_path:    "{{ cnx_data_nfs }}"
+    local_cnx_data_path:    "{{ __cnx_data_nfs }}"
   when:                     cnx_data_mount_target.stdout|length == 0
 
 - set_fact:
