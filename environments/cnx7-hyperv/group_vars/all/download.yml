@@ -25,7 +25,7 @@ ihs_repository_url: "http://{{ download_location_host }}:{{ download_location_po
 ihs_fixes_repository_url: "http://{{ download_location_host }}:{{ download_location_port }}/"
 
 # Download location of HCL Connections Docs 2.0.1
-cnx_docs_download_location: "http://{{ download_location_host }}:{{ download_location_port }}/"
+cnx_docs_download_location: "http://{{ download_location_host }}:{{ download_location_port }}"
 
 # Download location for HCL Connections zip file. Used by Connections installation and TDI to get tdisol archive.
 cnx_repository_url: "{{ download_location_host }}:{{ download_location_port }}/"

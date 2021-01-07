@@ -13,8 +13,7 @@ cnx_updates_enabled: False
 # This username and password are going to be set as administrative for IBM WebSphere ND and used as such accross whenever
 # needed.
 was_username: wasadmin
-docs_username: docsuser
-sudo_group: docsuser
+
 #
 # This section is used when setting up OpenLDAP, when setting up TDI and when setting up WebSphere.
 ldap_server: cnx7-ldap.stoeps.internal
