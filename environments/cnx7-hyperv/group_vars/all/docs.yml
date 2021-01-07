@@ -1,0 +1,51 @@
+# Websphere DMGR for Docs. It can be only one node.
+dmgr_hostname: "{{ groups['dmgr'][0] }}"
+
+# IHS servers for Docs
+ihs_hostname_list: "{{ groups['ihs_servers'] }}"
+
+# Docs Editor servers
+docs_servers_list:  "{{ groups['docs_servers'] }}"
+
+# Document Format Conversion servers
+conversion_servers_list: "{{ groups['conversion_servers'] }}"
+
+# Docs Viewer servers
+viewer_servers_list: "{{ groups['viewer_servers'] }}"
+
+# Editor Proxy Filter
+proxy_servers_list: "{{ groups['proxy_servers'] }}"
+
+# If set to true, database for Docs will be created. Recommended to keep it this way.
+setup_connections_docs: true
+
+# IP address for the NFS server for Connections shared data and Docs data
+nfs_server_name: "{{ groups['nfs_servers'][0] }}"
+nfsMasterAddress: "{{ hostvars[nfs_server_name].ansible_default_ipv4.address }}"
+# hostvars['server'].ansible_default_ipv4.address
+
+docs_url: cnx7-ihs.stoeps.internal
+
+db_concord_username: docsuser
+docs_username: docsuser
+
+# Group needs to exist and be in /etc/sudoers!
+# TODO: Build check or create sudoers entry
+sudo_group: wheel
+
+# Connections clusters to restart as part of the Docs installation process.
+connections_auto_start_clusters: "{{ common_app.cluster_name }}"
+
+# Cluster that hosts the Connections Files application
+cnx_files_cluster: "{{ files_app.cluster_name }}"
+
+# Cluster that hosts the Connections News application
+cnx_news_cluster: "{{ news_app.cluster_name }}"
+
+# Cluster that hosts the Connections Common application
+cnx_common_cluster: "{{ common_app.cluster_name }}"
+
+cnx_docs_package_name: HCL_Docs_v201.zip
+
+# If set to false, database for Connections will not be created. Recommended to keep it this way so only Docs database is created.
+setup_connections_wizards: false
