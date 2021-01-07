@@ -1,5 +1,9 @@
 # Install Docs 2.0.1
 ---
+- name:                    Gather facts
+  hosts:                   nfs_servers, was_servers
+  tasks:                   []
+  
 - name:                    Setup NFS
   hosts:                   docs_servers, conversion_servers, viewer_servers
   become:                  true
