@@ -3,6 +3,9 @@
 cnx7-was.stoeps.internal
 
 # One or multiple Nodeagents
+[cnx_was_servers]
+cnx7-was.stoeps.internal
+
 [was_servers]
 cnx7-was.stoeps.internal
 
