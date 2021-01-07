@@ -1,12 +1,16 @@
 ---
-__conversion_cluster_name:                   "HCLConversionCluster"
-__conversion_cluster_member_name:            "HCLConversionMember"
+__conversion_cluster_name:                   "{{ conversion_cluster_name | default('Conversion') }}"
+__conversion_cluster_member_name:            "{{ conversion_cluster_member_name | default('ConversionMember') }}"
+__conversion_servers_list:                   "{{ conversion_servers_list | default(groups['conversion_servers']) }}"
 
-__editor_cluster_name:                       "HCLEditorCluster"
-__editor_cluster_member_name:                "HCLEditorMember"
+__editor_cluster_name:                       "{{ editor_cluster_name | default('Editor') }}"
+__editor_cluster_member_name:                "{{ editor_cluster_member_name | default('EditorMember') }}"
+__docs_servers_list:                         "{{ docs_servers_list |  default(groups['docs_servers']) }}"
 
-__viewer_cluster_name:                       "HCLViewerCluster"
-__viewer_cluster_member_name:                "HCLViewerMember"
+__viewer_cluster_name:                       "{{ viewer_cluster_name | default('Viewer') }}"
+__viewer_cluster_member_name:                "{{ viewer_cluster_member_name | default('ViewerMember') }}"
+__viewer_servers_list:                       "{{ viewer_servers_list |  default(groups['viewer_servers']) }}"
 
-__docs_proxy_cluster_name:                   "HCLDocsProxyCluster"
-__docs_proxy_cluster_member_name:            "HCLDocsProxyMember"
+__docs_proxy_cluster_name:                   "{{ docs_proxy_cluster_name | default('DocsProxy') }}"
+__docs_proxy_cluster_member_name:            "{{ docs_proxy_cluster_member_name | default('DocsProxyMember') }}"
+__proxy_servers_list:                        "{{ proxy_servers_list |  default(groups['proxy_servers']) }}"
