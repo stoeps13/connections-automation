@@ -1,3 +1,9 @@
+- name: Set facts
+  set_fact:
+    nfsMasterAddress: "{{ hostvars[groups['nfs_servers'][0]]['ansible_default_ipv4']['address'] }}"
+    __docs_editor_files_dest:      "{{ nfsMasterAddress }}:{{ __docs_editor_files_nfs }}"
+    __docs_viewer_files_dest:      "{{ nfsMasterAddress }}:{{ __docs_viewer_files_nfs }}"
+
 - name:                      Create local mount points
   file:
     path:                    "{{ item }}"
@@ -8,7 +14,7 @@
    - "{{ __docs_viewer_files_mount }}"
    - "{{ __cnx_data_mount }}"
 
-- name:                      Mount "{{ __docs_editor_files_dest }}" to "{{ __docs_editor_files_mount }}"
+- name:                      "Mount {{ __docs_editor_files_dest }} to {{ __docs_editor_files_mount }}"
   mount:
     fstype:                  nfs
     opts:                    defaults
@@ -18,7 +24,7 @@
     src:                     "{{ __docs_editor_files_dest }}"
     path:                    "{{ __docs_editor_files_mount }}"
 
-- name:                      Mount "{{ __docs_viewer_files_dest }}" to "{{ __docs_viewer_files_mount }}"
+- name:                      "Mount {{ __docs_viewer_files_dest }} to {{ __docs_viewer_files_mount }}"
   mount:
     fstype:                  nfs
     opts:                    defaults
@@ -28,7 +34,7 @@
     src:                     "{{ __docs_viewer_files_dest }}"
     path:                    "{{ __docs_viewer_files_mount }}"
 
-- name:                      Mount "{{ __cnx_data_nfs_dest }}" to "{{ __cnx_data_mount }}"
+- name:                      "Mount {{ __cnx_data_nfs_dest }} to {{ __cnx_data_mount }}"
   mount:
     fstype:                  nfs
     opts:                    defaults
