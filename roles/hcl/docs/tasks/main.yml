@@ -5,7 +5,7 @@
 - name:                    Download Docs installer to Docs env
   include_tasks:           download_docs.yml
   when:
-   - __setup_environmenti |bool
+   - __setup_environment |bool
    - (inventory_hostname in groups["docs_servers"] or inventory_hostname in groups["conversion_servers"] or inventory_hostname in groups["viewer_servers"][0] or inventory_hostname in groups["proxy_servers"][0])
 
 - name:                    Install Docs Conversion (first node)
