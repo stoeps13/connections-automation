@@ -1,21 +1,21 @@
-- name:                  "Verify if migrations are already done"
+- name:                  "Verify if database creation are already done"
   stat:
     path:                "{{ __ora_success_file }}"
-  register:              migrations_already_done
+  register:              creation_already_done
 
 - name:                  Clean up installation folder(s)
   file:
     path:                "{{ __db_extraction_folder }}"
     state:               absent
   when:
-    - (not migrations_already_done.stat.exists) or (__cnx_force_repopulation |bool )
+    - (not creation_already_done.stat.exists) or (__cnx_force_repopulation |bool )
 
 - name:                  Create installation folder
   file:
     path:                "{{ __db_extraction_folder }}"
     state:               directory
   when:
-    - (not migrations_already_done.stat.exists) or (__cnx_force_repopulation |bool )
+    - (not creation_already_done.stat.exists) or (__cnx_force_repopulation |bool )
 
 
 - name:                  Download and unzip installation "{{ __download_location}}/{{ __package_name }}" to the {{ __db_extraction_folder }}
@@ -24,13 +24,13 @@
     dest:                "{{ __db_extraction_folder }}"
     remote_src:          yes
   when:
-    - (not migrations_already_done.stat.exists) or (__cnx_force_repopulation |bool) or (__db_enable_upgrades |bool)
+    - (not creation_already_done.stat.exists) or (__cnx_force_repopulation |bool) or (__db_enable_upgrades |bool)
   retries:               3
 
 - name:                  Disable fingerprinting
   command:               authconfig --disablefingerprint --update
   when:
-    - not migrations_already_done.stat.exists
+    - not creation_already_done.stat.exists
 
 - name:                  Stop CNX cluster for database cleanup
   include_role:
@@ -106,15 +106,15 @@
   when:
     - __cnx_force_repopulation |bool
 
-- name:                  "Verify if should proceed with migrations if cleanup was done"
+- name:                  "Verify if should proceed with database creation if cleanup was done"
   stat:
     path:                "{{ __ora_success_file }}"
-  register:              migrations_already_done
+  register:              creation_already_done
 
-- name:                  Run migrations for everything but ICEC
+- name:                  Run database creation for everything but ICEC
   shell:                 "{{ __oracle_migration_cmd }} {{ __installation_folder }}/{{ item }} {{ __dbw_oracle_password }}"
-  register:              all_migrations_result
-  failed_when:           ( all_migrations_result.rc not in [0, 1, 2, 3] )
+  register:              all_creation_result
+  failed_when:           ( all_creation_result.rc not in [0, 1, 2, 3] )
   become_user:           "oracle"
   environment:
     ORACLE_HOME:         "{{ __dbw_oracle_home }}"
@@ -152,12 +152,12 @@
    - "connections.sql/library.gcd/oracle/appGrants.sql"
    - "connections.sql/library.os/oracle/appGrants.sql"
   when:
-    - not migrations_already_done.stat.exists
+    - not creation_already_done.stat.exists
 
 - name:                  "Verify if Sharepoint migration has already run"
   stat:
     path:                "{{ __ora_sharepoint_success_file }}"
-  register:              sharepoint_migrations_already_done
+  register:              sharepoint_creation_already_done
 
 - name:                  Run Sharepoint migration for Connections 7
   shell:                 "{{ __oracle_migration_cmd }} {{ __installation_folder }}/{{ item }} {{ __dbw_oracle_password }}"
@@ -170,16 +170,16 @@
   with_items:
    - "connections.sql/homepage/oracle/upgrade-60CR4-70.sql"
   when:
-    - not sharepoint_migrations_already_done.stat.exists
+    - not sharepoint_creation_already_done.stat.exists
     - __db_version == '7.0'
     - __db_enable_upgrades |bool
 
 - name:                  "Verify if IC360 DB is already created"
   stat:
     path:                "{{ __ora_ic360_success_file }}"
-  register:              ic360_migrations_already_done
+  register:              ic360_creation_already_done
 
-- name:                  Run migrations for IC360
+- name:                  Run database creation for IC360
   shell:                 "{{ __oracle_migration_cmd }} {{ __installation_folder }}/{{ item }} {{ __dbw_oracle_password }}"
   register:              ic360_migration_result
   failed_when:           ( ic360_migration_result.rc not in [0, 1, 2, 3] )
@@ -193,12 +193,12 @@
    - "connections.sql/ic360/oracle/appGrants.sql"
   when:
     - __db_version == '7.0'
-    - not ic360_migrations_already_done.stat.exists
+    - not ic360_creation_already_done.stat.exists
 
-- name:                  Run migrations for ICEC only
+- name:                  Run database creation for ICEC only
   shell:                 "echo exit | {{ __oracle_migration_cmd }} {{ __installation_folder }}/{{ item }} {{ __dbw_oracle_password }}"
-  register:              icec_migrations_result
-  failed_when:           ( icec_migrations_result.rc not in [0] )
+  register:              icec_creation_result
+  failed_when:           ( icec_creation_result.rc not in [0] )
   become_user:           "oracle"
   environment:
     ORACLE_HOME:         "{{ __dbw_oracle_home }}"
@@ -208,15 +208,15 @@
    - "connections.sql/icec/oracle/createDb.sql"
    - "connections.sql/icec/oracle/appGrants.sql"
   when:
-    - not migrations_already_done.stat.exists
+    - not creation_already_done.stat.exists
 
 - name:                  "Create {{ __ora_success_file }} file"
   file:
     path:                "{{ __ora_success_file }}"
     state:               touch
   when:
-   - all_migrations_result is defined
-   - not migrations_already_done.stat.exists
+   - all_creation_result is defined
+   - not creation_already_done.stat.exists
 
 - name:                  "Create {{ __ora_ic360_success_file }} file"
   file:
@@ -224,7 +224,7 @@
     state:               touch
   when:
    - ic360_migration_result is defined
-   - not ic360_migrations_already_done.stat.exists
+   - not ic360_creation_already_done.stat.exists
 
 - name:                  "Create {{ __ora_sharepoint_success_file }} file"
   file:
@@ -232,4 +232,4 @@
     state:               touch
   when:
    - sharepoint_migration_result is defined
-   - not sharepoint_migrations_already_done.stat.exists
+   - not sharepoint_creation_already_done.stat.exists
