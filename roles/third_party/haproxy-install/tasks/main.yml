@@ -8,8 +8,10 @@
 - name:                        Create folders
   include_tasks:               setup_haproxy.yml
 
-- name:                        Download and build Haproxy
-  include_tasks:               download_and_build_haproxy.yml
+    #- name:                        Download and build Haproxy
+    # include_tasks:               download_and_build_haproxy.yml
+- name: Install haproxy
+  include_tasks: install_haproxy.yml
 
 - name:                        Configure Haproxy
   include_tasks:               configure_haproxy.yml

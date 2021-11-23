@@ -3,12 +3,12 @@
     path:                    "{{ __haproxy_stats_file }}"
     state:                   touch
 
-- name:                      Link installed binary to expected location
-  file:
-    src:                     "{{ __haproxy_exec_src }}"
-    dest:                    "{{ __haproxy_exec_dest }}"
-    owner:                   "{{ __haproxy_user }}"
-    state:                   link
+      #- name:                      Link installed binary to expected location
+      #  file:
+      #    src:                     "{{ __haproxy_exec_src }}"
+      #    dest:                    "{{ __haproxy_exec_dest }}"
+      #    owner:                   "{{ __haproxy_user }}"
+      #    state:                   link
 
 - name:                      Copy init file to /etc/init.d/
   copy:
