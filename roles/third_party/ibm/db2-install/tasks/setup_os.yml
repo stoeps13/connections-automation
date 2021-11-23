@@ -37,14 +37,39 @@
   when:
     - ansible_distribution == "SLES"
 
-- name:              Install pre-requisites Yum for CentOS 7 - epel-release
+- name: Check if EPEL repo is already configured.
+  stat:
+    path: "{{ epel_repofile_path }}"
+  register: epel_repofile_result
+
+- name: Import EPEL GPG key.
+  rpm_key:
+    key: "{{ epel_repo_gpg_key_url }}"
+    state: present
+  register: result
+  until: result is succeeded
+  retries: 5
+  delay: 10
+  when: not epel_repofile_result.stat.exists
+  ignore_errors: "{{ ansible_check_mode }}"
+
+- name: Install EPEL repo.
   yum:
-    name:            ['epel-release']
-    enablerepo:      "extras"
-    state:           present
-  when:
-    - ansible_distribution == "CentOS"
-    - ansible_distribution_major_version == "7"
+    name: "{{ epel_repo_url }}"
+    state: present
+  register: result
+  until: result is succeeded
+  retries: 5
+  delay: 10
+  when: not epel_repofile_result.stat.exists
+
+- name: Disable Main EPEL repo.
+  ini_file:
+    path: "/etc/yum.repos.d/epel.repo"
+    section: epel
+    option: enabled
+    value: "{{ epel_repo_disable | ternary(0, 1) }}"
+    mode: 0644
 
 - name:              Install Development Tools group
   yum:
