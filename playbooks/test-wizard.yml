@@ -1,0 +1,3 @@
+---
+- name:                  Setup Connections Wizards
+  import_playbook:       hcl/setup-connections-wizards.yml
