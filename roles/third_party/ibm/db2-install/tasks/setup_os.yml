@@ -1,12 +1,12 @@
 - name:              Install pre-requisites Zypper
-  zypper:
+  community.general.zypper:
     name:            ['python3', 'libselinux-devel', 'selinux-tools', 'libselinux1', 'python3-selinux', 'kernel-default', 'libnuma1', 'libaio1', 'libstdc++6', 'unzip']
     state:           present
   when:
     - ansible_distribution == "SLES"
 
 - name:              Install pre-requisites Zypper
-  zypper:
+  community.general.zypper:
     name:            ['pam', 'pam-config', 'yast2-pam']
     state:           present
   when:
@@ -59,7 +59,6 @@
     state:           present
   when:
     - ansible_os_family == "RedHat"
-    - (ansible_distribution == "RedHat"or ansible_distribution == "CentOS"or ansible_distribution == "Amazon")
 
 - name:              Install pre-requisites Yum
   yum:
@@ -67,7 +66,6 @@
     state:           present
   when:
     - ansible_os_family == "RedHat"
-    - (ansible_distribution == "RedHat"or ansible_distribution == "CentOS"or ansible_distribution == "Amazon")
 
 - name:              Disable SELinux
   selinux:
