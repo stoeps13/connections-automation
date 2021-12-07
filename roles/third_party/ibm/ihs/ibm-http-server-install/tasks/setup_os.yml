@@ -17,7 +17,6 @@
 # java 32 bits for Toolbox/WCT 8.5 
 - name:          Install pre-requisites Yum
   yum:
-    name: ['glibc.i686', 'libgcc.i686']
     name: ['glibc.i686', 'gtk2', 'libXtst', 'xorg-x11-fonts-Type1', 'psmisc', 'libnsl', 'gtk2.i686', 'libXtst.i686', 'libXft.i686', 'libnsl.i686']
     state: present
   when:
