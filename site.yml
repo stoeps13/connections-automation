@@ -1,0 +1,25 @@
+---
+#- name: Install epel
+#  import_playbook: playbooks/epel.yml
+#
+    # - name: Cleanup
+    #   import_playbook: playbooks/hcl/cleanup/cleanup-db2.yml
+
+    # - name: Install Connections and prerequisits
+    #   import_playbook: playbooks/setup-trial-environment.yml
+
+    # - name: Setup Component Pack
+    #   import_playbook: playbooks/hcl/setup-component-pack.yml
+    #
+    # - name: Setup Connections
+    # import_playbook: playbooks/hcl/setup-connections-ifix.yml
+    
+- name:                    Install HTTP Servers
+  hosts:                   ihs_servers
+  become:                  true
+  roles:
+    - roles/third_party/ibm/installation-manager-install
+    - roles/third_party/ibm/ihs/ibm-http-server-install
+    - roles/third_party/ibm/ihs/ibm-http-server-fix-install
+
+
