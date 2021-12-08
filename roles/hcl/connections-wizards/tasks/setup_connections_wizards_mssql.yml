@@ -16,8 +16,6 @@
     state:               directory
   when:
     - (not migrations_already_done.stat.exists) or (__cnx_force_repopulation |bool )
-
-
 - name:                  Download and unzip installation "{{ __download_location}}/{{ __package_name }}" to the {{ __db_extraction_folder }}
   unarchive:
     src:                 "{{ __download_location }}/{{ __package_name }}"
@@ -48,25 +46,23 @@
   environment:
     PATH:                "PATH=/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/opt/mssql/bin:/opt/mssql-tools/bin:/home/vagrant/.local/bin:/home/vagrant/bin:/opt/mssql/bin:/opt/mssql-tools/bin"
   with_items:
-   - "connections.sql/activities/sqlserver/dropDb.sql"
-   - "connections.sql/blogs/sqlserver/dropDb.sql"
-   - "connections.sql/dogear/sqlserver/dropDb.sql"
-   - "connections.sql/communities/sqlserver/dropDb.sql"
-   - "connections.sql/files/sqlserver/dropDb.sql"
-   - "connections.sql/forum/sqlserver/dropDb.sql"
-   - "connections.sql/homepage/sqlserver/dropDb.sql"
-   - "connections.sql/metrics/sqlserver/dropDb.sql"
-   - "connections.sql/mobile/sqlserver/dropDb.sql"
-   - "connections.sql/profiles/sqlserver/dropDb.sql"
-   - "connections.sql/pushnotification/sqlserver/dropDb.sql"
-   - "connections.sql/wikis/sqlserver/dropDb.sql"
-   - "connections.sql/library.gcd/sqlserver/dropDb.sql"
-   - "connections.sql/library.os/sqlserver/dropDb.sql"
+    - "connections.sql/activities/sqlserver/dropDb.sql"
+    - "connections.sql/blogs/sqlserver/dropDb.sql"
+    - "connections.sql/dogear/sqlserver/dropDb.sql"
+    - "connections.sql/communities/sqlserver/dropDb.sql"
+    - "connections.sql/files/sqlserver/dropDb.sql"
+    - "connections.sql/forum/sqlserver/dropDb.sql"
+    - "connections.sql/homepage/sqlserver/dropDb.sql"
+    - "connections.sql/metrics/sqlserver/dropDb.sql"
+    - "connections.sql/mobile/sqlserver/dropDb.sql"
+    - "connections.sql/profiles/sqlserver/dropDb.sql"
+    - "connections.sql/pushnotification/sqlserver/dropDb.sql"
+    - "connections.sql/wikis/sqlserver/dropDb.sql"
+    - "connections.sql/library.gcd/sqlserver/dropDb.sql"
+    - "connections.sql/library.os/sqlserver/dropDb.sql"
   when:
     - __cnx_force_repopulation |bool
   ignore_errors:         yes
-
-
 - name:                  Cleanup IC360 database
   shell:                 "{{ __sql_migration_cmd }} {{ __installation_folder }}/{{ item }} {{ __sql_migration_cmd_args }}"
   register:              all_migrations_result
@@ -74,7 +70,7 @@
   environment:
     PATH:                "PATH=/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/opt/mssql/bin:/opt/mssql-tools/bin:/home/vagrant/.local/bin:/home/vagrant/bin:/opt/mssql/bin:/opt/mssql-tools/bin"
   with_items:
-   - "connections.sql/ic360/sqlserver/dropDb.sql"
+    - "connections.sql/ic360/sqlserver/dropDb.sql"
   when:
     - __cnx_force_repopulation |bool
     - __db_version == '7.0'
@@ -87,7 +83,7 @@
   environment:
     PATH:                "PATH=/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/opt/mssql/bin:/opt/mssql-tools/bin:/home/vagrant/.local/bin:/home/vagrant/bin:/opt/mssql/bin:/opt/mssql-tools/bin"
   with_items:
-   - "connections.sql/icec/sqlserver/dropDb.sql"
+    - "connections.sql/icec/sqlserver/dropDb.sql"
   when:
     - __cnx_force_repopulation |bool
   ignore_errors:         yes
@@ -115,35 +111,35 @@
   environment:
     PATH:                "PATH=/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/opt/mssql/bin:/opt/mssql-tools/bin:/home/vagrant/.local/bin:/home/vagrant/bin:/opt/mssql/bin:/opt/mssql-tools/bin"
   with_items:
-   - "connections.sql/activities/sqlserver/createDb.sql"
-   - "connections.sql/activities/sqlserver/appGrants.sql"
-   - "connections.sql/blogs/sqlserver/createDb.sql"
-   - "connections.sql/blogs/sqlserver/appGrants.sql"
-   - "connections.sql/dogear/sqlserver/createDB.sql"
-   - "connections.sql/dogear/sqlserver/appGrants.sql"
-   - "connections.sql/communities/sqlserver/createDb.sql"
-   - "connections.sql/communities/sqlserver/appGrants.sql"
-   - "connections.sql/communities/sqlserver/calendar-createDb.sql"
-   - "connections.sql/communities/sqlserver/calendar-appGrants.sql"
-   - "connections.sql/files/sqlserver/createDb.sql"
-   - "connections.sql/files/sqlserver/appGrants.sql"
-   - "connections.sql/forum/sqlserver/createDb.sql"
-   - "connections.sql/forum/sqlserver/appGrants.sql"
-   - "connections.sql/homepage/sqlserver/createDb.sql"
-   - "connections.sql/homepage/sqlserver/appGrants.sql"
-   - "connections.sql/homepage/sqlserver/initData.sql"
-   - "connections.sql/metrics/sqlserver/createDb.sql"
-   - "connections.sql/metrics/sqlserver/appGrants.sql"
-   - "connections.sql/mobile/sqlserver/createDb.sql"
-   - "connections.sql/mobile/sqlserver/appGrants.sql"
-   - "connections.sql/profiles/sqlserver/createDb.sql"
-   - "connections.sql/profiles/sqlserver/appGrants.sql"
-   - "connections.sql/pushnotification/sqlserver/createDb.sql"
-   - "connections.sql/pushnotification/sqlserver/appGrants.sql"
-   - "connections.sql/wikis/sqlserver/createDb.sql"
-   - "connections.sql/wikis/sqlserver/appGrants.sql"
-   - "connections.sql/library.gcd/sqlserver/appGrants.sql"
-   - "connections.sql/library.os/sqlserver/appGrants.sql"
+    - "connections.sql/activities/sqlserver/createDb.sql"
+    - "connections.sql/activities/sqlserver/appGrants.sql"
+    - "connections.sql/blogs/sqlserver/createDb.sql"
+    - "connections.sql/blogs/sqlserver/appGrants.sql"
+    - "connections.sql/dogear/sqlserver/createDB.sql"
+    - "connections.sql/dogear/sqlserver/appGrants.sql"
+    - "connections.sql/communities/sqlserver/createDb.sql"
+    - "connections.sql/communities/sqlserver/appGrants.sql"
+    - "connections.sql/communities/sqlserver/calendar-createDb.sql"
+    - "connections.sql/communities/sqlserver/calendar-appGrants.sql"
+    - "connections.sql/files/sqlserver/createDb.sql"
+    - "connections.sql/files/sqlserver/appGrants.sql"
+    - "connections.sql/forum/sqlserver/createDb.sql"
+    - "connections.sql/forum/sqlserver/appGrants.sql"
+    - "connections.sql/homepage/sqlserver/createDb.sql"
+    - "connections.sql/homepage/sqlserver/appGrants.sql"
+    - "connections.sql/homepage/sqlserver/initData.sql"
+    - "connections.sql/metrics/sqlserver/createDb.sql"
+    - "connections.sql/metrics/sqlserver/appGrants.sql"
+    - "connections.sql/mobile/sqlserver/createDb.sql"
+    - "connections.sql/mobile/sqlserver/appGrants.sql"
+    - "connections.sql/profiles/sqlserver/createDb.sql"
+    - "connections.sql/profiles/sqlserver/appGrants.sql"
+    - "connections.sql/pushnotification/sqlserver/createDb.sql"
+    - "connections.sql/pushnotification/sqlserver/appGrants.sql"
+    - "connections.sql/wikis/sqlserver/createDb.sql"
+    - "connections.sql/wikis/sqlserver/appGrants.sql"
+    - "connections.sql/library.gcd/sqlserver/appGrants.sql"
+    - "connections.sql/library.os/sqlserver/appGrants.sql"
   when:
     - not migrations_already_done.stat.exists
 
@@ -159,7 +155,7 @@
   environment:
     PATH:                "PATH=/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/opt/mssql/bin:/opt/mssql-tools/bin:/home/vagrant/.local/bin:/home/vagrant/bin:/opt/mssql/bin:/opt/mssql-tools/bin"
   with_items:
-   - "connections.sql/homepage/sqlserver/upgrade-60CR4-70.sql"
+    - "connections.sql/homepage/sqlserver/upgrade-60CR4-70.sql"
   when:
     - not sharepoint_migrations_already_done.stat.exists
     - __db_version == '7.0'
@@ -177,8 +173,8 @@
   environment:
     PATH:                "PATH=/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/opt/mssql/bin:/opt/mssql-tools/bin:/home/vagrant/.local/bin:/home/vagrant/bin:/opt/mssql/bin:/opt/mssql-tools/bin"
   with_items:
-   - "connections.sql/ic360/sqlserver/createDb.sql"
-   - "connections.sql/ic360/sqlserver/appGrants.sql"
+    - "connections.sql/ic360/sqlserver/createDb.sql"
+    - "connections.sql/ic360/sqlserver/appGrants.sql"
   when:
     - __db_version == '7.0'
     - not ic360_migrations_already_done.stat.exists
@@ -190,8 +186,8 @@
   environment:
     PATH:                "PATH=/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/opt/mssql/bin:/opt/mssql-tools/bin:/home/vagrant/.local/bin:/home/vagrant/bin:/opt/mssql/bin:/opt/mssql-tools/bin"
   with_items:
-   - "connections.sql/icec/sqlserver/createDb.sql"
-   - "connections.sql/icec/sqlserver/appGrants.sql"
+    - "connections.sql/icec/sqlserver/createDb.sql"
+    - "connections.sql/icec/sqlserver/appGrants.sql"
   when:
     - not migrations_already_done.stat.exists
 
@@ -200,21 +196,21 @@
     path:                "{{ __sql_success_file }}"
     state:               touch
   when:
-   - all_migrations_result is defined
-   - not migrations_already_done.stat.exists
+    - all_migrations_result is defined
+    - not migrations_already_done.stat.exists
 
 - name:                  "Create {{ __sql_ic360_success_file }} file"
   file:
     path:                "{{ __sql_ic360_success_file }}"
     state:               touch
   when:
-   - ic360_migration_result is defined
-   - not ic360_migrations_already_done.stat.exists
+    - ic360_migration_result is defined
+    - not ic360_migrations_already_done.stat.exists
 
 - name:                  "Create {{ __sql_sharepoint_success_file }} file"
   file:
     path:                "{{ __sql_sharepoint_success_file }}"
     state:               touch
   when:
-   - sharepoint_migration_result is defined
-   - not sharepoint_migrations_already_done.stat.exists
+    - sharepoint_migration_result is defined
+    - not sharepoint_migrations_already_done.stat.exists

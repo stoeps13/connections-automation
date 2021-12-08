@@ -36,19 +36,19 @@
 - name:                      Generate self signed certificates
   command:                   "{{ item }}"
   with_items:
-   - "openssl req -x509 -nodes -days 1825 -newkey rsa:2048 -keyout /etc/haproxy/ssl/nginx-selfsigned.key -out /etc/haproxy/ssl/nginx-selfsigned.crt -batch"
+    - "openssl req -x509 -nodes -days 1825 -newkey rsa:2048 -keyout /etc/haproxy/ssl/nginx-selfsigned.key -out /etc/haproxy/ssl/nginx-selfsigned.crt -batch"
   become:                    true
 
 - name:                      Generate pem 1
   shell:                     "{{ item }}"
   with_items:
-   - "/bin/cat /etc/haproxy/ssl/nginx-selfsigned.crt > /etc/haproxy/ssl/haproxy.pem"
+    - "/bin/cat /etc/haproxy/ssl/nginx-selfsigned.crt > /etc/haproxy/ssl/haproxy.pem"
   become:                    true
 
 - name:                      Generate pem 2
   shell:                     "{{ item }}"
   with_items:
-   - "/bin/cat /etc/haproxy/ssl/nginx-selfsigned.key >> /etc/haproxy/ssl/haproxy.pem"
+    - "/bin/cat /etc/haproxy/ssl/nginx-selfsigned.key >> /etc/haproxy/ssl/haproxy.pem"
   become:                    true
 
 - name:                      Start Haproxy

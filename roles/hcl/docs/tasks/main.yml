@@ -8,8 +8,8 @@
 - name:                    Download Docs installer to Docs env
   include_tasks:           download_docs.yml
   when:
-   - __setup_environment |bool
-   - (inventory_hostname in groups["docs_servers"] or inventory_hostname in groups["conversion_servers"] or inventory_hostname in groups["viewer_servers"][0] or inventory_hostname in groups["proxy_servers"][0])
+    - __setup_environment |bool
+    - (inventory_hostname in groups["docs_servers"] or inventory_hostname in groups["conversion_servers"] or inventory_hostname in groups["viewer_servers"][0] or inventory_hostname in groups["proxy_servers"][0])
 
 - name:                    Install Docs Conversion (first node)
   include_tasks:           install_docs_conversion.yml
@@ -74,8 +74,6 @@
 - name:                    Propagate plugin to IHS servers
   include_tasks:           propagate_plugin.yml
   when:                    inventory_hostname in groups["ihs_servers"]
-
-
 - name:                    Cleanup Install Binaries directory
   file:
     state:                 absent

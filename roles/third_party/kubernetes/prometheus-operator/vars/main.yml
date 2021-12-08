@@ -45,31 +45,31 @@ __oracledb_exporter_sermonitor_destination:  "{{ __ansible_cache }}/oracledb-exp
 __oracledb_exporter_endpoint_destination:    "{{ __ansible_cache }}/oracledb-exporter-endpoint.yml"
 
 __jmx_small_deployment:
-  - { name: 'Apps', port: '8070'}
+  - { name: 'Apps', port: '8070' }
 
 __jmx_medium_deployment:
-  - { name: 'Apps', port: '8070'}
-  - { name: 'Infra', port: '8071'}
-  - { name: 'Util', port: '8072'}
-  - { name: 'Push', port: '8073'}
+  - { name: 'Apps', port: '8070' }
+  - { name: 'Infra', port: '8071' }
+  - { name: 'Util', port: '8072' }
+  - { name: 'Push', port: '8073' }
 
 __jmx_large_deployment:
-  - { name: 'Common', port: '8060'}
-  - { name: 'Communities', port: '8061'}
-  - { name: 'News', port: '8062'}
-  - { name: 'Widgets', port: '8063'}
-  - { name: 'Profiles', port: '8064'}
-  - { name: 'Search', port: '8065'}
-  - { name: 'Homepage', port: '8066'}
-  - { name: 'Moderation', port: '8067'}
-  - { name: 'RTE', port: '8068'}
-  - { name: 'Activities', port: '8069'}
-  - { name: 'Blogs', port: '8070'}
-  - { name: 'Dogear', port: '8071'}
-  - { name: 'Files', port: '8072'}
-  - { name: 'Forums', port: '8073'}
-  - { name: 'Metrics', port: '8084'}
-  - { name: 'Mobile', port: '8075'}
-  - { name: 'Wikis', port: '8076'}
-  - { name: 'IC360', port: '8077'}
-  - { name: 'Push', port: '8078'}
+  - { name: 'Common', port: '8060' }
+  - { name: 'Communities', port: '8061' }
+  - { name: 'News', port: '8062' }
+  - { name: 'Widgets', port: '8063' }
+  - { name: 'Profiles', port: '8064' }
+  - { name: 'Search', port: '8065' }
+  - { name: 'Homepage', port: '8066' }
+  - { name: 'Moderation', port: '8067' }
+  - { name: 'RTE', port: '8068' }
+  - { name: 'Activities', port: '8069' }
+  - { name: 'Blogs', port: '8070' }
+  - { name: 'Dogear', port: '8071' }
+  - { name: 'Files', port: '8072' }
+  - { name: 'Forums', port: '8073' }
+  - { name: 'Metrics', port: '8084' }
+  - { name: 'Mobile', port: '8075' }
+  - { name: 'Wikis', port: '8076' }
+  - { name: 'IC360', port: '8077' }
+  - { name: 'Push', port: '8078' }

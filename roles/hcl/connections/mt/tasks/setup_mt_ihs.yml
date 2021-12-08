@@ -34,7 +34,7 @@
      ./connections-mt-webserver-update-cli.sh -f config.properties 2>&1 | tee mtupdate_ihs.log
      echo ${PIPESTATUS[0]} > mtupdate_ihs.rc
   args:
-      chdir:           "{{ __tmp_dir }}/mt/install"
+    chdir:           "{{ __tmp_dir }}/mt/install"
   become:              true
   register:            mt_update_ihs_performed
 

@@ -17,22 +17,22 @@
 - name:                      Delete bootstrap if already exists - Helm v2
   command:                   helm del --purge bootstrap
   when:
-   - bootstrap_already_provisioned.rc == 0
-   - helm_version.stdout == "v2"
+    - bootstrap_already_provisioned.rc == 0
+    - helm_version.stdout == "v2"
   become_user:               "{{ __sudo_user }}"
 
 - name:                      Delete bootstrap if already exists - Helm v3
   command:                   "helm uninstall bootstrap --namespace {{ __default_namespace }}"
   when:
-   - bootstrap_already_provisioned.rc == 0
-   - helm_version.stdout != "v2"
+    - bootstrap_already_provisioned.rc == 0
+    - helm_version.stdout != "v2"
   become_user:               "{{ __sudo_user }}"
 
 - name:                      Give it some space after eventual cleanup
   pause:
     seconds:                 5
   when:
-   - bootstrap_already_provisioned.rc == 0
+    - bootstrap_already_provisioned.rc == 0
 
 - name:                      "Render {{ __bootstrap_install_env }}"
   template:
@@ -60,7 +60,7 @@
   become_user:               "{{ __sudo_user }}"
 
 - name:                      Get bootstrap POD name
-  shell:                     kubectl get pods -n {{ __default_namespace }} | grep bootstrap | grep Completed | awk {'print $1'}  
+  shell:                     kubectl get pods -n {{ __default_namespace }} | grep bootstrap | grep Completed | awk {'print $1'}
   changed_when:              true
   register:                  bootstrap_successful
   become_user:               "{{ __sudo_user }}"
@@ -77,5 +77,5 @@
   become_user:               "{{ __sudo_user }}"
 
 - name:                      Bootstrap succeed
-  debug: 
+  debug:
     msg:                     "{{ bootstrap_success_message.stdout }}"

@@ -4,7 +4,7 @@
     state:                   directory
     mode:                    '0755'
   with_items:
-   - "{{ __docs_data_local_path }}"
+    - "{{ __docs_data_local_path }}"
 
 - name:                      Create Viewer data local mount points
   file:
@@ -12,7 +12,7 @@
     state:                   directory
     mode:                    '0755'
   with_items:
-   - "{{ __viewer_data_local_path }}"
+    - "{{ __viewer_data_local_path }}"
   when:                      inventory_hostname in groups["conversion_servers"] or inventory_hostname in groups["viewer_servers"]
 
 - name:                      Mount "{{ __docs_editor_files_dest }}" to "{{ __docs_data_local_path }}"

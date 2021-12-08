@@ -9,5 +9,6 @@
   user:
     name: "{{ __ihs_username }}"
     uid: 2021
-    group: ihsadmins
+    groups:
+      - ihsadmins
     append: yes

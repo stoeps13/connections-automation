@@ -38,12 +38,12 @@
   register:                                 get_element_text
 
 - name:                                     Print get_element_text@enabled
-  ansible.builtin.debug: 
+  ansible.builtin.debug:
     var: "get_element_text.matches[0]['{http://www.ibm.com/service-location}serviceReference']['enabled']"
   verbosity: 1
 
 - name:                                     Print get_element_text@ssl_enabled
-  ansible.builtin.debug: 
+  ansible.builtin.debug:
     var: "get_element_text.matches[0]['{http://www.ibm.com/service-location}serviceReference']['ssl_enabled']"
   verbosity: 1
 
@@ -70,11 +70,11 @@
       when:                                 get_element_text.count == 1
 
 - name:                                     Print extensionRegistry@ssl_enabled
-  ansible.builtin.debug: 
+  ansible.builtin.debug:
     msg:  "{{ isExtReg_ssl_enabled.changed }}"
   verbosity: 1
 
 - name:                                     Print extensionRegistry@enabled
-  ansible.builtin.debug: 
+  ansible.builtin.debug:
     msg:                                    "{{ isExtReg_enabled.changed }}"
   verbosity: 1

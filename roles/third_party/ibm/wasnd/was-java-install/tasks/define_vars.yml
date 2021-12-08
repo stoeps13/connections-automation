@@ -15,3 +15,4 @@
   command:           egrep {{ __was_java_version }} /var/ibm/InstallationManager/installed.xml
   register:          version_already_installed
   ignore_errors:     true
+  changed_when:           false

@@ -25,10 +25,10 @@
     __prop_name:               "{{ item.prop_name }}"
     __prop_value:              "{{ item.prop_value }}"
   with_items:
-     - { prop_name: "sun.jnu.encoding", prop_value: "UTF-8" }
-     - { prop_name: "file.encoding", prop_value: "UTF-8" }
-     - { prop_name: "client.encoding.override", prop_value: "UTF-8" }
-     - { prop_name: "ws.ext.dirs", prop_value: "${USER_INSTALL_ROOT}/config/cells/{{ __was_cellname }}/autodeploy/classpath/DU-ic360-security/security/" }
+    - { prop_name: "sun.jnu.encoding", prop_value: "UTF-8" }
+    - { prop_name: "file.encoding", prop_value: "UTF-8" }
+    - { prop_name: "client.encoding.override", prop_value: "UTF-8" }
+    - { prop_name: "ws.ext.dirs", prop_value: "${USER_INSTALL_ROOT}/config/cells/{{ __was_cellname }}/autodeploy/classpath/DU-ic360-security/security/" }
   when:                        __ic360_app.cluster_name is defined
 
 - name:                        Add root signing certificate of {{ groups['ihs_servers'][0] }} to the Default Trust Store for ic360 http.hostname

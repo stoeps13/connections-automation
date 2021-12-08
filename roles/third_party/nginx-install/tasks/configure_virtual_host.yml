@@ -3,7 +3,7 @@
     path:                   "{{ item }}"
     state:                  directory
   with_items:
-   - "{{ __packages_location }}"
+    - "{{ __packages_location }}"
 
 - name:                     "Render {{ __packages_conf_location }}"
   template:

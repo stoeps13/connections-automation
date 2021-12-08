@@ -3,34 +3,34 @@
     path:                 "{{ item }}"
     state:                directory
   with_items:
-   - "/tmp/k8s_master_files/"
-   - "/tmp/k8s_master_files/pki"
-   - "/tmp/k8s_master_files/pki/etcd"
+    - "/tmp/k8s_master_files/"
+    - "/tmp/k8s_master_files/pki"
+    - "/tmp/k8s_master_files/pki/etcd"
   when:                   inventory_hostname == groups['k8s_masters'][0] and ((groups.k8s_workers | difference(groups.k8s_masters) | list)== []  and (groups.k8s_masters|length) == 1 and (groups.k8s_workers|length) == 1 ) != true
 
 - name:                   Copy admin.conf to the temporary folder part
   command:                cp -r /etc/kubernetes/{{ item }} /tmp/k8s_master_files/
   when:                   inventory_hostname == groups['k8s_masters'][0] and ((groups.k8s_workers | difference(groups.k8s_masters) | list)== []  and (groups.k8s_masters|length) == 1 and (groups.k8s_workers|length) == 1 ) != true
   with_items:
-   - "admin.conf"
+    - "admin.conf"
 
 - name:                   Copy pki config files to the temporary folder part
   command:                cp -r /etc/kubernetes/pki/{{ item }} /tmp/k8s_master_files/pki
   when:                   inventory_hostname == groups['k8s_masters'][0] and ((groups.k8s_workers | difference(groups.k8s_masters) | list)== []  and (groups.k8s_masters|length) == 1 and (groups.k8s_workers|length) == 1 ) != true
   with_items:
-   - "ca.crt"
-   - "ca.key"
-   - "sa.key"
-   - "sa.pub"
-   - "front-proxy-ca.crt"
-   - "front-proxy-ca.key"
+    - "ca.crt"
+    - "ca.key"
+    - "sa.key"
+    - "sa.pub"
+    - "front-proxy-ca.crt"
+    - "front-proxy-ca.key"
 
 - name:                   Copy pki/etcd config files to the temporary folder part
   command:                cp -r /etc/kubernetes/pki/etcd/{{ item }} /tmp/k8s_master_files/pki/etcd
   when:                   inventory_hostname == groups['k8s_masters'][0] and ((groups.k8s_workers | difference(groups.k8s_masters) | list)== []  and (groups.k8s_masters|length) == 1 and (groups.k8s_workers|length) == 1 ) != true
   with_items:
-   - "ca.crt"
-   - "ca.key"
+    - "ca.crt"
+    - "ca.key"
 
 - name:                   Create the archive
   archive:
@@ -58,5 +58,5 @@
   command:                cp -rf /tmp/k8s_master_files/{{ item }} /etc/kubernetes/
   when:                   inventory_hostname != groups['k8s_masters'][0] and ((groups.k8s_workers | difference(groups.k8s_masters) | list)== []  and (groups.k8s_masters|length) == 1 and (groups.k8s_workers|length) == 1 ) != true
   with_items:
-   - "pki"
-   - "admin.conf"
+    - "pki"
+    - "admin.conf"

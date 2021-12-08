@@ -7,8 +7,8 @@
   ignore_errors:             true
   delegate_to:               "{{ item }}"
   with_items:
-   - "{{ groups['dmgr'] }}"
-   - "{{ groups['was_servers'] }}"
+    - "{{ groups['dmgr'] }}"
+    - "{{ groups['was_servers'] }}"
   register: result
   retries: 3
   delay: 15
@@ -23,8 +23,8 @@
   ignore_errors:             true
   delegate_to:               "{{ item }}"
   with_items:
-   - "{{ groups['dmgr'] }}"
-   - "{{ groups['was_servers'] }}"
+    - "{{ groups['dmgr'] }}"
+    - "{{ groups['was_servers'] }}"
 
 - name:                      Unmount "{{ __cnx_message_store }}"
   mount:
@@ -35,8 +35,8 @@
   ignore_errors:             true
   delegate_to:               "{{ item }}"
   with_items:
-   - "{{ groups['dmgr'] }}"
-   - "{{ groups['was_servers'] }}"
+    - "{{ groups['dmgr'] }}"
+    - "{{ groups['was_servers'] }}"
   register: result
   retries: 3
   delay: 15
@@ -51,5 +51,5 @@
   ignore_errors:             true
   delegate_to:               "{{ item }}"
   with_items:
-   - "{{ groups['dmgr'] }}"
-   - "{{ groups['was_servers'] }}"
+    - "{{ groups['dmgr'] }}"
+    - "{{ groups['was_servers'] }}"

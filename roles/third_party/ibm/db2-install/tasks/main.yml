@@ -6,7 +6,7 @@
 
 - name:                       Check if DB2 is already up and running
   community.general.pids:
-      name: db2sysc
+    name: db2sysc
   register:                   db2_running
   changed_when:               false
   ignore_errors:              true
@@ -63,6 +63,6 @@
 
 - name:                       Install jdbc drivers only
   include_tasks:              install_jdbc.yml
-  when:  
+  when:
     - inventory_hostname in groups["was_servers"]
     - __setup_db2_jdbc |bool

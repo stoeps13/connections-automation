@@ -1,3 +1,4 @@
+---
 - name:                             Generate hashed password for docker registry auth
   shell:                            htpasswd -Bbn {{ __registry_user }} {{ __registry_password }}  > /etc/docker/auth/htpasswd
   when:                             inventory_hostname == groups['docker_registry'][0]
@@ -19,8 +20,8 @@
     path:                           "{{ item }}"
     state:                          absent
   with_items:
-   - /tmp/cert.pem
-   - /tmp/certs/
+    - /tmp/cert.pem
+    - /tmp/certs/
 
 - name:                             Copy certificate
   copy:
@@ -102,38 +103,38 @@
     published_ports:
       - "{{ __registry_port }}:5000"
     env:
-        REGISTRY_AUTH: "htpasswd"
-        REGISTRY_AUTH_HTPASSWD_REALM: "Registry Realm"
-        REGISTRY_AUTH_HTPASSWD_PATH: "/auth/htpasswd"
-        REGISTRY_HTTP_TLS_CERTIFICATE: "/certs/cert.pem"
-        REGISTRY_HTTP_TLS_KEY: "/certs/key.pem"
+      REGISTRY_AUTH: "htpasswd"
+      REGISTRY_AUTH_HTPASSWD_REALM: "Registry Realm"
+      REGISTRY_AUTH_HTPASSWD_PATH: "/auth/htpasswd"
+      REGISTRY_HTTP_TLS_CERTIFICATE: "/certs/cert.pem"
+      REGISTRY_HTTP_TLS_KEY: "/certs/key.pem"
   when:
-   - inventory_hostname == groups['docker_registry'][0]
-   - ansible_os_family == "RedHat" or ansible_distribution == "SLES"
+    - inventory_hostname == groups['docker_registry'][0]
+    - ansible_os_family == "RedHat" or ansible_distribution == "SLES"
   register: docker_registry_status
 
 - name:                             "Save Docker Registry status when ansible_version < 2.10"
   set_fact:
     docker_registry_is_running:     "{{ docker_registry_status.ansible_facts.docker_container.State.Running }}"
   when:
-   - inventory_hostname == groups['docker_registry'][0]
-   - ansible_os_family == "RedHat"
-   - "ansible_version.full is version_compare('2.9', '<=')"
+    - inventory_hostname == groups['docker_registry'][0]
+    - ansible_os_family == "RedHat"
+    - "ansible_version.full is version_compare('2.9', '<=')"
 
 - name:                             "Save Docker Registry status when ansible_version >= 2.10"
   set_fact:
     docker_registry_is_running:     "{{ docker_registry_status.container.State.Running }}"
   when:
-   - inventory_hostname == groups['docker_registry'][0]
-   - ansible_os_family == "RedHat"
-   - "ansible_version.full is version_compare('2.10', '>=')"
+    - inventory_hostname == groups['docker_registry'][0]
+    - ansible_os_family == "RedHat"
+    - "ansible_version.full is version_compare('2.10', '>=')"
 
 - name:                             Fail if Docker Registry is not running
   fail:
     msg: "Docker Registry could not be started"
-  when: 
-   - inventory_hostname == groups['docker_registry'][0]
-   - not docker_registry_is_running
+  when:
+    - inventory_hostname == groups['docker_registry'][0]
+    - not docker_registry_is_running
 
 - name:                             Test Docker Registry Login on RHEL/SUSE
   vars:
@@ -144,4 +145,4 @@
     password:                       "{{ __registry_password }}"
     reauthorize:                    yes
   when:
-   - ansible_os_family == "RedHat" or ansible_distribution == "SLES"
+    - ansible_os_family == "RedHat" or ansible_distribution == "SLES"

@@ -4,8 +4,6 @@
   register:           node_already_joined
   become:             false
   ignore_errors:      true
-
-
 - name:               Save join command to the file
   template:
     src:              "{{ __join_command_template }}"

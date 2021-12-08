@@ -58,8 +58,6 @@ __scope_r:                                "Cluster"
 __scope_name_r:                           "{{ __conversion_cluster_name }}"
 __non_job_mgr_mode_r:                     "True"
 __viewer_url_r:                           "https://{{ docs_url }}/viewer"
-
-
 # Docs Editor install config
 __editor_cfg_prop_location:               "{{ __extraction_folder }}/{{ __editor_install_folder }}/installer"
 __editor_install_root_r:                  "{{ __docs_editor_install_location }}"
@@ -82,8 +80,6 @@ __integrate_with_lc_r:                    "true"
 __lc_config_xml_path_r:                   "{{ __was_install_location }}/profiles/{{ __profile_name }}/config/cells/{{ __was_cellname }}/LotusConnections-config/LotusConnections-config.xml"
 __files_url_r:                            "https://{{ cnx_application_ingress }}/files"
 __email_url_r:                            "https://{{ cnx_application_ingress }}/connections"
-
-
 # Docs Viewer install config
 __viewer_cfg_prop_location:               "{{ __extraction_folder }}/{{ __viewer_install_folder }}/installer"
 __viewer_install_root_r:                  "{{ __docs_viewer_install_location }}"
@@ -96,15 +92,11 @@ __docs_url_r:                             "https://{{ docs_url }}/docs"
 __ecm_fncmis_server_url:                  ""
 __ecm_fncs_server_url:                    ""
 __ecm_community_server_url:               ""
-
-
 # Docs Editor Proxy install config
 __editor_proxy_cfg_prop_location:         "{{ __extraction_folder }}/{{ __proxy_install_folder }}/installer"
 __was_proxy_profile_root_r:               "{{ __was_install_location }}/profiles/{{ __profile_name }}"
 __proxy_scope_name_r:                     "{{ __docs_proxy_cluster_name }}"
 __docs_scope_name_r:                      "{{ __editor_cluster_name }}"
-
-
 # Docs Editor Extension install config
 __editor_ext_cfg_prop_location:            "{{ __extraction_folder }}/DocsCnxExtension/installer"
 __editor_ext_install_root_r:               "{{ __docs_editor_ext_install_location }}"
@@ -118,8 +110,6 @@ __ic_version_r:                            "5.5"
 __docs_admin_j2c_alias_r:                  "connectionsAdmin"
 # not in doc
 __ccm_enabled_r:                           "False"
-
-
 # Docs Viewer Extension install config:
 __viewer_ext_cfg_prop_location:            "{{ __extraction_folder }}/ViewerCnxExtension/installer"
 __viewer_ext_install_root_r:               "{{ __docs_viewer_ext_install_location }}"
@@ -127,8 +117,6 @@ __enable_upload_conversion_r:              "Yes"
 __auth_type_r:                             "BASIC"
 __viewer_server_url_r:                     "https://{{ docs_url }}/viewer"
 __viewer_admin_j2c_alias_r:                "connectionsAdmin"
-
-
 __conversion_install_success_file:        "{{ __docs_conversion_install_location }}/docs.conversion.installed.success"
 __editor_install_success_file:            "{{ __docs_editor_install_location }}/docs.editor.installed.success"
 __viewer_install_success_file:            "{{ __docs_viewer_install_location }}/docs.viewer.installed.success"

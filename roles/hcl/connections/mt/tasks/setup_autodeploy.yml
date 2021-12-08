@@ -37,7 +37,7 @@
      ./autodeploy-install-cli.sh -s -f config.properties 2>&1 | tee autodeploy_install.log
      echo ${PIPESTATUS[0]} > autodeploy_install.rc
   args:
-      chdir:           "{{ __tmp_dir }}/mt/install"
+    chdir:           "{{ __tmp_dir }}/mt/install"
   register:            autodeploy_install_performed
 
 - name:                Check install return code

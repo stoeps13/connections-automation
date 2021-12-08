@@ -41,8 +41,6 @@
   register:          cout
   changed_when:      ( cout.stdout.find(__was_fp_version_check) != -1)
   when:              version_already_installed.rc != 0
-
-
 - name:              Cleanup Binaries directory
   file:
     state:           absent

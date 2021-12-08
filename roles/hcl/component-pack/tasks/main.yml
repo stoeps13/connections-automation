@@ -81,8 +81,8 @@
 - name:                      Run profiles migration for OrientMe
   include_tasks:             orientme_profile_migration.yml
   when:
-   - __setup_orientme |bool
-   - not __skip_connections_integration
+    - __setup_orientme |bool
+    - not __skip_connections_integration
 
 - name:                      Setup Sanity
   include_tasks:             setup_sanity.yml
@@ -91,14 +91,14 @@
 - name:                      Setup Activities Plus
   include_tasks:             setup_kudosboards.yml
   when:
-   - __setup_kudosboards |bool
-   - not __skip_connections_integration
+    - __setup_kudosboards |bool
+    - not __skip_connections_integration
 
 - name:                      Setup Outlook Desktop Plugin
   include_tasks:             setup_outlook_addin.yml
   when:
-   - __setup_outlook_addin |bool
-   - not __skip_connections_integration
+    - __setup_outlook_addin |bool
+    - not __skip_connections_integration
 
 - name:                      Scale to the number of nodes
   include_tasks:             scale_component_pack.yml
@@ -107,18 +107,18 @@
 - name:                      Enable ES metrics
   include_tasks:             enable_es_metrics.yml
   when:
-   - __enable_es_metrics |bool
-   - __setup_elasticsearch7 |bool or __setup_elasticsearch |bool
-   - not __skip_connections_integration
+    - __enable_es_metrics |bool
+    - __setup_elasticsearch7 |bool or __setup_elasticsearch |bool
+    - not __skip_connections_integration
 
 - name:                      Setup GK flags
   include_tasks:             setup_gk_flags.yml
   when:
-   - __enable_gk_flags |bool
-   - not __skip_connections_integration
+    - __enable_gk_flags |bool
+    - not __skip_connections_integration
 
 - name:                      Setup MS Teams Extensions
   include_tasks:             setup_ms_teams_extensions.yml
   when:
-   - __setup_ms_teams_extensions |bool
-   - not __skip_connections_integration
+    - __setup_ms_teams_extensions |bool
+    - not __skip_connections_integration

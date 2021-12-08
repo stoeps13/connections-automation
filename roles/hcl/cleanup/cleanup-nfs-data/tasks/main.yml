@@ -4,10 +4,10 @@
     state:                 absent
   ignore_errors:           true
   with_items:
-   - "{{ __cnx_message_store_nfs }}"
-   - "{{ __cnx_shared_area_nfs }}"
-   - "{{ __nfs_master_source }}"
-   - "{{ __viewer_data_remote_path }}"
-   - "{{ __docs_data_remote_path }}"
+    - "{{ __cnx_message_store_nfs }}"
+    - "{{ __cnx_shared_area_nfs }}"
+    - "{{ __nfs_master_source }}"
+    - "{{ __viewer_data_remote_path }}"
+    - "{{ __docs_data_remote_path }}"
   when:
-   - inventory_hostname == groups['nfs_servers'][0]
+    - inventory_hostname == groups['nfs_servers'][0]

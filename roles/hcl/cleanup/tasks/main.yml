@@ -3,14 +3,14 @@
   ignore_errors:           true
   tags:                    k8s_cleanup
   when:
-   - __force_destroy_kubernetes == true
+    - __force_destroy_kubernetes == true
 
 - name:                    Cleanup K8S
   command:                 yum remove kubeadm kubectl kubelet kubernetes-cni kube* -y
   ignore_errors:           true
   tags:                    k8s_cleanup
   when:
-   - __force_destroy_kubernetes == true
+    - __force_destroy_kubernetes == true
 
 - name:                    Find kubectl
   shell:                   "whereis kubectl | awk '{ print $2 }'"
@@ -18,7 +18,7 @@
   ignore_errors:           true
   tags:                    k8s_cleanup
   when:
-   - __force_destroy_kubernetes == true
+    - __force_destroy_kubernetes == true
 
 - name:                    Delete kubectl if exists {{ kubectl_loc.stdout }}
   file:
@@ -27,7 +27,7 @@
   ignore_errors:           true
   tags:                    k8s_cleanup
   when:
-   - __force_destroy_kubernetes == true and kubectl_loc.rc == 0
+    - __force_destroy_kubernetes == true and kubectl_loc.rc == 0
 
 - name:                    Cleanup folders
   file:
@@ -35,14 +35,14 @@
     state:                 absent
   tags:                    k8s_cleanup
   when:
-   - __force_destroy_kubernetes == true
+    - __force_destroy_kubernetes == true
   with_items:
-   - "{{ __ansible_cache }}"
-   - "{{ __helm_install_dir }}"
-   - "{{ __kube_dir }}"
-   - "{{ __docker_registry_dir }}"
-   - "{{ __kubernetes_etc_dir }}"
-   - "{{ __etcd_dir }}"
+    - "{{ __ansible_cache }}"
+    - "{{ __helm_install_dir }}"
+    - "{{ __kube_dir }}"
+    - "{{ __docker_registry_dir }}"
+    - "{{ __kubernetes_etc_dir }}"
+    - "{{ __etcd_dir }}"
 
 - name:                    Stop db2fmcd process
   systemd:
@@ -51,14 +51,14 @@
   ignore_errors:           true
   tags:                    db2_cleanup
   when:
-   - __force_destroy_db2 == true
+    - __force_destroy_db2 == true
 
 - name:                    Kill all db2 processes
   shell:                   ps -ef | grep db2 | awk {'print $2'} | xargs kill -9
   ignore_errors:           true
   tags:                    db2_cleanup
   when:
-   - __force_destroy_db2 == true
+    - __force_destroy_db2 == true
 
 - name:                    Cleanup DB2 folders
   file:
@@ -66,18 +66,18 @@
     state:                 absent
   tags:                    db2_cleanup
   when:
-   - __force_destroy_db2 == true
+    - __force_destroy_db2 == true
   with_items:
-   - "{{ __db2_instance_fenced_homedir }}"
-   - "{{ __db2_instance_homedir }}"
-   - "{{ __db_installation_folder_dir }}"
+    - "{{ __db2_instance_fenced_homedir }}"
+    - "{{ __db2_instance_homedir }}"
+    - "{{ __db_installation_folder_dir }}"
 
 - name:                    Kill all IHSs processes
   shell:                   ps -ef | grep http | awk {'print $2'} | xargs kill -9
   ignore_errors:           true
   tags:                    ihs_cleanup
   when:
-   - __force_destroy_ihs == true
+    - __force_destroy_ihs == true
 
 - name:                    Cleanup IHSs folders
   file:
@@ -86,18 +86,18 @@
   tags:                    ihs_cleanup
   ignore_errors:           true
   when:
-   - __force_destroy_ihs == true
+    - __force_destroy_ihs == true
   with_items:
-   - "{{ __ihs_install_location }}"
-   - "{{ __iim_install_location }}"
-   - "{{ __var_ibm_base_location }}"
+    - "{{ __ihs_install_location }}"
+    - "{{ __iim_install_location }}"
+    - "{{ __var_ibm_base_location }}"
 
 - name:                    Kill all WebSphere/Connections processes
   shell:                   ps -ef | grep java | awk {'print $2'} | xargs kill -9
   ignore_errors:           true
   tags: was_cleanup
   when:
-   - __force_destroy_websphere == true
+    - __force_destroy_websphere == true
 
 - name:                    Cleanup WebSphere/Connections folders
   file:
@@ -106,19 +106,19 @@
   tags: was_cleanup
   ignore_errors:           true
   when:
-   - __force_destroy_websphere == true
+    - __force_destroy_websphere == true
   with_items:
-   - "{{ __iim_install_location_dir }}"
-   - "{{ __websphere_base_location }}"
-   - "{{ __imshared_location }}"
-   - "{{ __var_ibm_base_location_dir }}"
+    - "{{ __iim_install_location_dir }}"
+    - "{{ __websphere_base_location }}"
+    - "{{ __imshared_location }}"
+    - "{{ __var_ibm_base_location_dir }}"
 
 - name:                    Kill all Oracle processes
   shell:                   ps -ef | grep ora | awk {'print $2'} | xargs kill -9
   ignore_errors:           true
   tags:                    oracle_cleanup
   when:
-   - __force_destroy_oracle == true
+    - __force_destroy_oracle == true
 
 - name:                    Cleanup oracle folders
   file:
@@ -126,10 +126,10 @@
     state:                 absent
   tags:                    oracle_cleanup
   when:
-   - __force_destroy_oracle == true
+    - __force_destroy_oracle == true
   with_items:
-   - "{{ __ora_rsp_oracle_base }}"
-   - "{{ __oraclfmap_oracle_base }}"
-   - "{{ __oracltab_oracle_base }}"
-   - "{{ __orainst_oracle_base }}"
-   - "{{ __oracle_temp }}"
+    - "{{ __ora_rsp_oracle_base }}"
+    - "{{ __oraclfmap_oracle_base }}"
+    - "{{ __oracltab_oracle_base }}"
+    - "{{ __orainst_oracle_base }}"
+    - "{{ __oracle_temp }}"

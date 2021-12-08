@@ -79,10 +79,10 @@
      ./connections-mt-update-cli.sh -s -f config.properties 2>&1 | tee mtupdate.log
      echo ${PIPESTATUS[0]} > mtupdate.rc
   args:
-      chdir:           "{{ __tmp_dir }}/mt/install"
+    chdir:           "{{ __tmp_dir }}/mt/install"
   become:              true
   when:
-      - autodeploy_already_installed.stat.exists
+    - autodeploy_already_installed.stat.exists
   register:            mt_update_performed
 
 - name:                Check install return code

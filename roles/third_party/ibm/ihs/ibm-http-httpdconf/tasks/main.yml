@@ -6,10 +6,10 @@
 - name:                 Clean up old certificates
   command:              "rm -rf {{ item }}"
   with_items:
-   - "{{ __ihs_install_location }}/{{__ihs_hostname}}-key.crl }}"
-   - "{{ __ihs_install_location }}/{{__ihs_hostname}}-key.rdb }}"
-   - "{{ __ihs_install_location }}/{{__ihs_hostname}}-key.sth }}"
-   - "{{ __ihs_kdb_filename }}"
+    - "{{ __ihs_install_location }}/{{__ihs_hostname}}-key.crl }}"
+    - "{{ __ihs_install_location }}/{{__ihs_hostname}}-key.rdb }}"
+    - "{{ __ihs_install_location }}/{{__ihs_hostname}}-key.sth }}"
+    - "{{ __ihs_kdb_filename }}"
 
 - name:                 Generate key DB
   shell:                "{{ __ihs_install_location }}/bin/gskcapicmd -keydb -create -db {{__ihs_kdb_filename }} -type cms -pw {{ __ihs_kdb_password }} -stash"

@@ -1,23 +1,35 @@
 ---
 - name:          "Is dmgr Running?"
-  shell:         "ps -p `cat '{{ __was_install_location }}/profiles/{{ __profile_name }}/logs/dmgr/dmgr.pid'` > /dev/null"
+  community.general.pids:
+    name:        java
   register:      dmgr_is_running
-  ignore_errors: true
+
+- name: Set dmgr.pid file
+  ansible.builtin.set_fact:
+    dmgr_pid_file_name: "{{ __was_install_location }}/profiles/{{ __profile_name }}/logs/dmgr/dmgr.pid"
+
+- name: Check if dmgr.pid exists
+  stat:
+    path:       "{{ dmgr_pid_file_name }}"
+  register:   dmgr_pid_file
+
+- name: Get pid from dmgr.pid
+  ansible.builtin.slurp:
+    src:          "{{ dmgr_pid_file_name }}"
+  register: dmgr_pid_b64
+  when:
+    - dmgr_pid_file.stat.exists
 
 - name:          "Start Dmgr"
   command:       "{{ __was_install_location }}/profiles/{{ __profile_name }}/bin/startManager.sh"
   register:      dmgr_start
   changed_when:  dmgr_start.rc == 0
   failed_when:   dmgr_start.rc != 0
-  when:          dmgr_is_running.rc != 0
+  when:
+    - not dmgr_pid_file.stat.exists
+    - (dmgr_pid_b64.content | b64decode | int) not in dmgr_is_running.pids
 
-- name:          "Is dmgr Running?"
-  shell:         "ps -p `cat '{{ __was_install_location }}/profiles/{{ __profile_name }}/logs/dmgr/dmgr.pid'` > /dev/null"
-  register:      cout
-  ignore_errors: true
-  when:          (dmgr_start.rc is defined) and (dmgr_start.rc == 0)
-
-- name:          Wait 60 seconds for DMGR to activate
-  pause:
-    seconds:     60
-  when:          (dmgr_start.rc is defined) and (dmgr_start.rc == 0)
+- name: Wait until DMGR is started
+  wait_for:
+    path:  "{{ dmgr_pid_file_name }}"
+    state: present

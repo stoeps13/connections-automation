@@ -45,7 +45,7 @@
     ORACLE_SID:          "{{ __dbw_oracle_sid }}"
     PATH:                "/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/home/oracle/.local/bin:/home/oracle/bin:{{ __dbw_oracle_home }}/bin"
   with_items:
-   - "dropDb.sh"
+    - "dropDb.sh"
   when:
     - __cnx_docs_force_repopulation |bool
   ignore_errors:         yes
@@ -63,8 +63,8 @@
     ORACLE_SID:          "{{ __dbw_oracle_sid }}"
     PATH:                "/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/home/oracle/.local/bin:/home/oracle/bin:{{ __dbw_oracle_home }}/bin"
   with_items:
-   - "createDb.sh"
-   - "updateDBSchema.sh"
+    - "createDb.sh"
+    - "updateDBSchema.sh"
   when:
     - not docs_migrations_already_done.stat.exists
 

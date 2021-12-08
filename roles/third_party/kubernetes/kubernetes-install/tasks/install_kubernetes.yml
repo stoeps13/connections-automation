@@ -22,7 +22,7 @@
     state:                 absent
   ignore_errors:           true
   when:
-   - kubectl_loc.rc == 0
+    - kubectl_loc.rc == 0
 
 - name:                    Install Kubernetes binaries - kubectl
   include_tasks:           install_kubectl.yml

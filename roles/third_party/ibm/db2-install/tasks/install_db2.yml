@@ -18,7 +18,7 @@
     group:                 "db2group"
     password:              "{{ db2_generated_password.stdout }}"
   with_items:
-   - "{{ __db2_users }}"
+    - "{{ __db2_users }}"
 
 - name:                    "Install DB2"
   command:                 "{{ __installation_folder }}/db2setup -r {{ __db2_server_rsp_location }}"

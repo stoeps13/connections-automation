@@ -15,8 +15,6 @@
   when:
     - not viewer_already_installed.stat.exists
     - cnx_data_mount_target is defined
-
-
 - name:               Edit cfg.properties
   replace:
     path:            "{{ __viewer_cfg_prop_location }}/cfg.properties"

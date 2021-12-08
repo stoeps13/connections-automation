@@ -50,7 +50,7 @@
     DB2_HOME:            "{{ __db2_instance_homedir }}/sqllib"
     PATH:                "/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:{{ __db2_instance_homedir }}/sqllib/bin:{{ __db2_instance_homedir }}/sqllib/adm:{{ __db2_instance_homedir }}/sqllib/misc:{{ __db2_instance_homedir }}/sqllib/gskit/bin:{{ __db2_instance_homedir }}/.local/bin:{{ __db2_instance_homedir }}/bin"
   with_items:
-   - "dropDb.sh"
+    - "dropDb.sh"
   when:
     - __cnx_docs_force_repopulation |bool
   ignore_errors:         yes
@@ -73,8 +73,8 @@
     DB2_HOME:            "{{ __db2_instance_homedir }}/sqllib"
     PATH:                "/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:{{ __db2_instance_homedir }}/sqllib/bin:{{ __db2_instance_homedir }}/sqllib/adm:{{ __db2_instance_homedir }}/sqllib/misc:{{ __db2_instance_homedir }}/sqllib/gskit/bin:{{ __db2_instance_homedir }}/.local/bin:{{ __db2_instance_homedir }}/bin"
   with_items:
-   - "createDb.sh"
-   - "updateDBSchema.sh"
+    - "createDb.sh"
+    - "updateDBSchema.sh"
   when:
     - not docs_migrations_already_done.stat.exists
 
@@ -93,7 +93,7 @@
     DB2_HOME:            "{{ __db2_instance_homedir }}/sqllib"
     PATH:                "/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:{{ __db2_instance_homedir }}/sqllib/bin:{{ __db2_instance_homedir }}/sqllib/adm:{{ __db2_instance_homedir }}/sqllib/misc:{{ __db2_instance_homedir }}/sqllib/gskit/bin:{{ __db2_instance_homedir }}/.local/bin:{{ __db2_instance_homedir }}/bin"
   with_items:
-   - "appGrants.sql"
+    - "appGrants.sql"
   when:
     - not docs_migrations_already_done.stat.exists
 

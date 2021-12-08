@@ -34,5 +34,3 @@
   file:
     path:               "{{ __success_file }}"
     state:              touch
-
-    

@@ -1,15 +1,19 @@
 extends: default
 rules:
   braces:
+    forbid: false
     level: warning
+    min-spaces-inside-empty: 0
+    max-spaces-inside-empty: 0
     max-spaces-inside: 1
+    min-spaces-inside: 1
   brackets:
     level: warning
     max-spaces-inside: 1
   colons:
     level: warning
     max-spaces-before: 1
-    max-spaces-after: 20
+    max-spaces-after: 50
   commas:
     level: warning
   comments: disable
@@ -17,12 +21,13 @@ rules:
   document-start: disable
   empty-lines:
     level: warning
+    max: 1
+    max-start: 0
+    max-end: 0
   hyphens:
     level: warning
   indentation:
     level: warning
     indent-sequences: consistent
-  line-length:
-    level: warning
-    allow-non-breakable-inline-mappings: true
+  line-length: disable
   truthy: disable

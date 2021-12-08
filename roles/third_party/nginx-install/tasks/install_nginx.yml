@@ -9,7 +9,7 @@
     path:                   "{{ item }}"
     state:                  directory
   with_items:
-   - "/etc/nginx/ssl"
+    - "/etc/nginx/ssl"
 
 - name:                     Apply nginx.conf
   template:

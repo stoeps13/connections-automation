@@ -16,7 +16,7 @@
 
 - debug: var=helm_ver.stdout
 
-- set_fact: 
+- set_fact:
     helm_vers={{ helm_ver.stdout }}
 
 - name:              Check if tiller is already initialized

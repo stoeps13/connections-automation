@@ -54,7 +54,7 @@
     remote_src:             yes
   register:                 config_copied
   when:
-   - config_converted is changed
+    - config_converted is changed
 
 - name:                     "Create {{ __mt_config_added_success_file }} file"
   file:

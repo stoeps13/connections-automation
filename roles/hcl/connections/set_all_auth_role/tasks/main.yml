@@ -165,8 +165,6 @@
   when:
     restrict_reader_access is defined and restrict_reader_access|bool or
     restrict_reader_access__trusted_realms is defined and restrict_reader_access__trusted_realms|bool
-
-
 - name:                      Update applications J2EE reader role to All Authenticated (MetricsEventCapture, PushNotification, StorageProxy)
   include_role:
     name:                    roles/third_party/ibm/wasnd/was-dmgr-j2ee-role-update

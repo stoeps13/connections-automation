@@ -13,10 +13,10 @@
   command:               "{{ item }}"
   when:                  inventory_hostname == groups['k8s_masters'][2] and not etcd_third_node_already_joined_cluster.stat.exists
   with_items:
-   - "kubeadm alpha phase certs all --config /tmp/kubeadm-config.yaml"
-   - "kubeadm alpha phase kubelet config write-to-disk --config /tmp/kubeadm-config.yaml"
-   - "kubeadm alpha phase kubelet write-env-file --config /tmp/kubeadm-config.yaml"
-   - "kubeadm alpha phase kubeconfig kubelet --config /tmp/kubeadm-config.yaml"
+    - "kubeadm alpha phase certs all --config /tmp/kubeadm-config.yaml"
+    - "kubeadm alpha phase kubelet config write-to-disk --config /tmp/kubeadm-config.yaml"
+    - "kubeadm alpha phase kubelet write-env-file --config /tmp/kubeadm-config.yaml"
+    - "kubeadm alpha phase kubeconfig kubelet --config /tmp/kubeadm-config.yaml"
 
 - name:                  Enable and start kubelet
   service:
@@ -33,7 +33,7 @@
   command:               "{{ item }}"
   when:                  inventory_hostname == groups['k8s_masters'][2] and not etcd_third_node_already_joined_cluster.stat.exists
   with_items:
-   - "kubectl exec -n kube-system etcd-{{ hostvars[groups['k8s_masters'][0]]['inventory_hostname'] }} -- etcdctl --ca-file /etc/kubernetes/pki/etcd/ca.crt --cert-file /etc/kubernetes/pki/etcd/peer.crt --key-file /etc/kubernetes/pki/etcd/peer.key --endpoints=https://{{ hostvars[groups['k8s_masters'][0]]['ansible_default_ipv4']['address'] }}:2379 member add {{ hostvars[groups['k8s_masters'][2]]['inventory_hostname'] }} https://{{ hostvars[groups['k8s_masters'][2]]['ansible_default_ipv4']['address'] }}:2380"
+    - "kubectl exec -n kube-system etcd-{{ hostvars[groups['k8s_masters'][0]]['inventory_hostname'] }} -- etcdctl --ca-file /etc/kubernetes/pki/etcd/ca.crt --cert-file /etc/kubernetes/pki/etcd/peer.crt --key-file /etc/kubernetes/pki/etcd/peer.key --endpoints=https://{{ hostvars[groups['k8s_masters'][0]]['ansible_default_ipv4']['address'] }}:2379 member add {{ hostvars[groups['k8s_masters'][2]]['inventory_hostname'] }} https://{{ hostvars[groups['k8s_masters'][2]]['ansible_default_ipv4']['address'] }}:2380"
   become:                false
 
 - name:                  Waiting for etcd to be available again
@@ -44,10 +44,10 @@
   command:               "{{ item }}"
   when:                  inventory_hostname == groups['k8s_masters'][2] and not etcd_third_node_already_joined_cluster.stat.exists
   with_items:
-   - "kubeadm alpha phase etcd local --config /tmp/kubeadm-config.yaml"
-   - "kubeadm alpha phase kubeconfig all --config /tmp/kubeadm-config.yaml"
-   - "kubeadm alpha phase controlplane all --config /tmp/kubeadm-config.yaml"
-   - "kubeadm alpha phase mark-master --config /tmp/kubeadm-config.yaml"
+    - "kubeadm alpha phase etcd local --config /tmp/kubeadm-config.yaml"
+    - "kubeadm alpha phase kubeconfig all --config /tmp/kubeadm-config.yaml"
+    - "kubeadm alpha phase controlplane all --config /tmp/kubeadm-config.yaml"
+    - "kubeadm alpha phase mark-master --config /tmp/kubeadm-config.yaml"
 
 - name:                  Create {{ __etcd_third_node_clustering_success_file }} file
   file:

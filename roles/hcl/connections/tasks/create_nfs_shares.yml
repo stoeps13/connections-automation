@@ -5,8 +5,8 @@
     mode:                    '0755'
   delegate_to:               "{{ item }}"
   with_items:
-   - "{{ groups['dmgr'] }}"
-   - "{{ groups['was_servers'] }}"
+    - "{{ groups['dmgr'] }}"
+    - "{{ groups['was_servers'] }}"
 
 - name:                      "Create local mount point for {{ __cnx_message_store }}"
   file:
@@ -15,8 +15,8 @@
     mode:                    '0755'
   delegate_to:               "{{ item }}"
   with_items:
-   - "{{ groups['dmgr'] }}"
-   - "{{ groups['was_servers'] }}"
+    - "{{ groups['dmgr'] }}"
+    - "{{ groups['was_servers'] }}"
 
 - name:                      Mount "{{ __cnx_shared_area_files_dest }}" to "{{ __cnx_shared_area }}"
   mount:
@@ -29,10 +29,10 @@
     path:                    "{{ __cnx_shared_area }}"
   delegate_to:               "{{ item }}"
   with_items:
-   - "{{ groups['dmgr'] }}"
-   - "{{ groups['was_servers'] }}"
+    - "{{ groups['dmgr'] }}"
+    - "{{ groups['was_servers'] }}"
   when:
-   - not __skip_nfs_mount
+    - not __skip_nfs_mount
 
 - name:                      "Mount {{ __cnx_messagestore_files_dest }} to {{ __cnx_message_store }}"
   mount:
@@ -45,7 +45,7 @@
     path:                    "{{ __cnx_message_store }}"
   delegate_to:               "{{ item }}"
   with_items:
-   - "{{ groups['dmgr'] }}"
-   - "{{ groups['was_servers'] }}"
+    - "{{ groups['dmgr'] }}"
+    - "{{ groups['was_servers'] }}"
   when:
-   - not __skip_nfs_mount
+    - not __skip_nfs_mount

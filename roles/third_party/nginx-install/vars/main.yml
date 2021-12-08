@@ -26,7 +26,7 @@ __mw_proxy_address:             "{{ load_balancer_dns | default('localhost') }}"
 __mw_proxy_port:                "{{ mw_proxy_port | default('30301') }}"
 
 __customizer_conf_template:     "customizer.conf.j2"
-__customizer_conf_location:     "{{ __conf_d_location }}/customizer.conf" 
+__customizer_conf_location:     "{{ __conf_d_location }}/customizer.conf"
 
 __param_nofile_soft:            "64000"
 __param_nofile_hard:            "64000"

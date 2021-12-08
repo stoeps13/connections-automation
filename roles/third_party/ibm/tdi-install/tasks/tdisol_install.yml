@@ -72,12 +72,12 @@
     dest:                "{{ __tdi_sol_dest }}/TDI/{{ item }}"
     mode:                a+x
   with_items:
-   - "clearRC.sh"
-   - "collect_dns.sh"
-   - "derby.sh"
-   - "netstore"
-   - "tdienv.sh"
-   - "populate_from_dn_file.sh"
+    - "clearRC.sh"
+    - "collect_dns.sh"
+    - "derby.sh"
+    - "netstore"
+    - "tdienv.sh"
+    - "populate_from_dn_file.sh"
 
 - name:                  "Copy DB2 JDBC files"
   copy:
@@ -85,8 +85,8 @@
     dest:                "{{ __jdbc_destination }}"
     remote_src:          yes
   with_items:
-   - "db2jcc.jar"
-   - "db2jcc_license_cu.jar"
+    - "db2jcc.jar"
+    - "db2jcc_license_cu.jar"
   when:
     - "'db2_servers' in groups"
 
@@ -96,7 +96,7 @@
     dest:                "{{ __jdbc_destination }}"
     mode:                0755
   with_items:
-   - "ojdbc7.jar"
+    - "ojdbc7.jar"
   when:
     - "'oracle_servers' in groups"
 
@@ -106,7 +106,7 @@
     dest:                "{{ __jdbc_destination }}"
     remote_src:          yes
   with_items:
-   - "sqljdbc41.jar"
+    - "sqljdbc41.jar"
   when:
     - "'mssql_servers' in groups"
 

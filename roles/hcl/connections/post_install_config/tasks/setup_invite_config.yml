@@ -31,8 +31,6 @@
     value:                                  "{{ invite_user_type | default('internal') }}"
   when:
     - __cnx_major_version is version('7', '>=')
-
-
 - name:                                     Set Invite LDAP server href and ssl_href
   xml:
     path:                                   "{{ __selfreg_full_path }}"
@@ -42,8 +40,6 @@
   with_items:
     - { protocol: 'ldap', prop: 'href', port: "{{ ldap_href_port | default('389') }}" }
     - { protocol: 'ldaps', prop: 'ssl_href', port: "{{ ldap_ssl_port  | default('636') }}" }
-
-
 - name:                                     Set Invite LDAP server authentication
   xml:
     path:                                   "{{ __selfreg_full_path }}"

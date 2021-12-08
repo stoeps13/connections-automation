@@ -15,4 +15,3 @@
     - { appname: "ViewerApp", module: ".*.war,.*", servers: "WebSphere:cell={{ __was_cellname }},cluster={{ __viewer_cluster_name }}" }
     - { appname: "ViewerSanity", module: ".*.war,.*", servers: "WebSphere:cell={{ __was_cellname }},cluster={{ __viewer_cluster_name }}" }
     - { appname: "Spellcheck4IBMDocs", module: ".*.war,.*", servers: "WebSphere:cell={{ __was_cellname }},cluster={{ __editor_cluster_name }}" }
-    

@@ -11,17 +11,13 @@ controller:
   ## Annotations to be added to the controller config configuration configmap
   ##
   configAnnotations:
-      prometheus.io/port: "10254"
-      prometheus.io/scrape: "true"
-
-
+    prometheus.io/port: "10254"
+    prometheus.io/scrape: "true"
   ## Limit the scope of the controller
   ##
   scope:
     enabled: true
     namespace: ""   # defaults to $(POD_NAMESPACE)
-
-
     ## Annotations to be added to the tcp config configmap
     annotations:
       prometheus.io/port: "10254"
@@ -36,8 +32,6 @@ controller:
       prometheus.io/port: "10254"
       prometheus.io/scrape: "true"
 
-
-
   ## DaemonSet or Deployment
   ##
   kind: Deployment
@@ -45,13 +39,9 @@ controller:
   ## Annotations to be added to the controller Deployment or DaemonSet
   ##
   annotations:
-      prometheus.io/port: "10254"
-      prometheus.io/scrape: "true"
+    prometheus.io/port: "10254"
+    prometheus.io/scrape: "true"
   #  keel.sh/pollSchedule: "@every 60m"
-
-
-
-
 
   ## Liveness and readiness probe values
   ## Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#container-probes
@@ -78,21 +68,15 @@ controller:
     timeoutSeconds: 60
     successThreshold: 1
     failureThreshold: 3
-
-
   # Path of the health check endpoint. All requests received on the port defined by
   # the healthz-port parameter are forwarded internally to this path.
   healthStatus: true
   healthCheckPath: "/healthz"
-
-
   ## Annotations to be added to controller pods
   ##
   podAnnotations:
-      prometheus.io/port: "10254"
-      prometheus.io/scrape: "true"
-
-
+    prometheus.io/port: "10254"
+    prometheus.io/scrape: "true"
   # Ideally, there should be no limits.
   # https://engineering.indeedblog.com/blog/2019/12/cpu-throttling-regression-fix/
   resources:
@@ -185,8 +169,8 @@ controller:
 
       priorityClassName: ""
       podAnnotations:
-         prometheus.io/port: "10254"
-         prometheus.io/scrape: "true"
+        prometheus.io/port: "10254"
+        prometheus.io/scrape: "true"
       nodeSelector:
         kubernetes.io/os: linux
       tolerations: []
@@ -199,8 +183,8 @@ controller:
 
     service:
       annotations:
-         prometheus.io/scrape: "true"
-         prometheus.io/port: "10254"
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "10254"
 
       # clusterIP: ""
 
@@ -222,9 +206,8 @@ controller:
       namespace: "connections"
       # The label to use to retrieve the job name from.
       # jobLabel: "app.kubernetes.io/name"
-      namespace: "connections"
       namespaceSelector:
-         any: true
+        any: true
       # Default: scrape .Release.Namespace only
       # To scrape all, use the following:
       # namespaceSelector:
@@ -237,41 +220,41 @@ controller:
     prometheusRule:
       enabled: true
       additionalLabels:
-       namespace: "connections"
+        namespace: "connections"
       rules:
         # # These are just examples rules, please adapt them to your needs
-         - alert: NGINXConfigFailed
-           expr: count(nginx_ingress_controller_config_last_reload_successful == 0) > 0
-           for: 1s
-           labels:
-             severity: critical
-           annotations:
-             description: bad ingress config - nginx config test failed
-             summary: uninstall the latest ingress changes to allow config reloads to resume
-         - alert: NGINXCertificateExpiry
-           expr: (avg(nginx_ingress_controller_ssl_expire_time_seconds) by (host) - time()) < 604800
-           for: 1s
-           labels:
-             severity: critical
-           annotations:
-             description: ssl certificate(s) will expire in less then a week
-             summary: renew expiring certificates to avoid downtime
-         - alert: NGINXTooMany500s
-           expr: 100 * ( sum( nginx_ingress_controller_requests{status=~"5.+"} ) / sum(nginx_ingress_controller_requests) ) > 5
-           for: 1m
-           labels:
-             severity: warning
-           annotations:
-             description: Too many 5XXs
-             summary: More than 5% of all requests returned 5XX, this requires your attention
-         - alert: NGINXTooMany400s
-           expr: 100 * ( sum( nginx_ingress_controller_requests{status=~"4.+"} ) / sum(nginx_ingress_controller_requests) ) > 5
-           for: 1m
-           labels:
-             severity: warning
-           annotations:
-             description: Too many 4XXs
-             summary: More than 5% of all requests returned 4XX, this requires your attention
+        - alert: NGINXConfigFailed
+          expr: count(nginx_ingress_controller_config_last_reload_successful == 0) > 0
+          for: 1s
+          labels:
+            severity: critical
+          annotations:
+            description: bad ingress config - nginx config test failed
+            summary: uninstall the latest ingress changes to allow config reloads to resume
+        - alert: NGINXCertificateExpiry
+          expr: (avg(nginx_ingress_controller_ssl_expire_time_seconds) by (host) - time()) < 604800
+          for: 1s
+          labels:
+            severity: critical
+          annotations:
+            description: ssl certificate(s) will expire in less then a week
+            summary: renew expiring certificates to avoid downtime
+        - alert: NGINXTooMany500s
+          expr: 100 * ( sum( nginx_ingress_controller_requests{status=~"5.+"} ) / sum(nginx_ingress_controller_requests) ) > 5
+          for: 1m
+          labels:
+            severity: warning
+          annotations:
+            description: Too many 5XXs
+            summary: More than 5% of all requests returned 5XX, this requires your attention
+        - alert: NGINXTooMany400s
+          expr: 100 * ( sum( nginx_ingress_controller_requests{status=~"4.+"} ) / sum(nginx_ingress_controller_requests) ) > 5
+          for: 1m
+          labels:
+            severity: warning
+          annotations:
+            description: Too many 4XXs
+            summary: More than 5% of all requests returned 4XX, this requires your attention
 
   ## Improve connection draining when ingress controller pod is deleted using a lifecycle hook:
   ## With this new hook, we increased the default terminationGracePeriodSeconds from 30 seconds
@@ -297,8 +280,6 @@ revisionHistoryLimit: 10
 defaultBackend:
   ##
   enabled: true
-
-
   serviceAccount:
     create: true
     name: ""
@@ -327,19 +308,15 @@ defaultBackend:
   ## Annotations to be added to default backend pods
   ##
   podAnnotations:
-      prometheus.io/port: "10254"
-      prometheus.io/scrape: "true"
-
-
+    prometheus.io/port: "10254"
+    prometheus.io/scrape: "true"
   resources:
-   limits:
-     cpu: 10m
-     memory: 20Mi
-   requests:
-     cpu: 10m
-     memory: 20Mi
-
-
+    limits:
+      cpu: 10m
+      memory: 20Mi
+    requests:
+      cpu: 10m
+      memory: 20Mi
   service:
     annotations:
       prometheus.io/port: "10254"

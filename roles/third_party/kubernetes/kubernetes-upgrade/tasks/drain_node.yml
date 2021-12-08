@@ -5,5 +5,5 @@
 - name:                  Drain the node
   command:               "{{ item }}"
   with_items:
-   - "kubectl drain {{ inventory_hostname }} --delete-local-data --ignore-daemonsets"
+    - "kubectl drain {{ inventory_hostname }} --delete-local-data --ignore-daemonsets"
   become:                false

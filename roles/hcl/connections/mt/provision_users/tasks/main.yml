@@ -26,9 +26,9 @@
 
 - name:                Run MT User Provision, log file {{ __tmp_dir }}/mt/install/mtupdate_entitlements.log
   shell:
-     ./connections-mt-init-entitlements-cli.sh -f config.properties 2>&1 | tee mtupdate_entitlements.log
+    ./connections-mt-init-entitlements-cli.sh -f config.properties 2>&1 | tee mtupdate_entitlements.log
   args:
-      chdir:           "{{ __tmp_dir }}/mt/install"
+    chdir:           "{{ __tmp_dir }}/mt/install"
   become:              true
   register:            mt_user_provision_performed
 

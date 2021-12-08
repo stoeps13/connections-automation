@@ -24,5 +24,3 @@
     name: roles/third_party/ibm/wasnd/was-dmgr-stop-cluster
   vars:
     __cluster_name:        "{{ __conversion_cluster_name }}"
-
-

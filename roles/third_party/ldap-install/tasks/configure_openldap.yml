@@ -1,3 +1,4 @@
+---
 - name:                     "Verify if database is already created"
   stat:
     path:                   "{{ __db_ldif_success_file }}"
@@ -32,9 +33,9 @@
   register:                 result
   failed_when:              ( result.rc not in [0] )
   with_items:
-   - "/etc/openldap/schema/cosine.ldif"
-   - "/etc/openldap/schema/nis.ldif"
-   - "/etc/openldap/schema/inetorgperson.ldif"
+    - "/etc/openldap/schema/cosine.ldif"
+    - "/etc/openldap/schema/nis.ldif"
+    - "/etc/openldap/schema/inetorgperson.ldif"
   when:
     - ldap_database_already_created.stat.exists |bool
     - not ldap_schema_already_created.stat.exists

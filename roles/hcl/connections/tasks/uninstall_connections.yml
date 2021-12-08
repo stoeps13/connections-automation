@@ -44,18 +44,18 @@
     state:           absent
     path:            "{{ item }}"
   with_items:
-   - "{{ __cnx_install_location }}"
+    - "{{ __cnx_install_location }}"
 
 - name:              Remove Connections data on DMGR
   shell:             "rm -rf {{ item }}"
   with_items:
-   - "{{ __cnx_shared_area }}/*"
-   - "{{ __cnx_message_store }}/*"
-   - "{{ __cell_location }}/registry.xml"
-   - "{{ __lcc_location }}"
-   - "{{ __was_install_location }}/profiles/{{ __app_profile_name }}/temp"
-   - "{{ __was_install_location }}/profiles/{{ __app_profile_name }}/wstemp"
-   - "{{ __dmgr_bin_dir }}/*.py"
+    - "{{ __cnx_shared_area }}/*"
+    - "{{ __cnx_message_store }}/*"
+    - "{{ __cell_location }}/registry.xml"
+    - "{{ __lcc_location }}"
+    - "{{ __was_install_location }}/profiles/{{ __app_profile_name }}/temp"
+    - "{{ __was_install_location }}/profiles/{{ __app_profile_name }}/wstemp"
+    - "{{ __dmgr_bin_dir }}/*.py"
 
 - name:              Remove temp folders on WAS nodes
   shell:             "rm -rf {{ __was_install_location }}/profiles/{{ __app_profile_name }}/*temp"

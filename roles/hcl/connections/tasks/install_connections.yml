@@ -54,8 +54,6 @@
 - debug: var=__installer_deployment_type
   run_once: true
 
-
-
 - name:              Generate Response file {{ __rsp_file }} from {{ __tpl_file }}
   template:
     src:             "{{ __tpl_file }}"
@@ -79,8 +77,6 @@
   environment:
     IATEMPDIR: "/opt/IBM/CTemp"
   register:          cout
-
-
 - name:              Cleanup Binaries directory
   file:
     state:           absent

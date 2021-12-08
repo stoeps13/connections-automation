@@ -28,24 +28,24 @@
     src:             "{{ __kubernetes_yum_repo_template }}"
     dest:            "{{ __kubernetes_yum_repo_location }}"
   when:
-   - ansible_os_family == "RedHat"
-   - ansible_distribution_major_version == "7"
+    - ansible_os_family == "RedHat"
+    - ansible_distribution_major_version == "7"
 
 - name:              Enable Kubernetes repository
   template:
     src:             "{{ __kubernetes_yum_rhel8_template }}"
     dest:            "{{ __kubernetes_yum_repo_location }}"
   when:
-   - ansible_os_family == "RedHat"
-   - ansible_distribution_major_version == "8"
+    - ansible_os_family == "RedHat"
+    - ansible_distribution_major_version == "8"
 
 - name:              Install prereqs for RHEL 8 / CentOS 8
   yum:
     name:            ['iproute-tc']
     state:           present
   when:
-   - ansible_os_family == "RedHat"
-   - ansible_distribution_major_version == "8"
+    - ansible_os_family == "RedHat"
+    - ansible_distribution_major_version == "8"
 
 - name:              "Load br_netfilter as per https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/#letting-iptables-see-bridged-traffic"
   modprobe:
@@ -59,9 +59,9 @@
     sysctl_set:      yes
     reload:          yes
   with_items:
-   - "net.ipv4.conf.all.forwarding"
-   - "net.bridge.bridge-nf-call-ip6tables"
-   - "net.bridge.bridge-nf-call-iptables"
+    - "net.ipv4.conf.all.forwarding"
+    - "net.bridge.bridge-nf-call-ip6tables"
+    - "net.bridge.bridge-nf-call-iptables"
 
 - name:              Disable SELinux to support Kubelet as per documentation
   selinux:

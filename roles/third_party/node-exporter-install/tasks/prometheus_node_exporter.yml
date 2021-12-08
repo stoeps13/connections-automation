@@ -34,7 +34,7 @@
     - "{{ __prometheus_exporters_common_log_dir }}"
 
 - name:            Download prometheus node exporter binary
-  get_url: 
+  get_url:
     url:           "{{ __prometheus_url }}"
     dest:          "{{ __prometheus_exporters_common_dist_dir }}/{{ __prometheus_node_exporter_release_name }}.tar.gz"
 

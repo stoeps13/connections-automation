@@ -5,9 +5,9 @@
     state:               absent
   become:                true
   when:
-   - inventory_hostname in groups["was_servers"]
-   - cnx_updates_enabled |bool
-   - not __cnx_uninstall
+    - inventory_hostname in groups["was_servers"]
+    - cnx_updates_enabled |bool
+    - not __cnx_uninstall
 
 - set_fact:
     versionStampToSet:   "{{ '%Y%m%d.%H%M%S' | strftime(ansible_date_time.epoch) }}"

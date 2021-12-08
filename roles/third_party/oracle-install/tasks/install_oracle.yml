@@ -63,8 +63,8 @@
 - name:                  "Execute root scripts"
   command:               "{{ item }}"
   with_items:
-   - "{{ __ora_rsp_oracle_base }}/orainstRoot.sh"
-   - "{{ __ora_rsp_oracle_home }}/root.sh"
+    - "{{ __ora_rsp_oracle_base }}/orainstRoot.sh"
+    - "{{ __ora_rsp_oracle_home }}/root.sh"
   when:
     - oracle_already_running.rc != 0
     - oracle_already_running.rc != 0

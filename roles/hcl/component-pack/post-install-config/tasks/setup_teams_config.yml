@@ -9,7 +9,7 @@
       - { name: "provider_1.useJwtFromRequest", value: "required" }
       - { name: "provider_1.identifier", value: "{{ __msteams_identifier }}" }
       - { name: "provider_1.issuerIdentifier", value: "https://{{ __msteams_login_host }}/{{ __msteams_tenant_id }}/{{ __msteams_login_version }}" }
-      - { name: "provider_1.jwkEndpointUrl", value: "https://{{ __msteams_login_host }}/{{ __msteams_tenant_id }}/{{ __msteams_jwk_endpoint }}"}
+      - { name: "provider_1.jwkEndpointUrl", value: "https://{{ __msteams_login_host }}/{{ __msteams_tenant_id }}/{{ __msteams_jwk_endpoint }}" }
       - { name: "provider_1.interceptedPathFilter", value: "/profiles/oidc/session" }
       - { name: "provider_1.audiences", value: "ALL_AUDIENCES" }
       - { name: "provider_1.setLtpaCookie", value: "true" }

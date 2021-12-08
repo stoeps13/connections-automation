@@ -39,15 +39,14 @@
                              helm uninstall cnx-ingress --namespace {{ __default_namespace }}
   become_user:               "{{ __sudo_user }}"
   when:
-   - (community_ingress_already_provisioned_helm2.rc == 0) or (community_ingress_already_provisioned_helm3.rc == 0)
+    - (community_ingress_already_provisioned_helm2.rc == 0) or (community_ingress_already_provisioned_helm3.rc == 0)
   ignore_errors:             true
 
 - name:                      Delete cnx-ingress-rule if already exists
-  shell:                     helm del --purge cnx-ingress-rule
   shell:                     helm uninstall cnx-ingress-rule --namespace default
   become_user:               "{{ __sudo_user }}"
   when:
-   - (cnx_ingress_rule_already_provisioned_helm2.rc == 0) or (cnx_ingress_rule_already_provisioned_helm3.rc == 0)
+    - (cnx_ingress_rule_already_provisioned_helm2.rc == 0) or (cnx_ingress_rule_already_provisioned_helm3.rc == 0)
   ignore_errors:             true
 
 - name:                      Give it some space...

@@ -4,7 +4,7 @@
     path:               "{{ item }}"
     state:              directory
   with_items:
-   - "{{ __logs_dir }}/"
+    - "{{ __logs_dir }}/"
 
 - name:                 "Generate Response file {{ __rsp_file }}"
   template:
@@ -28,7 +28,7 @@
     path:               "{{ item }}"
     state:              directory
   with_items:
-   - "/tmp/wct_plugins_{{ __ihs_hostname }}/"
+    - "/tmp/wct_plugins_{{ __ihs_hostname }}/"
 
 - name:                 "Copy {{ __plg_install_location }}/bin/configure{{ __ihs_hostname }}.sh to /tmp/wct_plugins_{{ __ihs_hostname }}"
   command:              cp "{{ __plg_install_location }}/bin/configure{{ __ihs_hostname }}.sh" /tmp/wct_plugins_{{ __ihs_hostname }}
@@ -83,8 +83,8 @@
     path:               "{{ item }}"
     state:              absent
   with_items:
-   - "/tmp/wct_generated_plugins_{{ __ihs_hostname }}.zip"
-   - "/tmp/wct_generated_plugins_{{ __ihs_hostname }}"
+    - "/tmp/wct_generated_plugins_{{ __ihs_hostname }}.zip"
+    - "/tmp/wct_generated_plugins_{{ __ihs_hostname }}"
   delegate_to:          "{{ dmgr_hostname }}"
 
 - name:                 Create temporary folder
@@ -144,6 +144,6 @@
     dest:               "{{ __plg_install_location }}/config/{{ inventory_hostname_short }}/"
     remote_src:         yes
   with_items:
-   - "/tmp/wct_generated_plugins_{{ __ihs_hostname }}/plugin-cfg.xml"
-   - "/tmp/wct_generated_plugins_{{ __ihs_hostname }}/plugin-key.kdb"
-   - "/tmp/wct_generated_plugins_{{ __ihs_hostname }}/plugin-key.sth"
+    - "/tmp/wct_generated_plugins_{{ __ihs_hostname }}/plugin-cfg.xml"
+    - "/tmp/wct_generated_plugins_{{ __ihs_hostname }}/plugin-key.kdb"
+    - "/tmp/wct_generated_plugins_{{ __ihs_hostname }}/plugin-key.sth"

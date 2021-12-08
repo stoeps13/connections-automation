@@ -1,4 +1,4 @@
-- name:                       Check if pip is already installed 
+- name:                       Check if pip is already installed
   shell:                      /usr/local/bin/pip --version
   changed_when:               true
   register:                   pip_already_installed

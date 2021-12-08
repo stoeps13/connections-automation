@@ -16,8 +16,6 @@
     state:               directory
   when:
     - (not migrations_already_done.stat.exists) or (__cnx_force_repopulation |bool )
-
-
 - name:                  Download and unzip installation "{{ __download_location}}/{{ __package_name }}" to the {{ __db_extraction_folder }}
   unarchive:
     src:                 "{{ __download_location }}/{{ __package_name }}"
@@ -49,25 +47,23 @@
     ORACLE_SID:          "{{ __dbw_oracle_sid }}"
     PATH:                "/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/home/oracle/.local/bin:/home/oracle/bin:{{ __dbw_oracle_home }}/bin"
   with_items:
-   - "connections.sql/activities/oracle/dropDb.sql"
-   - "connections.sql/blogs/oracle/dropDb.sql"
-   - "connections.sql/dogear/oracle/dropDb.sql"
-   - "connections.sql/communities/oracle/dropDb.sql"
-   - "connections.sql/files/oracle/dropDb.sql"
-   - "connections.sql/forum/oracle/dropDb.sql"
-   - "connections.sql/homepage/oracle/dropDb.sql"
-   - "connections.sql/metrics/oracle/dropDb.sql"
-   - "connections.sql/mobile/oracle/dropDb.sql"
-   - "connections.sql/profiles/oracle/dropDb.sql"
-   - "connections.sql/pushnotification/oracle/dropDb.sql"
-   - "connections.sql/wikis/oracle/dropDb.sql"
-   - "connections.sql/library.gcd/oracle/dropDb.sql"
-   - "connections.sql/library.os/oracle/dropDb.sql"
+    - "connections.sql/activities/oracle/dropDb.sql"
+    - "connections.sql/blogs/oracle/dropDb.sql"
+    - "connections.sql/dogear/oracle/dropDb.sql"
+    - "connections.sql/communities/oracle/dropDb.sql"
+    - "connections.sql/files/oracle/dropDb.sql"
+    - "connections.sql/forum/oracle/dropDb.sql"
+    - "connections.sql/homepage/oracle/dropDb.sql"
+    - "connections.sql/metrics/oracle/dropDb.sql"
+    - "connections.sql/mobile/oracle/dropDb.sql"
+    - "connections.sql/profiles/oracle/dropDb.sql"
+    - "connections.sql/pushnotification/oracle/dropDb.sql"
+    - "connections.sql/wikis/oracle/dropDb.sql"
+    - "connections.sql/library.gcd/oracle/dropDb.sql"
+    - "connections.sql/library.os/oracle/dropDb.sql"
   when:
     - __cnx_force_repopulation |bool
   ignore_errors:         yes
-
-
 - name:                  Cleanup IC360 database
   shell:                 "{{ __oracle_migration_cmd }} {{ __installation_folder }}/{{ item }}"
   become_user:           "oracle"
@@ -76,7 +72,7 @@
     ORACLE_SID:          "{{ __dbw_oracle_sid }}"
     PATH:                "/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/home/oracle/.local/bin:/home/oracle/bin:{{ __dbw_oracle_home }}/bin"
   with_items:
-   - "connections.sql/ic360/oracle/dropDb.sql"
+    - "connections.sql/ic360/oracle/dropDb.sql"
   when:
     - __cnx_force_repopulation |bool
     - __db_version == '7.0'
@@ -90,7 +86,7 @@
     ORACLE_SID:          "{{ __dbw_oracle_sid }}"
     PATH:                "/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/home/oracle/.local/bin:/home/oracle/bin:{{ __dbw_oracle_home }}/bin"
   with_items:
-   - "connections.sql/icec/oracle/dropDb.sql"
+    - "connections.sql/icec/oracle/dropDb.sql"
   when:
     - __cnx_force_repopulation |bool
   ignore_errors:         yes
@@ -121,36 +117,36 @@
     ORACLE_SID:          "{{ __dbw_oracle_sid }}"
     PATH:                "/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/home/oracle/.local/bin:/home/oracle/bin:{{ __dbw_oracle_home }}/bin"
   with_items:
-   - "connections.sql/activities/oracle/createDb.sql"
-   - "connections.sql/activities/oracle/appGrants.sql"
-   - "connections.sql/blogs/oracle/createDb.sql"
-   - "connections.sql/blogs/oracle/appGrants.sql"
-   - "connections.sql/dogear/oracle/createDb.sql"
-   - "connections.sql/dogear/oracle/appGrants.sql"
-   - "connections.sql/dogear/oracle/createHistogramStatsJob.sql"
-   - "connections.sql/communities/oracle/createDb.sql"
-   - "connections.sql/communities/oracle/appGrants.sql"
-   - "connections.sql/communities/oracle/calendar-createDb.sql"
-   - "connections.sql/communities/oracle/calendar-appGrants.sql"
-   - "connections.sql/files/oracle/createDb.sql"
-   - "connections.sql/files/oracle/appGrants.sql"
-   - "connections.sql/forum/oracle/createDb.sql"
-   - "connections.sql/forum/oracle/appGrants.sql"
-   - "connections.sql/homepage/oracle/createDb.sql"
-   - "connections.sql/homepage/oracle/appGrants.sql"
-   - "connections.sql/homepage/oracle/initData.sql"
-   - "connections.sql/metrics/oracle/createDb.sql"
-   - "connections.sql/metrics/oracle/appGrants.sql"
-   - "connections.sql/mobile/oracle/createDb.sql"
-   - "connections.sql/mobile/oracle/appGrants.sql"
-   - "connections.sql/profiles/oracle/createDb.sql"
-   - "connections.sql/profiles/oracle/appGrants.sql"
-   - "connections.sql/pushnotification/oracle/createDb.sql"
-   - "connections.sql/pushnotification/oracle/appGrants.sql"
-   - "connections.sql/wikis/oracle/createDb.sql"
-   - "connections.sql/wikis/oracle/appGrants.sql"
-   - "connections.sql/library.gcd/oracle/appGrants.sql"
-   - "connections.sql/library.os/oracle/appGrants.sql"
+    - "connections.sql/activities/oracle/createDb.sql"
+    - "connections.sql/activities/oracle/appGrants.sql"
+    - "connections.sql/blogs/oracle/createDb.sql"
+    - "connections.sql/blogs/oracle/appGrants.sql"
+    - "connections.sql/dogear/oracle/createDb.sql"
+    - "connections.sql/dogear/oracle/appGrants.sql"
+    - "connections.sql/dogear/oracle/createHistogramStatsJob.sql"
+    - "connections.sql/communities/oracle/createDb.sql"
+    - "connections.sql/communities/oracle/appGrants.sql"
+    - "connections.sql/communities/oracle/calendar-createDb.sql"
+    - "connections.sql/communities/oracle/calendar-appGrants.sql"
+    - "connections.sql/files/oracle/createDb.sql"
+    - "connections.sql/files/oracle/appGrants.sql"
+    - "connections.sql/forum/oracle/createDb.sql"
+    - "connections.sql/forum/oracle/appGrants.sql"
+    - "connections.sql/homepage/oracle/createDb.sql"
+    - "connections.sql/homepage/oracle/appGrants.sql"
+    - "connections.sql/homepage/oracle/initData.sql"
+    - "connections.sql/metrics/oracle/createDb.sql"
+    - "connections.sql/metrics/oracle/appGrants.sql"
+    - "connections.sql/mobile/oracle/createDb.sql"
+    - "connections.sql/mobile/oracle/appGrants.sql"
+    - "connections.sql/profiles/oracle/createDb.sql"
+    - "connections.sql/profiles/oracle/appGrants.sql"
+    - "connections.sql/pushnotification/oracle/createDb.sql"
+    - "connections.sql/pushnotification/oracle/appGrants.sql"
+    - "connections.sql/wikis/oracle/createDb.sql"
+    - "connections.sql/wikis/oracle/appGrants.sql"
+    - "connections.sql/library.gcd/oracle/appGrants.sql"
+    - "connections.sql/library.os/oracle/appGrants.sql"
   when:
     - not migrations_already_done.stat.exists
 
@@ -168,7 +164,7 @@
     ORACLE_SID:          "{{ __dbw_oracle_sid }}"
     PATH:                "/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/home/oracle/.local/bin:/home/oracle/bin:{{ __dbw_oracle_home }}/bin"
   with_items:
-   - "connections.sql/homepage/oracle/upgrade-60CR4-70.sql"
+    - "connections.sql/homepage/oracle/upgrade-60CR4-70.sql"
   when:
     - not sharepoint_migrations_already_done.stat.exists
     - __db_version == '7.0'
@@ -189,8 +185,8 @@
     ORACLE_SID:          "{{ __dbw_oracle_sid }}"
     PATH:                "/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/home/oracle/.local/bin:/home/oracle/bin:{{ __dbw_oracle_home }}/bin"
   with_items:
-   - "connections.sql/ic360/oracle/createDb.sql"
-   - "connections.sql/ic360/oracle/appGrants.sql"
+    - "connections.sql/ic360/oracle/createDb.sql"
+    - "connections.sql/ic360/oracle/appGrants.sql"
   when:
     - __db_version == '7.0'
     - not ic360_migrations_already_done.stat.exists
@@ -205,8 +201,8 @@
     ORACLE_SID:          "{{ __dbw_oracle_sid }}"
     PATH:                "/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/home/oracle/.local/bin:/home/oracle/bin:{{ __dbw_oracle_home }}/bin"
   with_items:
-   - "connections.sql/icec/oracle/createDb.sql"
-   - "connections.sql/icec/oracle/appGrants.sql"
+    - "connections.sql/icec/oracle/createDb.sql"
+    - "connections.sql/icec/oracle/appGrants.sql"
   when:
     - not migrations_already_done.stat.exists
 
@@ -215,21 +211,21 @@
     path:                "{{ __ora_success_file }}"
     state:               touch
   when:
-   - all_migrations_result is defined
-   - not migrations_already_done.stat.exists
+    - all_migrations_result is defined
+    - not migrations_already_done.stat.exists
 
 - name:                  "Create {{ __ora_ic360_success_file }} file"
   file:
     path:                "{{ __ora_ic360_success_file }}"
     state:               touch
   when:
-   - ic360_migration_result is defined
-   - not ic360_migrations_already_done.stat.exists
+    - ic360_migration_result is defined
+    - not ic360_migrations_already_done.stat.exists
 
 - name:                  "Create {{ __ora_sharepoint_success_file }} file"
   file:
     path:                "{{ __ora_sharepoint_success_file }}"
     state:               touch
   when:
-   - sharepoint_migration_result is defined
-   - not sharepoint_migrations_already_done.stat.exists
+    - sharepoint_migration_result is defined
+    - not sharepoint_migrations_already_done.stat.exists

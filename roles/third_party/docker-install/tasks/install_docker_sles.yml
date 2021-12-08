@@ -8,8 +8,8 @@
     msg:                    "{{ ansible_distribution_version }}"
 
 - name:                     Install docker on SUSE
-  zypper: 
-    name:                   ['docker'] 
+  zypper:
+    name:                   ['docker']
     state:                  present
 
 - name:                     Install pip and passlib modules for Docker
@@ -24,20 +24,20 @@
     path:                   "{{ item }}"
     state:                  directory
   with_items:
-   - "/etc/docker"
-   - "/etc/docker/auth"
-   - "/etc/docker/certs"
-   - "/etc/docker/registry"
-   - "/etc/docker/certs.d"
-   - "/etc/docker/certs.d/{{ inventory_hostname }}:5000"
-   - "/etc/systemd/system/docker.service.d"
+    - "/etc/docker"
+    - "/etc/docker/auth"
+    - "/etc/docker/certs"
+    - "/etc/docker/registry"
+    - "/etc/docker/certs.d"
+    - "/etc/docker/certs.d/{{ inventory_hostname }}:5000"
+    - "/etc/systemd/system/docker.service.d"
 
 - name:                     Setup Docker daemon
   template:
     src:                    "{{ __docker_daemon_json_template }}"
     dest:                   "{{ __docker_daemon_json_location }}"
   when:
-   - __overlay2_enabled |bool
+    - __overlay2_enabled |bool
 
 - name:                     Add {{ __kubectl_user }} to the group docker
   user:

@@ -16,8 +16,6 @@
     state:               directory
   when:
     - (not migrations_already_done.stat.exists) or (__cnx_force_repopulation |bool )
-
-
 - name:                  Download and unzip installation "{{ __download_location}}/{{ __package_name }}" to the {{ __db_extraction_folder }}
   unarchive:
     src:                 "{{ __download_location }}/{{ __package_name }}"
@@ -71,23 +69,21 @@
     DB2_HOME:            "{{ __db2_instance_homedir }}/sqllib"
     PATH:                "/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:{{ __db2_instance_homedir }}/sqllib/bin:{{ __db2_instance_homedir }}/sqllib/adm:{{ __db2_instance_homedir }}/sqllib/misc:{{ __db2_instance_homedir }}/sqllib/gskit/bin:{{ __db2_instance_homedir }}/.local/bin:{{ __db2_instance_homedir }}/bin"
   with_items:
-   - "connections.sql/activities/db2/dropDb.sql"
-   - "connections.sql/blogs/db2/dropDb.sql"
-   - "connections.sql/dogear/db2/dropDb.sql"
-   - "connections.sql/communities/db2/dropDb.sql"
-   - "connections.sql/files/db2/dropDb.sql"
-   - "connections.sql/forum/db2/dropDb.sql"
-   - "connections.sql/homepage/db2/dropDb.sql"
-   - "connections.sql/metrics/db2/dropDb.sql"
-   - "connections.sql/mobile/db2/dropDb.sql"
-   - "connections.sql/profiles/db2/dropDb.sql"
-   - "connections.sql/pushnotification/db2/dropDb.sql"
-   - "connections.sql/wikis/db2/dropDb.sql"
+    - "connections.sql/activities/db2/dropDb.sql"
+    - "connections.sql/blogs/db2/dropDb.sql"
+    - "connections.sql/dogear/db2/dropDb.sql"
+    - "connections.sql/communities/db2/dropDb.sql"
+    - "connections.sql/files/db2/dropDb.sql"
+    - "connections.sql/forum/db2/dropDb.sql"
+    - "connections.sql/homepage/db2/dropDb.sql"
+    - "connections.sql/metrics/db2/dropDb.sql"
+    - "connections.sql/mobile/db2/dropDb.sql"
+    - "connections.sql/profiles/db2/dropDb.sql"
+    - "connections.sql/pushnotification/db2/dropDb.sql"
+    - "connections.sql/wikis/db2/dropDb.sql"
   when:
     - __cnx_force_repopulation |bool
   ignore_errors:         yes
-
-
 - name:                  Dropping IC360 database
   shell:                 "{{ __db2_migration_cmd }} {{ __installation_folder }}/{{ item }}"
   become_user:           "{{ __db2_user }}"
@@ -101,7 +97,7 @@
     DB2_HOME:            "{{ __db2_instance_homedir }}/sqllib"
     PATH:                "/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:{{ __db2_instance_homedir }}/sqllib/bin:{{ __db2_instance_homedir }}/sqllib/adm:{{ __db2_instance_homedir }}/sqllib/misc:{{ __db2_instance_homedir }}/sqllib/gskit/bin:{{ __db2_instance_homedir }}/.local/bin:{{ __db2_instance_homedir }}/bin"
   with_items:
-   - "connections.sql/ic360/db2/dropDb.sql"
+    - "connections.sql/ic360/db2/dropDb.sql"
   when:
     - __cnx_force_repopulation |bool
     - __db_version == '7.0'
@@ -122,7 +118,7 @@
     DB2_HOME:            "{{ __db2_instance_homedir }}/sqllib"
     PATH:                "/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:{{ __db2_instance_homedir }}/sqllib/bin:{{ __db2_instance_homedir }}/sqllib/adm:{{ __db2_instance_homedir }}/sqllib/misc:{{ __db2_instance_homedir }}/sqllib/gskit/bin:{{ __db2_instance_homedir }}/.local/bin:{{ __db2_instance_homedir }}/bin"
   with_items:
-   - "connections.sql/icec/db2/dropDb.sql"
+    - "connections.sql/icec/db2/dropDb.sql"
   when:
     - __cnx_force_repopulation |bool
   ignore_errors:         yes
@@ -158,35 +154,35 @@
     DB2_HOME:            "{{ __db2_instance_homedir }}/sqllib"
     PATH:                "/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:{{ __db2_instance_homedir }}/sqllib/bin:{{ __db2_instance_homedir }}/sqllib/adm:{{ __db2_instance_homedir }}/sqllib/misc:{{ __db2_instance_homedir }}/sqllib/gskit/bin:{{ __db2_instance_homedir }}/.local/bin:{{ __db2_instance_homedir }}/bin"
   with_items:
-   - "connections.sql/activities/db2/createDb.sql"
-   - "connections.sql/activities/db2/appGrants.sql"
-   - "connections.sql/blogs/db2/createDb.sql"
-   - "connections.sql/blogs/db2/appGrants.sql"
-   - "connections.sql/dogear/db2/createDb.sql"
-   - "connections.sql/dogear/db2/appGrants.sql"
-   - "connections.sql/communities/db2/createDb.sql"
-   - "connections.sql/communities/db2/appGrants.sql"
-   - "connections.sql/communities/db2/calendar-createDb.sql"
-   - "connections.sql/communities/db2/calendar-appGrants.sql"
-   - "connections.sql/files/db2/createDb.sql"
-   - "connections.sql/files/db2/appGrants.sql"
-   - "connections.sql/forum/db2/createDb.sql"
-   - "connections.sql/forum/db2/appGrants.sql"
-   - "connections.sql/homepage/db2/createDb.sql"
-   - "connections.sql/homepage/db2/appGrants.sql"
-   - "connections.sql/homepage/db2/initData.sql"
-   - "connections.sql/homepage/db2/reorg.sql"
-   - "connections.sql/homepage/db2/updateStats.sql"
-   - "connections.sql/metrics/db2/createDb.sql"
-   - "connections.sql/metrics/db2/appGrants.sql"
-   - "connections.sql/mobile/db2/createDb.sql"
-   - "connections.sql/mobile/db2/appGrants.sql"
-   - "connections.sql/profiles/db2/createDb.sql"
-   - "connections.sql/profiles/db2/appGrants.sql"
-   - "connections.sql/pushnotification/db2/createDb.sql"
-   - "connections.sql/pushnotification/db2/appGrants.sql"
-   - "connections.sql/wikis/db2/createDb.sql"
-   - "connections.sql/wikis/db2/appGrants.sql"
+    - "connections.sql/activities/db2/createDb.sql"
+    - "connections.sql/activities/db2/appGrants.sql"
+    - "connections.sql/blogs/db2/createDb.sql"
+    - "connections.sql/blogs/db2/appGrants.sql"
+    - "connections.sql/dogear/db2/createDb.sql"
+    - "connections.sql/dogear/db2/appGrants.sql"
+    - "connections.sql/communities/db2/createDb.sql"
+    - "connections.sql/communities/db2/appGrants.sql"
+    - "connections.sql/communities/db2/calendar-createDb.sql"
+    - "connections.sql/communities/db2/calendar-appGrants.sql"
+    - "connections.sql/files/db2/createDb.sql"
+    - "connections.sql/files/db2/appGrants.sql"
+    - "connections.sql/forum/db2/createDb.sql"
+    - "connections.sql/forum/db2/appGrants.sql"
+    - "connections.sql/homepage/db2/createDb.sql"
+    - "connections.sql/homepage/db2/appGrants.sql"
+    - "connections.sql/homepage/db2/initData.sql"
+    - "connections.sql/homepage/db2/reorg.sql"
+    - "connections.sql/homepage/db2/updateStats.sql"
+    - "connections.sql/metrics/db2/createDb.sql"
+    - "connections.sql/metrics/db2/appGrants.sql"
+    - "connections.sql/mobile/db2/createDb.sql"
+    - "connections.sql/mobile/db2/appGrants.sql"
+    - "connections.sql/profiles/db2/createDb.sql"
+    - "connections.sql/profiles/db2/appGrants.sql"
+    - "connections.sql/pushnotification/db2/createDb.sql"
+    - "connections.sql/pushnotification/db2/appGrants.sql"
+    - "connections.sql/wikis/db2/createDb.sql"
+    - "connections.sql/wikis/db2/appGrants.sql"
   when:
     - not migrations_already_done.stat.exists
 
@@ -210,7 +206,7 @@
     DB2_HOME:            "{{ __db2_instance_homedir }}/sqllib"
     PATH:                "/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:{{ __db2_instance_homedir }}/sqllib/bin:{{ __db2_instance_homedir }}/sqllib/adm:{{ __db2_instance_homedir }}/sqllib/misc:{{ __db2_instance_homedir }}/sqllib/gskit/bin:{{ __db2_instance_homedir }}/.local/bin:{{ __db2_instance_homedir }}/bin"
   with_items:
-   - "connections.sql/homepage/db2/upgrade-60CR4-70.sql"
+    - "connections.sql/homepage/db2/upgrade-60CR4-70.sql"
   when:
     - not sharepoint_migrations_already_done.stat.exists
     - __db_version == '7.0'
@@ -236,8 +232,8 @@
     DB2_HOME:            "{{ __db2_instance_homedir }}/sqllib"
     PATH:                "/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:{{ __db2_instance_homedir }}/sqllib/bin:{{ __db2_instance_homedir }}/sqllib/adm:{{ __db2_instance_homedir }}/sqllib/misc:{{ __db2_instance_homedir }}/sqllib/gskit/bin:{{ __db2_instance_homedir }}/.local/bin:{{ __db2_instance_homedir }}/bin"
   with_items:
-   - "connections.sql/ic360/db2/createDb.sql"
-   - "connections.sql/ic360/db2/appGrants.sql"
+    - "connections.sql/ic360/db2/createDb.sql"
+    - "connections.sql/ic360/db2/appGrants.sql"
   when:
     - not ic360_migrations_already_done.stat.exists
     - __db_version == '7.0'
@@ -257,8 +253,8 @@
     DB2_HOME:            "{{ __db2_instance_homedir }}/sqllib"
     PATH:                "/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:{{ __db2_instance_homedir }}/sqllib/bin:{{ __db2_instance_homedir }}/sqllib/adm:{{ __db2_instance_homedir }}/sqllib/misc:{{ __db2_instance_homedir }}/sqllib/gskit/bin:{{ __db2_instance_homedir }}/.local/bin:{{ __db2_instance_homedir }}/bin"
   with_items:
-   - "connections.sql/icec/db2/createDb.sql"
-   - "connections.sql/icec/db2/appGrants.sql"
+    - "connections.sql/icec/db2/createDb.sql"
+    - "connections.sql/icec/db2/appGrants.sql"
   when:
     - not migrations_already_done.stat.exists
 
@@ -277,34 +273,34 @@
     DB2_HOME:            "{{ __db2_instance_homedir }}/sqllib"
     PATH:                "/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:{{ __db2_instance_homedir }}/sqllib/bin:{{ __db2_instance_homedir }}/sqllib/adm:{{ __db2_instance_homedir }}/sqllib/misc:{{ __db2_instance_homedir }}/sqllib/gskit/bin:{{ __db2_instance_homedir }}/.local/bin:{{ __db2_instance_homedir }}/bin"
   with_items:
-   - "connections.sql/activities/db2/runstats.sql"
-   - "connections.sql/blogs/db2/runstats.sql"
-   - "connections.sql/dogear/db2/runstats.sql"
-   - "connections.sql/communities/db2/runstats.sql"
-   - "connections.sql/forum/db2/runstats.sql"
-   - "connections.sql/mobile/db2/runstats.sql"
-   - "connections.sql/profiles/db2/runstats.sql"
-   - "connections.sql/activities/db2/reorg.sql"
-   - "connections.sql/blogs/db2/reorg.sql"
-   - "connections.sql/dogear/db2/reorg.sql"
-   - "connections.sql/communities/db2/reorg.sql"
-   - "connections.sql/files/db2/reorg.sql"
-   - "connections.sql/forum/db2/reorg.sql"
-   - "connections.sql/homepage/db2/reorg.sql"
-   - "connections.sql/metrics/db2/reorg.sql"
-   - "connections.sql/mobile/db2/reorg.sql"
-   - "connections.sql/profiles/db2/reorg.sql"
-   - "connections.sql/pushnotification/db2/reorg.sql"
-   - "connections.sql/wikis/db2/reorg.sql"
-   - "connections.sql/activities/db2/clearScheduler.sql"
-   - "connections.sql/communities/db2/clearScheduler.sql"
-   - "connections.sql/forum/db2/clearScheduler.sql"
-   - "connections.sql/files/db2/clearScheduler.sql"
-   - "connections.sql/profiles/db2/clearScheduler.sql"
-   - "connections.sql/homepage/db2/clearScheduler.sql"
-   - "connections.sql/metrics/db2/clearScheduler.sql"
-   - "connections.sql/wikis/db2/clearScheduler.sql"
-   - "connections.sql/pushnotification/db2/clearScheduler.sql"
+    - "connections.sql/activities/db2/runstats.sql"
+    - "connections.sql/blogs/db2/runstats.sql"
+    - "connections.sql/dogear/db2/runstats.sql"
+    - "connections.sql/communities/db2/runstats.sql"
+    - "connections.sql/forum/db2/runstats.sql"
+    - "connections.sql/mobile/db2/runstats.sql"
+    - "connections.sql/profiles/db2/runstats.sql"
+    - "connections.sql/activities/db2/reorg.sql"
+    - "connections.sql/blogs/db2/reorg.sql"
+    - "connections.sql/dogear/db2/reorg.sql"
+    - "connections.sql/communities/db2/reorg.sql"
+    - "connections.sql/files/db2/reorg.sql"
+    - "connections.sql/forum/db2/reorg.sql"
+    - "connections.sql/homepage/db2/reorg.sql"
+    - "connections.sql/metrics/db2/reorg.sql"
+    - "connections.sql/mobile/db2/reorg.sql"
+    - "connections.sql/profiles/db2/reorg.sql"
+    - "connections.sql/pushnotification/db2/reorg.sql"
+    - "connections.sql/wikis/db2/reorg.sql"
+    - "connections.sql/activities/db2/clearScheduler.sql"
+    - "connections.sql/communities/db2/clearScheduler.sql"
+    - "connections.sql/forum/db2/clearScheduler.sql"
+    - "connections.sql/files/db2/clearScheduler.sql"
+    - "connections.sql/profiles/db2/clearScheduler.sql"
+    - "connections.sql/homepage/db2/clearScheduler.sql"
+    - "connections.sql/metrics/db2/clearScheduler.sql"
+    - "connections.sql/wikis/db2/clearScheduler.sql"
+    - "connections.sql/pushnotification/db2/clearScheduler.sql"
   when:
     - migrations_already_done.stat.exists |bool
 
@@ -313,21 +309,21 @@
     path:                "{{ __success_file }}"
     state:               touch
   when:
-   - all_migrations_result is defined
-   - not migrations_already_done.stat.exists
+    - all_migrations_result is defined
+    - not migrations_already_done.stat.exists
 
 - name:                  "Create {{ __ic360_success_file }} file"
   file:
     path:                "{{ __ic360_success_file }}"
     state:               touch
   when:
-   - ic360_migration_result is defined
-   - not ic360_migrations_already_done.stat.exists
+    - ic360_migration_result is defined
+    - not ic360_migrations_already_done.stat.exists
 
 - name:                  "Create {{ __sharepoint_success_file }} file"
   file:
     path:                "{{ __sharepoint_success_file }}"
     state:               touch
   when:
-   - sharepoint_migration_result is defined
-   - not sharepoint_migrations_already_done.stat.exists
+    - sharepoint_migration_result is defined
+    - not sharepoint_migrations_already_done.stat.exists

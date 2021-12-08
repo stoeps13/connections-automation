@@ -21,7 +21,7 @@
     src:                "{{ __tpl_file }}"
     dest:               "{{ __rsp_file }}"
   when:                 not session_mgmt_cookies_already_enabled.stat.exists
-    
+
 - name:                 "Enable Restrict cookies to HTTPS sessions"
   command:
     chdir={{ __bin_dir }}

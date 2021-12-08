@@ -11,18 +11,18 @@
     path:                    "{{ item }}"
     state:                   absent
   with_items:
-   - "{{ __es_certs_dir }}"
-   - "{{ __es_certs_dir_temp }}"
-   - "{{ __es_certs_dir_temp }}.zip"
+    - "{{ __es_certs_dir }}"
+    - "{{ __es_certs_dir_temp }}"
+    - "{{ __es_certs_dir_temp }}.zip"
 
 - name:                      Cleanup {{ __es_certs_dir_temp }} if it already exists
   file:
     path:                    "{{ item }}"
     state:                   absent
   with_items:
-   - "{{ __es_certs_dir }}"
-   - "{{ __es_certs_dir_temp }}"
-   - "{{ __es_certs_dir_temp }}.zip"
+    - "{{ __es_certs_dir }}"
+    - "{{ __es_certs_dir_temp }}"
+    - "{{ __es_certs_dir_temp }}.zip"
   delegate_to:               "{{ dmgr_hostname }}"
 
 - name:                      Create temporary folder
@@ -40,16 +40,16 @@
 - name:                      Retrieve signer certificates for ES5
   shell:                     "{{ item }}"
   with_items:
-   - kubectl get secret elasticsearch-secret -n connections -o=jsonpath="{.data['chain-ca\.pem']}" | base64 -d > "{{ __es_certs_dir_temp }}"/chain-ca.pem
-   - kubectl get secret elasticsearch-secret -n connections -o=jsonpath="{.data['elasticsearch-metrics\.p12']}" | base64 -d > "{{ __es_certs_dir_temp}}"/elasticsearch-metrics.p12
+    - kubectl get secret elasticsearch-secret -n connections -o=jsonpath="{.data['chain-ca\.pem']}" | base64 -d > "{{ __es_certs_dir_temp }}"/chain-ca.pem
+    - kubectl get secret elasticsearch-secret -n connections -o=jsonpath="{.data['elasticsearch-metrics\.p12']}" | base64 -d > "{{ __es_certs_dir_temp}}"/elasticsearch-metrics.p12
   become_user:               "{{ __sudo_user }}"
   when:                      __elasticsearch_default_version == "5"
 
 - name:                      Retrieve signer certificates for ES7
   shell:                     "{{ item }}"
   with_items:
-   - kubectl get secret elasticsearch-7-secret -n connections -o=jsonpath="{.data['chain-ca\.pem']}" | base64 -d > "{{ __es_certs_dir_temp }}"/chain-ca.pem
-   - kubectl get secret elasticsearch-7-secret -n connections -o=jsonpath="{.data['elasticsearch-metrics\.p12']}" | base64 -d > "{{ __es_certs_dir_temp}}"/elasticsearch-metrics.p12
+    - kubectl get secret elasticsearch-7-secret -n connections -o=jsonpath="{.data['chain-ca\.pem']}" | base64 -d > "{{ __es_certs_dir_temp }}"/chain-ca.pem
+    - kubectl get secret elasticsearch-7-secret -n connections -o=jsonpath="{.data['elasticsearch-metrics\.p12']}" | base64 -d > "{{ __es_certs_dir_temp}}"/elasticsearch-metrics.p12
   become_user:               "{{ __sudo_user }}"
   when:                      __elasticsearch_default_version == "7"
 
@@ -172,7 +172,7 @@
   with_items:                "{{ groups['was_servers'] }}"
   ignore_errors:             yes
   when:
-   - inventory_hostname != dmgr_hostname
+    - inventory_hostname != dmgr_hostname
 
 - name:                      Cleanup /tmp/certs if it already exists
   file:
@@ -197,7 +197,7 @@
   delegate_to:               "{{ item }}"
   with_items:                "{{ groups['was_servers'] }}"
   when:
-   - inventory_hostname != dmgr_hostname
+    - inventory_hostname != dmgr_hostname
 
 - name:                      Extract ES certificates on WAS hosts
   unarchive:
@@ -207,7 +207,7 @@
   delegate_to:               "{{ item }}"
   with_items:                "{{ groups['was_servers'] }}"
   when:
-   - inventory_hostname != dmgr_hostname
+    - inventory_hostname != dmgr_hostname
 
 - name:                      Copy /tmp/certs to the proper location
   copy:
@@ -217,7 +217,7 @@
   delegate_to:               "{{ item }}"
   with_items:                "{{ groups['was_servers'] }}"
   when:
-   - inventory_hostname != dmgr_hostname
+    - inventory_hostname != dmgr_hostname
 
 - name:                      Cleanup /tmp/certs if it already exists
   file:
@@ -253,4 +253,3 @@
   ignore_errors:             true
 
 - debug:                     var=configured_blue_metrics_repeat.stdout_lines
-  

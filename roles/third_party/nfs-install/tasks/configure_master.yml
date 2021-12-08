@@ -4,10 +4,10 @@
     mode:                                           '0700'
     state:                                          directory
   with_items:
-   - "/pv-connections"
-   - "/pv-connections/esbackup"
-   - "/pv-connections/esbackup-7"
-   - "/pv-connections/kudos-boards-minio"
+    - "/pv-connections"
+    - "/pv-connections/esbackup"
+    - "/pv-connections/esbackup-7"
+    - "/pv-connections/kudos-boards-minio"
 
 - name:                                             Setup PV folders for mongo
   file:
@@ -57,10 +57,10 @@
     mode:                                           '0775'
     state:                                          directory
   with_items:
-   - "{{ __docs_data_shared }}"
-   - "{{ __viewer_data_shared }}"
-   - "{{ __cnx_data_shared }}"
-   - "{{ __cnx_message_stores }}"
+    - "{{ __docs_data_shared }}"
+    - "{{ __viewer_data_shared }}"
+    - "{{ __cnx_data_shared }}"
+    - "{{ __cnx_message_stores }}"
 
 - name:                                             Setup PV folders - customizations
   file:
@@ -68,8 +68,7 @@
     mode:                                           '0005'
     state:                                          directory
   with_items:
-   - "/pv-connections/customizations"
-
+    - "/pv-connections/customizations"
 
 - name:                                             Render /etc/exports
   template:

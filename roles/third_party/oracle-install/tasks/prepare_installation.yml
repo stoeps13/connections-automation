@@ -8,9 +8,9 @@
     path:                "{{ item }}"
     state:               directory
   with_items:
-   - "{{ __extraction_folder }}"
-   - "{{ __ora_rsp_data_location }}"
-   - "{{ __ora_rsp_data_rcvry_location }}"
+    - "{{ __extraction_folder }}"
+    - "{{ __ora_rsp_data_location }}"
+    - "{{ __ora_rsp_data_rcvry_location }}"
   when:
     - not oracle_base_found.stat.exists
 

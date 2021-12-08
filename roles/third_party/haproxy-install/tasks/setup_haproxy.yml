@@ -5,7 +5,7 @@
     group:                "{{ __haproxy_group }}"
     state:                directory
   with_items:
-   - "{{ __haproxy_download_dir }}"
-   - "{{ __haproxy_config_dir }}"
-   - "{{ __haproxy_bin_dir }}"
-   - "{{ __haproxy_ssl_dir }}"
+    - "{{ __haproxy_download_dir }}"
+    - "{{ __haproxy_config_dir }}"
+    - "{{ __haproxy_bin_dir }}"
+    - "{{ __haproxy_ssl_dir }}"

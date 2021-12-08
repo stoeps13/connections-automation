@@ -24,4 +24,3 @@
     name: roles/third_party/ibm/wasnd/was-dmgr-start-cluster
   vars:
     __cluster_name:        "{{ __docs_proxy_cluster_name }}"
-
