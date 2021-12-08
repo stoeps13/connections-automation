@@ -4,12 +4,9 @@
     path: /var/ibm/InstallationManager/installed.xml
   register: im_installed
 
-- name:          Is Product already Installed?
-  lineinfile:
-    path: /var/ibm/InstallationManager/installed.xml
-    line: "<package kind='offering' name='IBM® Installation Manager' id='com.ibm.cic.agent' version='{{ __this_version }}'}>"
-    state: present
-  register:      version_already_installed
+- name: Is InstallationManager already installed?
+  command: "grep {{ __this_version }} /var/ibm/InstallationManager/installed.xml"
+  register: version_already_installed
   changed_when: 0
   when:
     - im_installed.stat.exists

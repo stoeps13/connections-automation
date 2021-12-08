@@ -1,9 +1,15 @@
 ---
 - name:          Create Binaries directory
-  file:          path={{ __tmp_dir }} state=directory mode=0755
+  file:          
+    path: "{{ __tmp_dir }}"
+    state: directory 
+    mode: 0755
 
 - name:          Create Logs directory
-  file:          path={{ __logs_dir }} state=directory mode=0755
+  file:          
+    path: "{{ __logs_dir }}"
+    state: directory 
+    mode: 0755
 
 - name:          Download IBM Installation Manager
   get_url:
@@ -24,7 +30,7 @@
   register:      cout
   changed_when:  (cout.stdout.find('Installed com.ibm.cic.agent') != -1) or (cout.stdout.find('Updated to com.ibm.cic.agent') != -1)
 
-#- debug:        msg={{ cout }}
-
 - name:          Cleanup Binaries directory
-  file:          path={{ __tmp_dir }} state=absent
+  file:          
+    path: "{{ __tmp_dir }}"
+    state: absent

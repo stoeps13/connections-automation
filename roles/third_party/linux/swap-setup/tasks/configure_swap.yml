@@ -19,7 +19,7 @@
     swap_file_exists.stat.exists
     and swap_enabled.rc > 0
     and (not swap_enabled
-       or (swap_enabled and swap_file_exists.stat.size != ({{ __swapfile_size }} * 0.75 * 1024 * 1024)))
+       or (swap_enabled and swap_file_exists.stat.size != ( __swapfile_size  * 0.75 * 1024 * 1024)))
 
 - name:                       Remove the "{{ __swapfile_location }}"
   file:
@@ -29,11 +29,11 @@
     - not swap_enabled
 
 - name:                       Create or change the size of the swap file
-  command:                    dd if=/dev/zero of="{{ __swapfile_location }}" count={{ __swapfile_size }} bs=1MiB
+  command:                    "dd if=/dev/zero of={{ __swapfile_location }} count={{ __swapfile_size }} bs=1MiB"
   register:                   swap_file_created
   when: >
     not swap_file_exists.stat.exists
-    or swap_file_exists.stat.size != ({{ __swapfile_size }} * 0.75 * 1024 * 1024)
+    or swap_file_exists.stat.size != ( __swapfile_size * 0.75 * 1024 * 1024)
 
 - name:                       Change swap file permissions
   file:
@@ -59,8 +59,8 @@
     src:                      "{{ __swapfile_location }}"
     fstype:                   swap
     opts:                     sw
-    passno:                   0
-    dump:                     0
+    passno:                   '0'
+    dump:                     '0'
     state:                    present
 
 - name:                       Turn swap on
@@ -69,7 +69,7 @@
 - name:                       Configure swappiness
   sysctl:
     name:                     vm.swappiness
-    value:                    1
+    value:                    '1'
     state:                    present
 
 - name:                       "Create {{ __swapfile_success }}"

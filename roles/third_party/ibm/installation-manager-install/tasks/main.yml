@@ -9,4 +9,4 @@
 
 - name:          Install IBM Installation Manager
   include_tasks: install_iim.yml
-  when:          version_already_installed.rc != 0
+  when:          (not im_installed.stat.exists) or ( version_already_installed is not defined ) or (version_already_installed.rc != 0) 

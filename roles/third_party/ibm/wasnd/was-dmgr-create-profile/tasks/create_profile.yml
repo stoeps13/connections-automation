@@ -1,11 +1,13 @@
 ---
-- name:                 "<<<<<<<<<<<< Debuging __profile_name variable >>>>>>>>>>>"
+- name:                 "<<<<<<<<<<<< Debugging __profile_name variable >>>>>>>>>>>"
   debug:
     msg:                "{{ __profile_name }}"
+    verbosity: 2
 
-- name:                 "<<<<<<<<<<<< Debuging __was_nodename variable >>>>>>>>>>>"
+- name:                 "<<<<<<<<<<<< Debugging __was_nodename variable >>>>>>>>>>>"
   debug:
     msg:                "{{ __was_nodename }}"
+    verbosity: 2
 
 - name:                 "Generate Response file"
   template:

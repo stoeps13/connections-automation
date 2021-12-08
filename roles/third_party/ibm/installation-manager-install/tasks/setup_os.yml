@@ -6,14 +6,14 @@
   when: ansible_os_family == "Debian"
 
 - name:          Install pre-requisites Zypper
-  zypper:
+  community.general.zypper:
     name: ['unzip', 'tar', 'wget', 'libgtk-2_0-0']
     state: present
   when: ansible_os_family == "Suse"
 
 - name:          Install pre-requisites Yum
   yum:
-    name: ['unzip', 'tar', 'wget', 'apr-util']
+    name: ['unzip', 'tar', 'wget', 'apr-util', 'python3-psutil']
     state: present
   when:
     - ansible_os_family == "RedHat"

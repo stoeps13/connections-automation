@@ -1,7 +1,8 @@
 ---
-- name:                 "<<<<<<<<<<<< Debuging variable >>>>>>>>>>>"
+- name:                 "<<<<<<<<<<<< Debugging variable >>>>>>>>>>>"
   debug:
     msg:                "{{ __profile_name }}"
+    verbosity: 2
 
 - name:                 "Verifiy if Profile already exists"
   stat:

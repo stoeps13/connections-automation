@@ -26,8 +26,7 @@
   changed_when:  dmgr_start.rc == 0
   failed_when:   dmgr_start.rc != 0
   when:
-    - not dmgr_pid_file.stat.exists
-    - (dmgr_pid_b64.content | b64decode | int) not in dmgr_is_running.pids
+    - (not dmgr_pid_file.stat.exists) or ((dmgr_pid_b64.content | b64decode | int) not in dmgr_is_running.pids)
 
 - name: Wait until DMGR is started
   wait_for:
