@@ -5,7 +5,7 @@
   register:                                 lcc_props_added
 
 - name:                                     Add appreg hostname and protocol genericProperties to lcc.xml
-  xml:
+  community.general.xml:
     path:                                   "{{ __lcc_full_path }}"
     xpath:                                  "{{ __lcc_version_xpath }}"
     namespaces:                             "{{ __lcc_namespaces }}"
@@ -18,8 +18,9 @@
   when:                                     not lcc_props_added.stat.exists
 
 - name:                                     print node
-  debug:
+  ansible.builtin.debug:
     msg:                                    "{{ add_node.changed }}"
+  verbosity: 1
 
 - name:                                     "Create {{ __success_file }} file"
   file:
@@ -29,7 +30,7 @@
 
 # Query element text using XPath
 - name:                                     Enable service extensionRegistry
-  xml:
+  community.general.xml:
     path:                                   "{{ __lcc_full_path }}"
     xpath:                                  "{{ __lcc_sloc_service_extRegistry_xpath }}"
     content:                                attribute
@@ -37,10 +38,14 @@
   register:                                 get_element_text
 
 - name:                                     Print get_element_text@enabled
-  debug: var=get_element_text.matches[0]['{http://www.ibm.com/service-location}serviceReference']['enabled']
+  ansible.builtin.debug: 
+    var: "get_element_text.matches[0]['{http://www.ibm.com/service-location}serviceReference']['enabled']"
+  verbosity: 1
 
 - name:                                     Print get_element_text@ssl_enabled
-  debug: var=get_element_text.matches[0]['{http://www.ibm.com/service-location}serviceReference']['ssl_enabled']
+  ansible.builtin.debug: 
+    var: "get_element_text.matches[0]['{http://www.ibm.com/service-location}serviceReference']['ssl_enabled']"
+  verbosity: 1
 
 - name:                                     Service extensionRegistry@enabled
   block:
@@ -65,9 +70,11 @@
       when:                                 get_element_text.count == 1
 
 - name:                                     Print extensionRegistry@ssl_enabled
-  debug:
+  ansible.builtin.debug: 
     msg:  "{{ isExtReg_ssl_enabled.changed }}"
+  verbosity: 1
 
 - name:                                     Print extensionRegistry@enabled
-  debug:
+  ansible.builtin.debug: 
     msg:                                    "{{ isExtReg_enabled.changed }}"
+  verbosity: 1

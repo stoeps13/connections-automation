@@ -1,0 +1,6 @@
+---
+- hosts: all
+  become: yes
+  roles:
+    - robertdebock.bootstrap
+    - robertdebock.ntp
