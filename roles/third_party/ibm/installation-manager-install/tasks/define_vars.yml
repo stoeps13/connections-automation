@@ -1,6 +1,15 @@
 ---
+- name: Any IM installed?
+  stat:
+    path: /var/ibm/InstallationManager/installed.xml
+  register: im_installed
+
 - name:          Is Product already Installed?
-  command:       egrep {{ __this_version }} /var/ibm/InstallationManager/installed.xml
+  lineinfile:
+    path: /var/ibm/InstallationManager/installed.xml
+    line: "<package kind='offering' name='IBM® Installation Manager' id='com.ibm.cic.agent' version='{{ __this_version }}'}>"
+    state: present
   register:      version_already_installed
   changed_when: 0
-  ignore_errors: true
+  when:
+    - im_installed.stat.exists
