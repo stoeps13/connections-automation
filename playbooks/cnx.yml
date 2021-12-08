@@ -1,26 +1,52 @@
 ---
 - name:                  Setup NFS
   import_playbook:       third_party/setup-nfs.yml
+  tags:
+    - install
+    - nfs
 
 - name:                  Setup DB2
   import_playbook:       third_party/setup-db2.yml
+  tags: 
+    - install
+    - install_cnx
+    - install_db2
 
 - name:                  Setup Connections Wizards
   import_playbook:       hcl/setup-connections-wizards.yml
+  tags: 
+    - install
+    - install_cnx
 
 - name:                  Setup LDAP
   import_playbook:       third_party/setup-ldap.yml
+  tags: 
+    - install_ldap
 
 - name:                  Setup IBM SDI
   import_playbook:       third_party/setup-tdi.yml
+  tags: 
+    - install
+    - install_cnx
+    - install_tdi
 
 - name:                  Setup WAS ND
   import_playbook:       third_party/setup-webspherend.yml
+  tags: 
+    - install
+    - install_cnx
+    - install_was
 
 - name:                  Setup Connections
   import_playbook:       hcl/setup-connections.yml
+  tags: 
+    - install
+    - install_cnx
 
 - name:                  Setup Connections
   import_playbook:       hcl/setup-connections-ifix.yml
+  tags: 
+    - install
+    - install_cnx
 
 

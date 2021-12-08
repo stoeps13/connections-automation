@@ -15,4 +15,4 @@
 
 - name:                  Apply the license
   command:               "{{ __db2_instance_homedir }}/sqllib/adm/db2licm -a {{ __license_location }}"
-  #become:                {{ __db2_instance_name }}
+  become:                "{{ __db2_instance_name }}"

@@ -1,6 +1,6 @@
 - name:                       Check if swap is already configured on the server
   shell:                      /usr/bin/cat /proc/swaps | grep -v Filename
-  #changed_when:               true
+  changed_when:               false
   register:                   swap_is_already_configured
   ignore_errors:              true
 

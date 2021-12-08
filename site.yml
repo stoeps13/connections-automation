@@ -1,9 +1,15 @@
 ---
 - name: Install epel
   import_playbook: playbooks/epel.yml
+  tags:
+    - prerequisits
+    - install
 
 - name: Install Connections
   import_playbook: playbooks/cnx.yml
+  tags:
+    - install_cnx
+    - install
     # - name: Cleanup
     #   import_playbook: playbooks/hcl/cleanup/cleanup-db2.yml
 
