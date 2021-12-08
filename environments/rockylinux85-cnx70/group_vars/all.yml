@@ -74,6 +74,9 @@ cnx_ifix_installer:                              HCL_Connections_70_updateInstal
 ifix_file:                                       CFix.70.2110-IC7.0.0.0-Common-Fix.jar
 db2_package_name:                                v11.5.6_linuxx64_universal_fixpack.tar.gz
 db2_license_file:                                DB2ESE_Restricted_Activation_11.5.zip
+db2_jdbc_package_name:                           v11.5.6_jdbc_sqlj.tar.gz
+db2_installation_folder:                         /opt/IBM/db2/V11.5
+db2_jdbc_location:                               "{{ db2_installation_folder }}/java"
 
 setup_docker_registry:                           False
 component_pack_package_name:                     component_pack_7.0.0.2.zip
