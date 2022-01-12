@@ -1,0 +1,4 @@
+---
+#- name: Bootstrap servers
+#  import_playbook: playbooks/bootstrap.yml
+
