@@ -139,82 +139,82 @@
   sysctl:
     name:                   "net.ipv4.ip_forward"
     value:                  '0'
-    sysctl_set:             yes
-    reload:                 yes
+    state: present
+    reload: no
 
 - name:                     Tune net.ipv4.conf.default.rp_filter
   sysctl:
     name:                   "net.ipv4.conf.default.rp_filter"
     value:                  '1'
-    sysctl_set:             yes
-    reload:                 yes
+    state: present
+    reload: no
 
 - name:                     Tune net.ipv4.conf.default.accept_source_route
   sysctl:
     name:                   "net.ipv4.conf.default.accept_source_route"
     value:                  '0'
-    sysctl_set:             yes
-    reload:                 yes
+    state: present
+    reload: no
 
 - name:                     Tune net.core.rmem_max
   sysctl:
     name:                   "net.core.rmem_max"
     value:                  '16777216'
-    sysctl_set:             yes
-    reload:                 yes
+    state: present
+    reload: no
 
 - name:                     Tune net.core.wmem_max
   sysctl:
     name:                   "net.core.wmem_max"
     value:                  '16777216'
-    sysctl_set:             yes
-    reload:                 yes
+    state: present
+    reload: no
 
 - name:                     Tune net.ipv4.tcp_rmem
   sysctl:
     name:                   "net.ipv4.tcp_rmem"
     value:                  '4096 87380 16777216'
-    sysctl_set:             yes
-    reload:                 yes
+    state: present
+    reload: no
 
 - name:                     Tune net.ipv4.tcp_wmem
   sysctl:
     name:                   "net.ipv4.tcp_wmem"
     value:                  '4096 87380 16777216'
-    sysctl_set:             yes
-    reload:                 yes
+    state: present
+    reload: no
 
 - name:                     Tune net.ipv4.tcp_fin_timeout
   sysctl:
     name:                   "net.ipv4.tcp_fin_timeout"
     value:                  '30'
-    sysctl_set:             yes
-    reload:                 yes
+    state: present
+    reload: no
 
 - name:                     Tune net.core.netdev_max_backlog
   sysctl:
     name:                   "net.core.netdev_max_backlog"
     value:                  '3000'
-    sysctl_set:             yes
-    reload:                 yes
+    state: present
+    reload: no
 
 - name:                     Tune net.core.somaxconn
   sysctl:
     name:                   "net.core.somaxconn"
     value:                  '10000'
-    sysctl_set:             yes
-    reload:                 yes
+    state: present
+    reload: no
 
 - name:                     Tune net.ipv4.tcp_keepalive_intvl
   sysctl:
     name:                   "net.ipv4.tcp_keepalive_intvl"
     value:                  '15'
-    sysctl_set:             yes
-    reload:                 yes
+    state: present
+    reload: no
 
 - name:                     Tune net.ipv4.tcp_keepalive_probes
   sysctl:
     name:                   "net.ipv4.tcp_keepalive_probes"
     value:                  '5'
-    sysctl_set:             yes
-    reload:                 yes
+    state: present
+    reload: yes

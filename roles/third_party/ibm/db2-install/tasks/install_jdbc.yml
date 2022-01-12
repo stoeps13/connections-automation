@@ -11,16 +11,23 @@
     state:             directory
 
 - name:                "Download and unzip drivers {{ __jdbc_package_name }} to the {{ __jdbc_installation_folder }}"
+  get_url:
+    url : "{{ __download_location }}/{{ __jdbc_package_name }}"
+    dest: "{{ __jdbc_installation_folder }}"
+    force : no
+  register: download_jdbc
+
+- name: Extract archive
   unarchive:
-    src:               "{{ __download_location }}/{{ __jdbc_package_name }}"
-    dest:              "{{ __jdbc_installation_folder }}"
-    remote_src:        yes
-  register: download_and_unpack_jdbc
-  until: download_and_unpack_jdbc is succeeded
-  retries: 3
+    src: "{{ __jdbc_installation_folder }}/{{ __jdbc_package_name }}"
+    dest: "{{ __jdbc_installation_folder }}"
+    creates : "{{ __jdbc_installation_folder }}/jdbc_sqlj/{{ __jdbc_bin_package_name }}"
+    remote_src: True
+  when: download_jdbc.changed
 
 - name:                "Unzip the drivers distributed as zip in {{ __jdbc_package_name }}"
   unarchive:
     src:               "{{ __jdbc_installation_folder }}/jdbc_sqlj/{{ __jdbc_bin_package_name }}"
     dest:              "{{ __jdbc_installation_folder }}"
     remote_src:        yes
+  when: download_jdbc.changed

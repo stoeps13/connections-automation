@@ -14,11 +14,22 @@
     state: present
   when: ansible_os_family == "Suse"
 
-# java 32 bits for Toolbox/WCT 8.5 
+# java 32 bits for Toolbox/WCT 8.5
+# https://www.ibm.com/docs/en/was-nd/9.0.5?topic=installation-preparing-red-hat-enterprise-linux-8
 - name:          Install pre-requisites Yum
   yum:
-    name: ['glibc.i686', 'libgcc.i686']
+    name:
+      - glibc.i686
+      - libgcc.i686
+      - apr-util
+      - gtk2
+      - libXtst
+      - xorg-x11-fonts-Type1
+      - psmisc
+      - gtk2.i686
+      - libXtst.i686
+      - libXft.i686
+      - libXtst.i686
     state: present
   when:
     - ansible_os_family == "RedHat"
-    - (ansible_distribution == "RedHat" or ansible_distribution == "CentOS" or ansible_distribution == "Amazon")

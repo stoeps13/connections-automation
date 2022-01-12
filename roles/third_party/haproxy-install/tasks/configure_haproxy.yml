@@ -10,12 +10,12 @@
       #    owner:                   "{{ __haproxy_user }}"
       #    state:                   link
 
-- name:                      Copy init file to /etc/init.d/
-  copy:
-    src:                     "{{ __haproxy_init_src }}"
-    dest:                    "{{ __haproxy_init_dest }}"
-    mode:                    '0755'
-    remote_src:              yes
+      #- name:                      Copy init file to /etc/init.d/
+      #  copy:
+      #    src:                     "{{ __haproxy_init_src }}"
+      #    dest:                    "{{ __haproxy_init_dest }}"
+      #    mode:                    '0755'
+      #    remote_src:              yes
 
 - name:                      Reload systemd
   systemd:
