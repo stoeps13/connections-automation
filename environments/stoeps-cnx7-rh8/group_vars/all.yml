@@ -70,9 +70,9 @@ cnx_enable_invite:                               True
 
 enable_prometheus_jmx_exporter:                  False
 
-ifix_apar:                                       CFix.70.2110
+ifix_apar:                                       CFix.70.2112
 cnx_ifix_installer:                              HCL_Connections_70_updateInstaller_2104.zip
-ifix_file:                                       CFix.70.2110-IC7.0.0.0-Common-Fix.jar
+ifix_file:                                       CFix.70.2112-IC7.0.0.0-Common-Fix.jar
 
 setup_docker_registry:                           True
 component_pack_package_name:                     component_pack_7.0.0.2.zip
