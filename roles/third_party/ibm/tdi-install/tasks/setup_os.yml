@@ -6,10 +6,16 @@
   when:
     - ansible_os_family == "RedHat"
 
-- name:              Install libnsl on CentOS8/RHEL8
+- name:              Install additional prereqs on CentOS8/RHEL8
   yum:
-    name:            libnsl
+    name:            "{{ item }}"
     state:           present
+  with_items:
+    - libnsl
+    - glibc
+    - nss-softokn
+    - libXpm
+    - compat-libstdc++-33
   when:
-    - ansible_distribution == "RedHat" or ansible_distribution == "CentOS"
+    - ansible_os_family == "RedHat"
     - ansible_distribution_major_version == "8"

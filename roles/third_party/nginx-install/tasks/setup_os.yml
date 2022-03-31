@@ -4,7 +4,7 @@
     enablerepo:             "extras"
     state:                  present
   when:
-    - ansible_distribution == "CentOS"
+    - ansible_os_family == "RedHat"
     - ansible_distribution_major_version == "7"
 
 - name:                     Apply repository for RHEL
@@ -12,7 +12,7 @@
     src:                    "{{ __nginx_repo_template }}"
     dest:                   "{{ __nginx_repo_location }}"
   when:
-   - ansible_distribution == "RedHat"
+   - ansible_os_family == "RedHat"
 
 - name:                     Install prerequisits for semanage
   package:
@@ -22,7 +22,7 @@
     - libselinux-python
     - libsemanage-python
   when:
-   - ansible_distribution == "RedHat"
+   - ansible_os_family == "RedHat"
    - ansible_distribution_major_version == "7"
 
 
