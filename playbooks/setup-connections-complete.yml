@@ -18,3 +18,9 @@
 
 - name:                  Setup HCL Connections
   import_playbook:       hcl/setup-connections-only.yml
+
+- name:                  Install CFix
+  import_playbook:       hcl/setup-connections-ifix.yml
+
+- name:                  Install Docs
+  import_playbook:       hcl/setup-connections-docs.yml
