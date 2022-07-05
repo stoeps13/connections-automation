@@ -13,6 +13,12 @@
 - name:                  Setup IBM SDI
   import_playbook:       third_party/setup-tdi.yml
 
+- name:                  Setup Nginx
+  import_playbook:       third_party/setup-nginx.yml
+
+- name:                  Setup Haproxy
+  import_playbook:       third_party/setup-haproxy.yml
+
 - name:                  Setup WebSphere ND
   import_playbook:       third_party/setup-webspherend.yml
 
