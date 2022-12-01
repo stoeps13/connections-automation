@@ -1,0 +1,6 @@
+---
+- name: Clone connections-mongo5 repository
+  ansible.builtin.git:
+    repo: "{{ __mongodb_repository }}"
+    dest: "{{ __mongodb_repository_root }}"
+    version: "{{ __mongodb_repository_version }}"

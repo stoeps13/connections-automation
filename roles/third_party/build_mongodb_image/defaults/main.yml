@@ -1,0 +1,6 @@
+---
+# defaults file for build_mongodb_image
+__mongodb_repository: "{{ mongodb_repository | default('https://github.com/HCL-TECH-SOFTWARE/connections-mongo5') }}"
+__mongodb_repository_root: "{{ mongodb_repository_root | default('/usr/src') }}"
+__mongodb_repository_version: "{{ mongodb_repository_version | default('main')}}"
+

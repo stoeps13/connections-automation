@@ -1,0 +1,9 @@
+---
+- name: Install Buildah
+  ansible.builtin.package:
+    name: 
+      - buildah
+      - git
+    state: present 
+  when:
+    - inventory_hostname == groups['k8s_masters'][0]

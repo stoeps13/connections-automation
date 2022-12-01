@@ -1,0 +1,12 @@
+---
+# tasks file for build_mongodb_image
+# think about if this will pushed to a private registry or if the image should be added manually on each node
+# I prefer the registry
+
+- name: Install prerequisits
+  include_tasks: prerequisits.yml
+
+- name: Clone repository
+  include_tasks: clone_repo.yml
+
+- name: Build image
