@@ -15,6 +15,8 @@
   get_url:
     url:                    https://download.docker.com/linux/centos/docker-ce.repo
     dest:                   /etc/yum.repos.d/docker-ce.repo
+  when:
+    - ansible_os_family == "RedHat"
 
 - name:                     Replace baseurl on RedHat 7
   replace:
@@ -22,7 +24,7 @@
     regexp:                 '^baseurl.*$'
     replace:                'baseurl=https://download.docker.com/linux/centos/7/x86_64/stable'
   when:
-    - ansible_distribution == "RedHat"
+    - ansible_os_family == "RedHat"
     - ansible_distribution_major_version == "7"
 
 - name:                     Replace baseurl on RedHat 8
@@ -31,7 +33,7 @@
     regexp:                 '^baseurl.*$'
     replace:                'baseurl=https://download.docker.com/linux/centos/8/x86_64/stable'
   when:
-    - ansible_distribution == "RedHat"
+    - ansible_os_family == "RedHat"
     - ansible_distribution_major_version == "8"
 
 - name:                     Enable Docker stable repo
@@ -90,7 +92,7 @@
       #     regexp:                 'systemd_cgroup.=.*$'
       #     replace:                'systemd_cgroup = true'
       #   when:
-      #    - ansible_distribution == "RedHat"
+      #    - ansible_family == "RedHat"
       #    - ansible_distribution_major_version == "7"
 
 - name:                     Restart containerd
