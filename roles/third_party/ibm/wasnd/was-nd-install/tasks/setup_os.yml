@@ -1,6 +1,6 @@
 ---
 - name:          Disable SELinux on RHEL8/RHEL9
-  selinux:
+  ansible.posix.selinux:
     state:       disabled
   ignore_errors: true
   notify:        reboot

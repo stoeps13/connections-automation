@@ -31,7 +31,7 @@
 
 
 - name:                     Disable SELinux
-  selinux:
+  ansible.posix.selinux:
     state:                  disabled
   ignore_errors:            true
   notify:                   reboot

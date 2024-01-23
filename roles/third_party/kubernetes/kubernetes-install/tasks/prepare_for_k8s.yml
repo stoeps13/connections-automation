@@ -64,7 +64,7 @@
    - "net.bridge.bridge-nf-call-iptables"
 
 - name:              Disable SELinux to support Kubelet as per documentation
-  selinux:
+  ansible.posix.selinux:
     state:           disabled
   ignore_errors:     true
   notify:            reboot

@@ -3,7 +3,7 @@
   set_fact:
     __ldap_add_users:      "{{ __symas_bin_path }}{{ __ldap_add_users }}"
   when:
-    - ansible_distribution == "RedHat"
+    - ansible_os_family == "RedHat"
 
 - name:                     "Verify if users are already created"
   stat:
@@ -61,6 +61,7 @@
   failed_when:              ( extra_users.rc not in [0] )
   when:
     - custom_ldap_users_location is defined and not custom_ldap_users_already_created.stat.exists
+  ignore_errors: true
 
 - name:                     "Cleanup /tmp/custom_ldap_user.ldif"
   file:

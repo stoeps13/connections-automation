@@ -54,6 +54,7 @@
 
 - name:                     Run slapadd command
   command:                  "{{ __symas_sbin_path }}slapadd -n 0 -F {{ __slapd_folder_location }} -l {{ __dest_slapd_config_file }}"
+  ignore_errors: true
 
 - name:                     "Copy template {{ __symas_openldap_template }} to {{ __symas_openldap_location }}"
   template:

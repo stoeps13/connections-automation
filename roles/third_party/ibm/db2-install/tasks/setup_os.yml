@@ -84,7 +84,7 @@
     - ansible_distribution_major_version == "8" or ansible_distribution_major_version == "9"
 
 - name:              Disable SELinux
-  selinux:
+  ansible.posix.selinux:
     state:           disabled
   ignore_errors:     true
   notify:            reboot

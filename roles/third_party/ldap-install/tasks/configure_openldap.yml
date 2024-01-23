@@ -45,7 +45,7 @@
   when:
     - ldap_database_already_created.stat.exists |bool
     - not ldap_schema_already_created.stat.exists
-    - ansible_distribution != "RedHat"
+    - ansible_os_family != "RedHat"
 
 - name:                     Add the cosine and nis LDAP schemas
   command:                  "{{ __symas_bin_path }}{{ __ldap_add_cmd }} {{ item }}"
@@ -58,7 +58,7 @@
   when:
     - ldap_database_already_created.stat.exists |bool
     - not ldap_schema_already_created.stat.exists
-    - ansible_distribution == "RedHat"
+    - ansible_os_family == "RedHat"
 
 - name:                     "Create {{ __schema_ldif_success_file }} file"
   file:

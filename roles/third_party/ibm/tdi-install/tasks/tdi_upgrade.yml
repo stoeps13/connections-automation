@@ -157,3 +157,4 @@
   when:
     - upgrade_version is search("FP0009")
     - activemq_folder_exists.stat.exists |bool
+  ignore_errors: true

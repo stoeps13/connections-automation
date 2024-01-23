@@ -35,11 +35,11 @@
     name:                 '*'
     state:                latest
   when:
-    - ansible_distribution == "RedHat" or ansible_distribution == "AlmaLinux"
+    - ansible_os_family == "RedHat" or ansible_os_family == "AlmaLinux"
 
 - name:                   Install HAProxy package
   yum:
     name:                 haproxy
     state:                present
   when:
-    - ansible_distribution == "RedHat" or ansible_distribution == "AlmaLinux"
+    - ansible_os_family == "RedHat" or ansible_os_family == "AlmaLinux"
