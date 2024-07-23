@@ -12,7 +12,7 @@
   when: ansible_os_family == "Suse"
 
 - name:          Install pre-requisites Yum
-  yum:
+  ansible.builtin.package:
     name: ['unzip', 'tar', 'wget', 'apr-util']
     state: present
   when:

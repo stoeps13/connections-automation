@@ -5,8 +5,7 @@
   become:                 false
 
 - name:                   Extract Kubernetes version
-  set_fact:
-    kubectl_version:      "{{ kubectl_version_output.stdout | from_json | json_query('serverVersion.gitVersion') | replace('v', '') }}"
+  shell: kubectl version | grep Server | awk -F ':' '{print $2}' | tr -d ' v'
   when:                   kubectl_version_output.stdout is defined
 
 - name:                   "[Single Node] Allow pods to run on master for kubernetes < v1.24"

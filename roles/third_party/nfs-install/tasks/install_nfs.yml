@@ -1,4 +1,4 @@
 - name:                                             Install nfs-server
-  yum:
+  ansible.builtin.package:
     name:                                           ['nfs-utils', 'cifs-utils']
     state:                                          present

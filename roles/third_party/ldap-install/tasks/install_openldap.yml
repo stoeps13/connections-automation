@@ -6,21 +6,21 @@
     - ansible_distribution == "RedHat"
 
 - name:                     Install OpenLDAP and dependencies on CentOS
-  yum:
+  ansible.builtin.package:
     name:                   ['openldap', 'compat-openldap', 'openldap-clients', 'openldap-servers', 'openldap-servers-sql', 'openldap-devel']
     state:                   present
   when:
     - ansible_distribution == "CentOS"
 
 - name:                     Install EPEL Release on Almalinux
-  yum:
+  ansible.builtin.package:
     name:                   epel-release
     state:                  present
   when:
     - ansible_os_family ==  "AlmaLinux"
 
 - name:                     Install OpenLDAP and dependencies on Almalinux
-  yum:
+  ansible.builtin.package:
     name:                   ['openldap', 'openldap-clients', 'openldap-servers', 'openldap-devel']
     state:                   present
   when:

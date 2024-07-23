@@ -32,14 +32,14 @@
     - ansible_facts['distribution'] not in ['RedHat', 'AlmaLinux']
 
 - name:                   Update all packages
-  yum:
+  ansible.builtin.package:
     name:                 '*'
     state:                latest
   when:
     - ansible_distribution == "RedHat" or ansible_distribution == "AlmaLinux"
 
 - name:                   Install HAProxy package
-  yum:
+  ansible.builtin.package:
     name:                 haproxy
     state:                present
   when:

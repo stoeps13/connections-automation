@@ -1,6 +1,7 @@
 - name:                Install pre-requisites Yum
-  yum:
-    name:              ['unzip']
+  ansible.builtin.package:
+    name:
+      - unzip
     state:             present
   when:
     - ansible_os_family == "RedHat" or "AlmaLinux"

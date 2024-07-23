@@ -1,12 +1,12 @@
 - name:                  Install pre-requisites Yum
-  yum:
+  ansible.builtin.package:
     name:                ['unzip', 'dos2unix']
     state:               present
   when:
     - ansible_os_family == "RedHat"
 
 - name:                  Install Development Tools group
-  yum:
+  ansible.builtin.package:
     name:                "@Development tools"
     state:               present
   when:
@@ -21,7 +21,7 @@
     - ansible_distribution_major_version != "8"
 
 - name:                  Install oracle-database-preinstall-19c from RPM on RedHat OL8
-  yum:
+  ansible.builtin.package:
     name:                https://yum.oracle.com/repo/OracleLinux/OL8/appstream/x86_64/getPackage/oracle-database-preinstall-19c-1.0-1.el8.x86_64.rpm
     state:               present
     disable_gpg_check:   yes

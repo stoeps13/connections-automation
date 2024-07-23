@@ -20,7 +20,7 @@
 
 - name:              Mount everything if something is missing
   command:           mount -a
-  
+
 
 - name:              Enable Kubernetes repository
   template:
@@ -39,9 +39,11 @@
    - ansible_distribution_major_version == "8" or ansible_distribution_major_version == "9"
 
 - name:              Install prereqs for RHEL 8 / CentOS 8
-  yum:
-    name:            ['iproute-tc']
-    state:           present
+  ansible.builtin.package:
+    name:
+      - iproute-tc
+    state: present
+    use: dnf
   when:
    - ansible_os_family == "RedHat"
    - ansible_distribution_major_version == "8"

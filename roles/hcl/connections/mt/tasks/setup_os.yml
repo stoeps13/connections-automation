@@ -1,6 +1,6 @@
 ---
 - name:                       Install pre-requisites
-  yum:
+  ansible.builtin.package:
     name:                     ['perl', 'vim-common']
     state:                    present
   when:

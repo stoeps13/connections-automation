@@ -6,7 +6,7 @@
   when: ansible_os_family == "Suse"
 
 - name:          Install pre-requisites Yum RHEL 7
-  yum:
+  ansible.builtin.package:
     name: ['nfs-utils', 'gtk2', 'libXtst', 'xorg-x11-fonts-Type1', 'psmisc', 'glibc.i686', 'gtk2.i686', 'libXtst.i686', 'libXft.i686', 'python-lxml.x86_64', 'xorg-x11-fonts-75dpi', 'xorg-x11-fonts-Type1', 'dejavu-sans-fonts']
     state: present
   when:
@@ -14,15 +14,16 @@
     - ansible_distribution_major_version == "7"
 
 - name:          Install pre-requisites Yum RHEL8/RHEL9
-  yum:
+  ansible.builtin.package:
     name: ['nfs-utils', 'gtk2', 'libXtst', 'xorg-x11-fonts-Type1', 'psmisc', 'glibc.i686', 'gtk2.i686', 'libXtst.i686', 'libXft.i686', 'python3-lxml.x86_64', 'xorg-x11-fonts-75dpi', 'xorg-x11-fonts-Type1', 'dejavu-sans-fonts']
     state: present
+    use: dnf
   when:
     - ansible_os_family == "RedHat"
     - ansible_distribution_major_version == "8" or ansible_distribution_major_version == "9"
 
 - name:          Install pre-requisites Yum on app servers RHEL 7
-  yum:
+  ansible.builtin.package:
     name: ['nfs-utils', 'gtk2', 'libXtst', 'xorg-x11-fonts-Type1', 'psmisc', 'glibc.i686', 'gtk2.i686', 'libXtst.i686', 'libXft.i686', 'python-lxml.x86_64', 'xorg-x11-fonts-75dpi', 'xorg-x11-fonts-Type1', 'dejavu-sans-fonts']
     state: present
   when:
@@ -32,9 +33,10 @@
   with_items:    "{{ groups['was_servers'] }}"
 
 - name:          Install pre-requisites Yum on app servers RHEL8/RHEL9
-  yum:
+  ansible.builtin.package:
     name: ['nfs-utils', 'gtk2', 'libXtst', 'xorg-x11-fonts-Type1', 'psmisc', 'glibc.i686', 'gtk2.i686', 'libXtst.i686', 'libXft.i686', 'python3-lxml.x86_64', 'xorg-x11-fonts-75dpi', 'xorg-x11-fonts-Type1', 'dejavu-sans-fonts']
     state: present
+    use: dnf
   when:
     - ansible_os_family == "RedHat" or "AlmaLinux"
     - ansible_distribution_major_version == "8" or ansible_distribution_major_version == "9"
@@ -42,7 +44,7 @@
   with_items:    "{{ groups['was_servers'] }}"
 
 - name:                Install wkhtmltox-0.12.6-1.centos7.x86_64.rpm from RPM
-  yum:
+  ansible.builtin.package:
     name:              https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox-0.12.6-1.centos7.x86_64.rpm
     state:             present
     disable_gpg_check: yes
@@ -51,7 +53,7 @@
     - ansible_distribution_major_version == "7"
 
 - name:                Install wkhtmltox-0.12.6-1.centos7.x86_64.rpm from RPM on WAS servers
-  yum:
+  ansible.builtin.package:
     name:              https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox-0.12.6-1.centos7.x86_64.rpm
     state:             present
     disable_gpg_check: yes
@@ -62,18 +64,20 @@
   with_items:          "{{ groups['was_servers'] }}"
 
 - name:                Install wkhtmltox-0.12.6-1.centos8.x86_64.rpm from RPM
-  yum:
+  ansible.builtin.package:
     name:              https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox-0.12.6-1.centos8.x86_64.rpm
     state:             present
+    use: dnf
     disable_gpg_check: yes
   when:
     - ansible_os_family == "RedHat"
     - ansible_distribution_major_version == "8"
 
 - name:                Install wkhtmltox-0.12.6-1.centos8.x86_64.rpm from RPM on WAS servers
-  yum:
+  ansible.builtin.package:
     name:              https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox-0.12.6-1.centos8.x86_64.rpm
     state:             present
+    use: dnf
     disable_gpg_check: yes
   when:
     - ansible_os_family == "RedHat"
@@ -82,18 +86,20 @@
   with_items:          "{{ groups['was_servers'] }}"
 
 - name:                Install wkhtmltox-0.12.6.1-2.almalinux9.x86_64.rpm from RPM
-  yum:
+  ansible.builtin.package:
     name:              https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6.1-2/wkhtmltox-0.12.6.1-2.almalinux9.x86_64.rpm
     state:             present
+    use: dnf
     disable_gpg_check: yes
   when:
     - ansible_os_family == "RedHat" or "AlmaLinux"
     - ansible_distribution_major_version == "9"
 
 - name:                Install wkhtmltox-0.12.6.1-2.almalinux9.x86_64.rpm from RPM on WAS servers
-  yum:
+  ansible.builtin.package:
     name:              https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6.1-2/wkhtmltox-0.12.6.1-2.almalinux9.x86_64.rpm
     state:             present
+    use: dnf
     disable_gpg_check: yes
   when:
     - ansible_os_family == "RedHat" or "AlmaLinux"

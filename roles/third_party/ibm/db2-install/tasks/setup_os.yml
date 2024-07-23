@@ -38,7 +38,7 @@
     - ansible_distribution == "SLES"
 
 - name:              Install pre-requisites Yum for CentOS 7 - epel-release
-  yum:
+  ansible.builtin.package:
     name:            ['epel-release']
     enablerepo:      "extras"
     state:           present
@@ -47,28 +47,28 @@
     - ansible_distribution_major_version == "7"
 
 - name:              Install Development Tools group
-  yum:
+  ansible.builtin.package:
     name:            "@Development tools"
     state:           present
   when:
     - ansible_distribution == "CentOS"
 
 - name:              Install pre-requisites Yum
-  yum:
+  ansible.builtin.package:
     name:            ['kernel-devel', 'kernel-headers', 'libaio', 'libstdc++-devel.i686', 'numactl-libs.i686', 'numactl-libs.x86_64', 'unzip']
     state:           present
   when:
     - ansible_os_family == "RedHat" or "AlmaLinux"
 
 - name:              Install pre-requisites Yum
-  yum:
+  ansible.builtin.package:
     name:            ['pam.i686']
     state:           present
   when:
     - ansible_os_family == "RedHat" or "AlmaLinux"
 
 - name:                     Install EPEL Release on Almalinux
-  yum:
+  ansible.builtin.package:
     name:                   epel-release
     state:                  present
   when:
@@ -76,7 +76,7 @@
 
 
 - name:              Install pre-requisites Yum for RHEL 8/9
-  yum:
+  ansible.builtin.package:
     name:            ['patch', 'make', 'gcc-c++']
     state:           present
   when:

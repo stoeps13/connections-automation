@@ -1,11 +1,11 @@
 - name:                    Install Kubernetes binaries - kubelet
-  yum:
+  ansible.builtin.package:
     name:                  kubelet-{{ __kubernetes_version }}
     state:                 present
     disable_excludes:      all
 
 - name:                    Install Kubernetes binaries - kubeadm
-  yum:
+  ansible.builtin.package:
     name:                  kubeadm-{{ __kubernetes_version }}
     state:                 present
     disable_excludes:      all

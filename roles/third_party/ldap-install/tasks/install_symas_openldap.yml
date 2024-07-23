@@ -1,6 +1,6 @@
 ---
 - name:                     Install pre-requisites symas
-  yum:
+  ansible.builtin.package:
     name:                   ['wget']
     state:                  present
 
@@ -12,13 +12,13 @@
   ignore_errors:            true
 
 - name:                     Remove openldap-clients if already installed
-  yum:
+  ansible.builtin.package:
     name:                   symas-openldap-clients
     state:                  absent
   ignore_errors:            true
 
 - name:                     Remove openldap-servers if already installed
-  yum:
+  ansible.builtin.package:
     name:                   symas-openldap-servers
     state:                  absent
   ignore_errors:            true
@@ -29,12 +29,12 @@
     dest:                   /etc/yum.repos.d/soldap-release26.repo
 
 - name:                     Upgrade all packages
-  yum:
+  ansible.builtin.package:
     name:                   '*'
     state:                  latest
 
 - name:                     Install symas OpenLDAP and dependencies on RHEL{{ ansible_distribution_major_version }}
-  yum:
+  ansible.builtin.package:
     name:                   ['symas-openldap-libs', 'symas-openssl-libs', 'symas-libargon2-libs', 'symas-heimdal-libs', 'symas-openldap-clients', 'symas-openldap-servers','symas-cyrus-sasl-libs']
     state:                   present
 

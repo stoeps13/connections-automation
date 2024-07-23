@@ -16,14 +16,14 @@
 
 # java 32 bits for Toolbox/WCT 8.5
 - name:          Install pre-requisites Yum
-  yum:
+  ansible.builtin.package:
     name: ['glibc.i686', 'libgcc.i686']
     state: present
   when:
     - ansible_os_family == "RedHat" or "AlmaLinux"
 
 - name:          Install pre-requisites Yum on RHEL8/RHEL9
-  yum:
+  ansible.builtin.package:
     name:        ['gtk2', 'libXtst', 'xorg-x11-fonts-Type1', 'psmisc', 'libnsl']
     state:       present
   when:

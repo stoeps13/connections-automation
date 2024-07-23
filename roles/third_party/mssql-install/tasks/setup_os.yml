@@ -1,5 +1,5 @@
 - name:                  Install pre-requisites Yum
-  yum:
+  ansible.builtin.package:
     name:                ['unzip', 'dos2unix']
     state:               present
   when:

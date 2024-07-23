@@ -8,14 +8,14 @@
     path:                "{{ __db_extraction_folder }}"
     state:               absent
   when:
-    - (not migrations_already_done.stat.exists) or (__cnx_force_repopulation |bool )
+    - (not migrations_already_done.stat.exists) or (__cnx_force_repopulation |bool ) or (__db_enable_upgrades |bool)
 
 - name:                  Create installation folder
   file:
     path:                "{{ __db_extraction_folder }}"
     state:               directory
   when:
-    - (not migrations_already_done.stat.exists) or (__cnx_force_repopulation |bool )
+    - (not migrations_already_done.stat.exists) or (__cnx_force_repopulation |bool ) or (__db_enable_upgrades |bool)
 
 
 - name:                  Download and unzip installation "{{ __download_location}}/{{ __package_name }}" to the {{ __db_extraction_folder }}
@@ -165,7 +165,10 @@
   register:              sharepoint_migrations_already_done
 
 - name:                  Run Sharepoint migration for Connections 7
-  include_tasks:         ../../../third_party/ibm/db2-install/tasks/run_db_command.yaml
+  include_tasks:
+    file: ../../../third_party/ibm/db2-install/tasks/run_db_command.yml
+    apply:
+      ignore_errors:     yes
   register:              sharepoint_migration_result
   vars:
     db_command:          "{{ __db2_migration_cmd }} {{ __installation_folder }}/{{ item }}"
@@ -215,7 +218,8 @@
     - not migrations_already_done.stat.exists
 
 - name:                  Run runstats.sql and reorg.sql everywhere
-  include_tasks:         ../../../third_party/ibm/db2-install/tasks/run_db_command.yml
+  include_tasks:
+    file: ../../../third_party/ibm/db2-install/tasks/run_db_command.yml
   vars:
     db_command:          "{{ __db2_migration_cmd }} {{ __installation_folder }}/{{ item }}"
   with_items:
@@ -280,4 +284,4 @@
     state:               absent
   when:
     - (not migrations_already_done.stat.exists) or (__cnx_force_repopulation |bool )
-    
+
