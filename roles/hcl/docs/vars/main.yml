@@ -24,6 +24,7 @@ __upgrade_success_message:                 "Upgrade completed successfully"
 __upgrade_success_message_2:               "Upgrade successfully"
 #
 __was_install_location:              "{{ was_install_location  | default('/opt/IBM/WebSphere/AppServer') }}"
+__plg_install_location: "{{ plg_install_location | default('/opt/IBM/WebSphere/Plugins') }}"
 __dmgr_profile_name:                 "{{ profile_name | default('Dmgr01') }}"
 __app_profile_name:                  "{{ app_profile_name | default('AppSrv01') }}"
 __was_cellname:                      "{{ was_cellname | default('ConnectionsCell') }}"
