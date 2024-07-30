@@ -38,7 +38,7 @@
     state: present
     use: dnf
   when:
-    - ansible_os_family == "RedHat" or "AlmaLinux"
+    - ansible_os_family in ["RedHat", "AlmaLinux"]
     - ansible_distribution_major_version == "8" or ansible_distribution_major_version == "9"
   delegate_to:   "{{ item }}"
   with_items:    "{{ groups['was_servers'] }}"
@@ -92,7 +92,7 @@
     use: dnf
     disable_gpg_check: yes
   when:
-    - ansible_os_family == "RedHat" or "AlmaLinux"
+    - ansible_os_family in ["RedHat", "AlmaLinux"]
     - ansible_distribution_major_version == "9"
 
 - name:                Install wkhtmltox-0.12.6.1-2.almalinux9.x86_64.rpm from RPM on WAS servers
@@ -102,7 +102,7 @@
     use: dnf
     disable_gpg_check: yes
   when:
-    - ansible_os_family == "RedHat" or "AlmaLinux"
+    - ansible_os_family in ["RedHat", "AlmaLinux"]
     - ansible_distribution_major_version == "9"
   delegate_to:         "{{ item }}"
   with_items:          "{{ groups['was_servers'] }}"

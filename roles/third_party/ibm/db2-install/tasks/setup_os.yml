@@ -58,14 +58,14 @@
     name:            ['kernel-devel', 'kernel-headers', 'libaio', 'libstdc++-devel.i686', 'numactl-libs.i686', 'numactl-libs.x86_64', 'unzip']
     state:           present
   when:
-    - ansible_os_family == "RedHat" or "AlmaLinux"
+    - ansible_os_family in ["RedHat", "AlmaLinux"]
 
 - name:              Install pre-requisites Yum
   ansible.builtin.package:
     name:            ['pam.i686']
     state:           present
   when:
-    - ansible_os_family == "RedHat" or "AlmaLinux"
+    - ansible_os_family in ["RedHat", "AlmaLinux"]
 
 - name:                     Install EPEL Release on Almalinux
   ansible.builtin.package:
