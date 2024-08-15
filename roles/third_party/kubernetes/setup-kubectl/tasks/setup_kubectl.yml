@@ -7,6 +7,7 @@
   ansible.builtin.file:
     path: "{{ __kubectl_user_home }}/.kube"
     owner: "{{ __kubectl_user }}"
+    state: directory
     mode: '0700'
 
 - name: Setting up kubectl for the list of users
@@ -67,6 +68,7 @@
     path: "{{ root_home }}/.kube"
     owner: root
     mode: '0700'
+    state: directory
   when: pool_server is defined
 
 - name: Setting up kubectl for the list of users
