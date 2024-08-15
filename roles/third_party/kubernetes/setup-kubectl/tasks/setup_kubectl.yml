@@ -50,13 +50,6 @@
   become: false
   ignore_errors: true
 
-- name: Cleanup .kube on /tmp
-  file:
-    state: absent
-    path: "/tmp/.kube_{{ groups['k8s_masters'][0] }}"
-  become: false
-  ignore_errors: true
-
 - name: "Get home dir of root (pool server)"
   ansible.builtin.set_fact:
     root_home: "{{ lookup('env', 'HOME') }}"
