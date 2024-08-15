@@ -1,16 +1,16 @@
 ---
-- name:                    Systemd daemon reload
-  systemd:
-    daemon-reload:         yes
+- name: Systemd daemon reload
+  ansible.builtin.systemd:
+    daemon-reload: true
 
-- name:                    Remove existing Kubernetes repository file if it exists
-  file:
-    path:                  /etc/yum.repos.d/kubernetes.repo
-    state:                 absent
-  ignore_errors:           yes
+- name: Remove existing Kubernetes repository file if it exists
+  ansible.builtin.file:
+    path: /etc/yum.repos.d/kubernetes.repo
+    state: absent
+  ignore_errors: true
 
-- name:                    Create Kubernetes repository file at /etc/yum.repos.d
-  copy:
+- name: Create Kubernetes repository file at /etc/yum.repos.d
+  ansible.builtin.copy:
     content: |
       [kubernetes]
       name=Kubernetes
@@ -20,24 +20,25 @@
       gpgkey=https://pkgs.k8s.io/core:/stable:/v{{ __kubernetes_major_minor_version }}/rpm/repodata/repomd.xml.key
       exclude=kubelet kubeadm kubectl cri-tools kubernetes-cni
     dest: /etc/yum.repos.d/kubernetes.repo
+    mode: '0644'
 
-- name:                    Clean YUM cache. This step is needed to cleanup old kubernetes from yum if any.
-  command:                 "{{ item }}"
-  become:                  yes
+- name: Clean YUM cache. This step is needed to cleanup old kubernetes from yum if any.
+  ansible.builtin.command: "{{ item }}"
+  become: true
   with_items:
-     - "yum clean all"
-     - "yum makecache"
-     - "yum clean expire-cache"
-  ignore_errors:           yes
+    - "yum clean all"
+    - "yum makecache"
+    - "yum clean expire-cache"
+  ignore_errors: true
 
-- name:                    Install kubelet, kubeadm, and kubectl
+- name: Install kubelet, kubeadm, and kubectl
   ansible.builtin.package:
-    name:                  "kubelet-{{ __kubernetes_version }},kubeadm-{{ __kubernetes_version }},kubectl-{{ __kubernetes_version }}"
-    state:                 present
-    disable_excludes:      kubernetes
+    name: "kubelet-{{ __kubernetes_version }},kubeadm-{{ __kubernetes_version }},kubectl-{{ __kubernetes_version }}"
+    state: present
+    disable_excludes: kubernetes
 
-- name:                    Enable and start kubelet service
-  systemd:
-    name:                  kubelet
-    enabled:               yes
-    state:                 started
+- name: Enable and start kubelet service
+  ansible.builtin.systemd:
+    name: kubelet
+    enabled: true
+    state: started
