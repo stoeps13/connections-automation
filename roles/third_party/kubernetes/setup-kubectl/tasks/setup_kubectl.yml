@@ -20,10 +20,10 @@
   when: inventory_hostname == groups['k8s_masters'][0]
 
 - name: Copy .kube to controller
-  ansible.builtin.copy:
-    src: "/tmp/.kube_{{ groups['k8s_masters'][0] }}/config"
-    dest: "{{ __kubectl_user_home }}/.kube/config"
-    mode: push
+  ansible.builtin.fetch:
+    src: "/etc/kubernetes/admin.conf"
+    dest: "/tmp/.kube_{{ groups['k8s_masters'][0] }}/"
+    mode: '0755'
   when: inventory_hostname == groups['k8s_masters'][0]
 
 - name: Copy .kube to all hosts
