@@ -1,0 +1,87 @@
+---
+# tasks file for mongo5
+- name: Create tmp directory
+  ansible.builtin.file:
+    path: "{{ __tmp_dir }}"
+    state: directory
+    mode: '0755'
+  become: true
+
+- name: Create containers directory
+  ansible.builtin.file:
+    state: directory
+    path: "{{ __tmp_dir }}"
+    mode: '755'
+    owner: ansible
+    group: ansible
+  become: true
+
+# Clone Repository
+- name: Build Mongo 5 image and copy to controller
+  when:
+    - inventory_hostname == groups['k8s_masters'][0]
+  block:
+  - name: Clone connections-mongo5
+    ansible.builtin.git:
+      repo: https://github.com/HCL-TECH-SOFTWARE/connections-mongo5.git
+      dest: "{{ __tmp_dir }}/connections-mongo5"
+
+  - name: Install buildah
+    ansible.builtin.package:
+      name: buildah
+      state: present
+    become: true
+
+  - name: Build Mongo5 image
+    ansible.builtin.shell: |
+      set -e
+      buildah bud -t {{ __mongo_img }} .
+      buildah push --format oci {{ __mongo_img }} oci-archive:{{ __mongo_tar }}
+    args:
+      chdir: "{{ __tmp_dir }}/connections-mongo5"
+
+  - name: Copy image to Controller
+    ansible.builtin.fetch:
+      src: "{{ __tmp_dir }}/connections-mongo5/{{ __mongo_tar }}"
+      dest: "/tmp/{{ __mongo_tar }}"
+      flat: true
+
+- name: Copy image from Controller
+  ansible.builtin.copy:
+    src: "/tmp/{{ __mongo_tar }}"
+    dest: "{{ __tmp_dir }}/connections-mongo5/{{ __mongo_tar }}"
+    mode: '644'
+  when:
+    - inventory_hostname != groups['k8s_masters'][0]
+
+- name: Cleanup controller
+  ansible.builtin.file:
+    name: "{{ __tmp_dir }}/connections-mongo5/{{ __mongo_tar }}"
+    state: absent
+  delegate_to: localhost
+
+- name: Import Mongo5 image to containerd
+  ansible.builtin.shell: |
+    set -e
+    ctr -n=k8s.io image import --digests=true {{ __mongo_tar }}
+  args:
+    chdir: "{{ __tmp_dir }}/connections-mongo5"
+  become: true
+
+- name: Tag imported image
+  ansible.builtin.shell: |
+    set -e
+    MONGO_IMG = $(ctr  -n=k8s.io images ls | grep import-2024-08-15 | awk '{print $1}' | tail -1)
+    ctr -n=k8s.io image tag $MONGO_IMG {{ __mongo_img }}
+  register: image_version
+  when:
+    - inventory_hostname != groups['k8s_masters'][0]
+
+
+# Install buildah
+
+# Create mongo5 image
+
+# Tag image
+
+# Copy image to nodes
