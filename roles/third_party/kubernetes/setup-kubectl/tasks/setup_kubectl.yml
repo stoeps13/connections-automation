@@ -7,6 +7,7 @@
   ansible.builtin.file:
     path: "{{ __kubectl_user_home }}/.kube"
     owner: "{{ __kubectl_user }}"
+    group: "{{ __kubectl_user }}"
     state: directory
     mode: '0700'
 
@@ -31,6 +32,8 @@
     src: "/tmp/kube-config"
     dest: "{{ __kubectl_user_home }}/.kube/config"
     remote_src: true
+    owner: "{{ __kubectl_user }}"
+    group: "{{ __kubectl_user }}"
     mode: '0600'
   when: inventory_hostname != groups['k8s_masters'][0]
 
