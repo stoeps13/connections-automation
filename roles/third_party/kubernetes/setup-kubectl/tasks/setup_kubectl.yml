@@ -10,19 +10,10 @@
     state: directory
     mode: '0700'
 
-    #- name: Setting up kubectl for the list of users
-    #  ansible.builtin.copy:
-    #    src: /etc/kubernetes/admin.conf
-    #    dest: "{{ __kubectl_user_home }}/.kube/config"
-    #    mode: '0600'
-    #    owner: "{{ __kubectl_user }}"
-    #    remote_src: true
-    #  when: inventory_hostname == groups['k8s_masters'][0]
-
 - name: Copy .kube to controller
   ansible.builtin.fetch:
     src: "/etc/kubernetes/admin.conf"
-    dest: "/tmp/.kube_{{ groups['k8s_masters'][0] }}/"
+    dest: "/tmp/.kube_{{ groups['k8s_masters'][0] }}/config"
     mode: '0755'
   when: inventory_hostname == groups['k8s_masters'][0]
 
@@ -36,18 +27,18 @@
 
 - name: "Copy .kube to {{ __kubectl_user }}"
   ansible.builtin.copy:
-    src: "/tmp/.kube_{{ groups['k8s_masters'][0] }}/"
-    dest: "{{ __kubectl_user_home }}/.kube/"
+    src: "/tmp/.kube_{{ groups['k8s_masters'][0] }}/config"
+    dest: "{{ __kubectl_user_home }}/.kube/config"
     mode: '0600'
   when: inventory_hostname != groups['k8s_masters'][0]
 
-  # - name: Cleanup .kube on controller
-  #   ansible.builtin.file:
-  #     path: "/tmp/.kube_{{ groups['k8s_masters'][0] }}"
-  #     state: absent
-  #   delegate_to: localhost
-  #   become: false
-  #   ignore_errors: true
+- name: Cleanup .kube on controller
+  ansible.builtin.file:
+    path: "/tmp/.kube_{{ groups['k8s_masters'][0] }}"
+    state: absent
+  delegate_to: localhost
+  become: false
+  ignore_errors: true
 
 - name: "Get home dir of root (pool server)"
   ansible.builtin.set_fact:
