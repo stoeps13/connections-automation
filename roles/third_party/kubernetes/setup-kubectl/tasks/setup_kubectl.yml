@@ -1,11 +1,7 @@
-- name: "Get home dir of {{ __kubectl_user }}"
-  ansible.builtin.shell: "echo ~{{ __kubectl_user }}"
-  register: kubectl_user_home_var
-  changed_when: false
-
-- name: "Save home dir of {{ __kubectl_user }}"
+---
+- name: "Get home dir"
   ansible.builtin.set_fact:
-    __kubectl_user_home: "{{ kubectl_user_home_var.stdout }}"
+    __kubectl_user_home: "{{ lookup('env', 'HOME') }}"
 
 - name: Create .kube folder
   ansible.builtin.file:
@@ -46,32 +42,40 @@
   when: inventory_hostname != groups['k8s_masters'][0]
 
 - name: Cleanup .kube on controller
-  local_action:
-    module: file
-    state: absent
+  ansible.builtin.file:
     path: "/tmp/.kube_{{ groups['k8s_masters'][0] }}"
+    state: absent
+  delegate_to: localhost
   become: false
-  ignore_errors: yes
+  ignore_errors: true
 
 - name: Cleanup .kube on /tmp
   file:
     state: absent
     path: "/tmp/.kube_{{ groups['k8s_masters'][0] }}"
   become: false
-  ignore_errors: yes
+  ignore_errors: true
 
 - name: "Get home dir of root (pool server)"
-  set_fact:
-    root_home: "{{ lookup('env','HOME') }}"
+  ansible.builtin.set_fact:
+    root_home: "{{ lookup('env', 'HOME') }}"
   become: true
   when: pool_server is defined
 
-- name: Setting up kubectl for root (pool server)
-  command: "{{ item }}"
-  with_items:
-   - mkdir -p {{ root_home }}/.kube
-   - cp -rf /etc/kubernetes/admin.conf {{ root_home }}/.kube/config
-   - chown {{ __kubectl_user }} {{ root_home }}/.kube/config
+- name: Create .kube folder
+  ansible.builtin.file:
+    path: "{{ root_home }}/.kube"
+    owner: root
+    mode: '0700'
+  when: pool_server is defined
+
+- name: Setting up kubectl for the list of users
+  ansible.builtin.copy:
+    src: /etc/kubernetes/admin.conf
+    dest: "{{ root_home }}/.kube/config"
+    mode: '0600'
+    owner: root
+    remote_src: true
   when: pool_server is defined
 
 - name: Restart containerd and kubelet
@@ -81,4 +85,4 @@
   with_items:
     - containerd
     - kubelet
-  ignore_errrs: yes
+  ignore_errors: true
