@@ -10,7 +10,7 @@
     state: directory
     mode: '0700'
 
-- name: Copy .kube to controller
+- name: Copy kube-config to controller
   ansible.builtin.fetch:
     src: "/etc/kubernetes/admin.conf"
     dest: "/tmp/.kube_{{ groups['k8s_masters'][0] }}/config"
@@ -18,28 +18,31 @@
     mode: '0755'
   when: inventory_hostname == groups['k8s_masters'][0]
 
-- name: Copy .kube to all hosts
+- name: Copy kube-config to all hosts
   ansible.builtin.copy:
-    src: "/tmp/.kube_{{ groups['k8s_masters'][0] }}"
-    dest: /tmp/
+    src: "/tmp/.kube_{{ groups['k8s_masters'][0] }}/config"
+    dest: /tmp/kube.config
     mode: '0640'
   when: inventory_hostname != groups['k8s_masters'][0]
   become: false
 
-- name: "Copy .kube to {{ __kubectl_user }}"
+- name: "Copy kube-config to {{ __kubectl_user }}"
   ansible.builtin.copy:
-    src: "/tmp/.kube_{{ groups['k8s_masters'][0] }}/config"
+    src: "/tmp/kube-config"
     dest: "{{ __kubectl_user_home }}/.kube/config"
     mode: '0600'
   when: inventory_hostname != groups['k8s_masters'][0]
 
 - name: Cleanup .kube on controller
   ansible.builtin.file:
-    path: "/tmp/.kube_{{ groups['k8s_masters'][0] }}"
+    path: "{{ item }}"
     state: absent
   delegate_to: localhost
   become: false
   ignore_errors: true
+  loop:
+    - "/tmp/.kube_{{ groups['k8s_masters'][0] }}"
+    - "/tmp/kube-config"
 
 - name: "Get home dir of root (pool server)"
   ansible.builtin.set_fact:
