@@ -4,6 +4,11 @@
   hosts:                   nfs_servers, was_servers
   tasks:                   []
 
+- name: Build mongo5 image
+  hosts: docker_registry
+  roles:
+    - roles/mongo5
+
 - name:                    Setup Component Pack
   hosts:                   component_pack_master
   become:                  true
