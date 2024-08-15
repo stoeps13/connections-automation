@@ -16,6 +16,7 @@
   kubernetes.core.k8s:
     state: present
     src: /tmp/calico.yml
+    kubeconfig: ~/.kube/config
 
 - name: Wait till all calico pods are created
   shell: "kubectl get po --namespace=kube-system --output=jsonpath='{.items[*].metadata.name}'"
