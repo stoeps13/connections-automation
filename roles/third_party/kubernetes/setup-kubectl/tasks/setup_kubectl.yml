@@ -21,7 +21,7 @@
 - name: Copy kube-config to all hosts
   ansible.builtin.copy:
     src: "/tmp/.kube_{{ groups['k8s_masters'][0] }}/config"
-    dest: /tmp/kube.config
+    dest: /tmp/kube-config
     mode: '0640'
   when: inventory_hostname != groups['k8s_masters'][0]
   become: false
