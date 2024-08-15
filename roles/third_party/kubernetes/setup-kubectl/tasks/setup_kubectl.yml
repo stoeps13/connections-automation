@@ -10,14 +10,14 @@
     state: directory
     mode: '0700'
 
-- name: Setting up kubectl for the list of users
-  ansible.builtin.copy:
-    src: /etc/kubernetes/admin.conf
-    dest: "{{ __kubectl_user_home }}/.kube/config"
-    mode: '0600'
-    owner: "{{ __kubectl_user }}"
-    remote_src: true
-  when: inventory_hostname == groups['k8s_masters'][0]
+    #- name: Setting up kubectl for the list of users
+    #  ansible.builtin.copy:
+    #    src: /etc/kubernetes/admin.conf
+    #    dest: "{{ __kubectl_user_home }}/.kube/config"
+    #    mode: '0600'
+    #    owner: "{{ __kubectl_user }}"
+    #    remote_src: true
+    #  when: inventory_hostname == groups['k8s_masters'][0]
 
 - name: Copy .kube to controller
   ansible.builtin.fetch:
