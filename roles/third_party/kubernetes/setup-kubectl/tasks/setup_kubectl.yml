@@ -20,9 +20,9 @@
   when: inventory_hostname == groups['k8s_masters'][0]
 
 - name: Copy .kube to controller
-  ansible.posix.synchronize:
-    src: "/tmp/.kube_{{ groups['k8s_masters'][0] }}"
-    dest: "{{ __kubectl_user_home }}/.kube"
+  ansible.builtin.copy:
+    src: "/tmp/.kube_{{ groups['k8s_masters'][0] }}/config"
+    dest: "{{ __kubectl_user_home }}/.kube/config"
     mode: push
   when: inventory_hostname == groups['k8s_masters'][0]
 
