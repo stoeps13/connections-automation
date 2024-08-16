@@ -37,7 +37,7 @@
         - containerd.io
 
     - name: Start docker
-      ansible.builtin.systemd_service:
+      ansible.builtin.systemd:
         name: docker
         state: started
 
@@ -48,6 +48,7 @@
         docker save -o {{ __mongo_tar }} {{ __mongo_img }}
       args:
         chdir: "{{ __tmp_dir }}/connections-mongo5"
+      become: true
 
     - name: Copy image to Controller
       ansible.builtin.fetch:
@@ -56,7 +57,7 @@
         flat: true
 
     - name: Stop docker
-      ansible.builtin.systemd_service:
+      ansible.builtin.systemd:
         name: docker
         state: stopped
         enabled: false
