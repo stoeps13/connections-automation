@@ -21,46 +21,45 @@
   when:
     - inventory_hostname == groups['k8s_masters'][0]
   block:
-  - name: Clone connections-mongo5
-    ansible.builtin.git:
-      repo: https://github.com/HCL-TECH-SOFTWARE/connections-mongo5.git
-      dest: "{{ __tmp_dir }}/connections-mongo5"
+    - name: Clone connections-mongo5
+      ansible.builtin.git:
+        repo: https://github.com/HCL-TECH-SOFTWARE/connections-mongo5.git
+        dest: "{{ __tmp_dir }}/connections-mongo5"
 
-  - name: Install buildah
-    ansible.builtin.package:
-      name: {{ item }}
-      state: present
-    become: true
-    loop:
-      - docker-ce
-      - docker-ce-cli
-      - containerd.io
+    - name: Install buildah
+      ansible.builtin.package:
+        name: "{{ item }}"
+        state: present
+      become: true
+      loop:
+        - docker-ce
+        - docker-ce-cli
+        - containerd.io
 
-  - name: Start docker
-    ansible.builtin.systemd_service:
-      name: docker
-      state: started
+    - name: Start docker
+      ansible.builtin.systemd_service:
+        name: docker
+        state: started
 
-  - name: Build Mongo5 image
-    ansible.builtin.shell: |
-      set -e
-      docker build --no-cache --tag {{ __mongo_img }} -f Dockerfile .
-      docker save -o {{ __mongo_tar }} {{ __mongo_img }}
-    args:
-      chdir: "{{ __tmp_dir }}/connections-mongo5"
+    - name: Build Mongo5 image
+      ansible.builtin.shell: |
+        set -e
+        docker build --no-cache --tag {{ __mongo_img }} -f Dockerfile .
+        docker save -o {{ __mongo_tar }} {{ __mongo_img }}
+      args:
+        chdir: "{{ __tmp_dir }}/connections-mongo5"
 
-  - name: Copy image to Controller
-    ansible.builtin.fetch:
-      src: "{{ __tmp_dir }}/connections-mongo5/{{ __mongo_tar }}"
-      dest: "/tmp/{{ __mongo_tar }}"
-      flat: true
+    - name: Copy image to Controller
+      ansible.builtin.fetch:
+        src: "{{ __tmp_dir }}/connections-mongo5/{{ __mongo_tar }}"
+        dest: "/tmp/{{ __mongo_tar }}"
+        flat: true
 
-  - name: Stop docker
-    ansible.builtin.systemd_service:
-      name: docker
-      state: stopped
-      enabled: false
-
+    - name: Stop docker
+      ansible.builtin.systemd_service:
+        name: docker
+        state: stopped
+        enabled: false
 
 - name: Copy image from Controller
   ansible.builtin.copy:
