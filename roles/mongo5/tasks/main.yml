@@ -28,15 +28,24 @@
 
   - name: Install buildah
     ansible.builtin.package:
-      name: buildah
+      name: {{ item }}
       state: present
     become: true
+    loop:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+
+  - name: Start docker
+    ansible.builtin.systemd_service:
+      name: docker
+      state: started
 
   - name: Build Mongo5 image
     ansible.builtin.shell: |
       set -e
-      buildah bud -t {{ __mongo_img }} .
-      buildah push --format oci {{ __mongo_img }} oci-archive:{{ __mongo_tar }}
+      docker build --no-cache --tag {{ __mongo_img }} -f Dockerfile .
+      docker save -o {{ __mongo_tar }} {{ __mongo_img }}
     args:
       chdir: "{{ __tmp_dir }}/connections-mongo5"
 
@@ -45,6 +54,13 @@
       src: "{{ __tmp_dir }}/connections-mongo5/{{ __mongo_tar }}"
       dest: "/tmp/{{ __mongo_tar }}"
       flat: true
+
+  - name: Stop docker
+    ansible.builtin.systemd_service:
+      name: docker
+      state: stopped
+      enabled: false
+
 
 - name: Copy image from Controller
   ansible.builtin.copy:
