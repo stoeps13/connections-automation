@@ -2,7 +2,7 @@
 # tasks file for mongo5
 - name: Create tmp directory
   ansible.builtin.file:
-    path: "{{ __tmp_dir }}"
+    path: "{{ tmp_dir }}"
     state: directory
     mode: '0755'
   become: true
@@ -10,11 +10,24 @@
 - name: Create containers directory
   ansible.builtin.file:
     state: directory
-    path: "{{ __tmp_dir }}"
+    path: "{{ tmp_dir }}"
     mode: '755'
     owner: ansible
     group: ansible
   become: true
+  when:
+    - inventory_hostname == groups['k8s_masters'][0]
+
+- name: Create containers directory
+  ansible.builtin.file:
+    state: directory
+    path: "{{ tmp_dir }}/connections-mongo5"
+    mode: '755'
+    owner: ansible
+    group: ansible
+  become: true
+  when:
+    - inventory_hostname != groups['k8s_masters'][0]
 
 # Clone Repository
 - name: Build Mongo 5 image and copy to controller
@@ -24,9 +37,9 @@
     - name: Clone connections-mongo5
       ansible.builtin.git:
         repo: https://github.com/HCL-TECH-SOFTWARE/connections-mongo5.git
-        dest: "{{ __tmp_dir }}/connections-mongo5"
+        dest: "{{ tmp_dir }}/connections-mongo5"
 
-    - name: Install buildah
+    - name: Install Docker
       ansible.builtin.package:
         name: "{{ item }}"
         state: present
@@ -38,58 +51,69 @@
 
     - name: Start docker
       ansible.builtin.systemd:
-        name: docker
+        name: "{{ item }}"
         state: started
+      become: true
+      loop:
+        - docker.socket
+        - docker
 
     - name: Build Mongo5 image
       ansible.builtin.shell: |
         set -e
-        docker build --no-cache --tag {{ __mongo_img }} -f Dockerfile .
-        docker save -o {{ __mongo_tar }} {{ __mongo_img }}
+        docker build --no-cache --tag {{ mongo.img.complete }} -f Dockerfile .
+        docker save -o {{ mongo.tar }} {{ mongo.img.complete }}
+        chown ansible:ansible {{ mongo.tar }}
       args:
-        chdir: "{{ __tmp_dir }}/connections-mongo5"
+        chdir: "{{ tmp_dir }}/connections-mongo5"
       become: true
 
     - name: Copy image to Controller
       ansible.builtin.fetch:
-        src: "{{ __tmp_dir }}/connections-mongo5/{{ __mongo_tar }}"
-        dest: "/tmp/{{ __mongo_tar }}"
+        src: "{{ tmp_dir }}/connections-mongo5/{{ mongo.tar }}"
+        dest: "/tmp/{{ mongo.tar }}"
         flat: true
 
     - name: Stop docker
       ansible.builtin.systemd:
-        name: docker
+        name: "{{ item }}"
         state: stopped
         enabled: false
+      become: true
+      loop:
+        - docker.socket
+        - docker
 
 - name: Copy image from Controller
   ansible.builtin.copy:
-    src: "/tmp/{{ __mongo_tar }}"
-    dest: "{{ __tmp_dir }}/connections-mongo5/{{ __mongo_tar }}"
+    src: "/tmp/{{ mongo.tar }}"
+    dest: "{{ tmp_dir }}/connections-mongo5/{{ mongo.tar }}"
     mode: '644'
   when:
     - inventory_hostname != groups['k8s_masters'][0]
 
 - name: Cleanup controller
   ansible.builtin.file:
-    name: "{{ __tmp_dir }}/connections-mongo5/{{ __mongo_tar }}"
+    name: "{{ tmp_dir }}/connections-mongo5/{{ mongo.tar }}"
     state: absent
   delegate_to: localhost
 
 - name: Import Mongo5 image to containerd
   ansible.builtin.shell: |
     set -e
-    ctr -n=k8s.io image import --digests=true {{ __mongo_tar }}
+    ctr -n=k8s.io image import --digests=true {{ mongo.tar }}
   args:
-    chdir: "{{ __tmp_dir }}/connections-mongo5"
+    chdir: "{{ tmp_dir }}/connections-mongo5"
   become: true
 
 - name: Tag imported image
   ansible.builtin.shell: |
     set -e
-    MONGO_IMG = $(ctr  -n=k8s.io images ls | grep import-2024-08-15 | awk '{print $1}' | tail -1)
-    ctr -n=k8s.io image tag $MONGO_IMG {{ __mongo_img }}
+    DATE=$(date +"%Y-%m-%d")
+    MONGO_IMG=$(ctr  -n=k8s.io images ls | grep import-${DATE} | awk '{print $1}' | tail -1)
+    ctr -n=k8s.io image tag $MONGO_IMG {{ mongo.img.complete }}
   register: image_version
+  become: true
   when:
     - inventory_hostname != groups['k8s_masters'][0]
 

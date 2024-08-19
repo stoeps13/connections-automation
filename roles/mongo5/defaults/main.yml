@@ -1,8 +1,10 @@
 ---
 # defaults file for mongo5
-__tmp_dir: "{{ tmp_dir | default('/opt/HCL/Binaries') }}"
-__mongo_img_registry: "{{ mongo_img_registry | default('hclcr.io/cnx') }}"
-__mongo_img_name: "{{ mongo_img_name | default('middleware-mongodb5') }}"
-__mongo_img_tag: "{{ mongo_img_tag | default('20240628-112447') }}"
-__mongo_img: "{{ __mongo_img_registry }}/{{ __mongo_img_name }}:{{ __mongo_img_tag }}"
-__mongo_tar: "middleware-mongodb5_{{ __mongo_img_tag }}.tar"
+tmp_dir: /opt/HCL/Binaries
+mongo:
+  img:
+    registry: hclcr.io/cnx
+    name: middleware-mongodb5
+    tag: 20240628-112447
+    complete: "{{ mongo.img.registry }}/{{ mongo.img.name }}:{{ mongo.img.tag }}"
+  tar: "middleware-mongodb5_{{ mongo.img.tag }}.tar"
