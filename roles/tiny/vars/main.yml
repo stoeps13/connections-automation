@@ -1,0 +1,3 @@
+---
+# vars file for feb
+__extraction_folder: "{{ cnx_extraction_folder | default('/opt/IBM/InstallBinaries') }}"

@@ -1,0 +1,39 @@
+---
+# tasks file for feb
+- name: Install pre-requisites Yum
+  ansible.builtin.package:
+    name:
+      - unzip
+      - tar
+    state: present
+  when:
+    - ansible_os_family in ["RedHat", "AlmaLinux"]
+
+- name: Create FEB download folder
+  ansible.builtin.file:
+    path: "{{ __extraction_folder }}"
+    state: directory
+    mode: '755'
+
+- name: Download and unzip FEB installer
+  ansible.builtin.unarchive:
+    src: "{{ __download_location }}/{{ feb_install_package }}"
+    dest: "{{ __extraction_folder }}"
+    remote_src: true
+  register: download_and_unpack_feb
+
+# Create JDBC for FEB
+#
+# Create database for FEB
+#
+# Deploy ear
+#
+# Deploy strings files
+#
+# Deploy Webresources
+#
+# Create /opt/ibm/forms
+#
+# Update ear to use /opt/ibm/forms
+#
+#

@@ -1,0 +1,73 @@
+---
+# tasks file for tiny
+- name: Install pre-requisites Yum
+  ansible.builtin.package:
+    name:
+      - unzip
+      - tar
+    state: present
+  become: true
+  when:
+    - ansible_os_family in ["RedHat", "AlmaLinux"]
+
+- name: Create Tiny download folder
+  ansible.builtin.file:
+    path: "{{ __extraction_folder }}"
+    state: directory
+    mode: '755'
+    owner: "{{ ansible_user_id }}"
+  become: true
+
+- name: Download and unzip Tiny installer
+  ansible.builtin.unarchive:
+    src: "{{ tinyeditors_download_location }}/{{ tiny_editors_package }}"
+    dest: "{{ __extraction_folder }}"
+    remote_src: true
+
+- name: List webresources
+  ansible.builtin.shell: |
+    set -e -o pipefail
+    ls {{ cnx_shared_area }}/provision/webresources | grep 'tiny.editors.connections_' | grep -v {{ tiny_version }} || echo "No old tiny editors found!"
+  register: installed_editors
+  changed_when: installed_editors.stdout != 'No old tiny editors found!'
+
+- name: Check filenames
+  ansible.builtin.debug:
+    msg: "{{ installed_editors.stdout }}"
+
+- name: Delete all tiny editor versions
+  ansible.builtin.file:
+    path: "{{ cnx_shared_area }}/provision/webresources/{{ item }}"
+    state: absent
+  loop: "{{ installed_editors.stdout_lines }}"
+  become: true
+
+- name: Copy tiny.editors.connections_VERSION.jar to Shared Dir/provision/webresources
+  ansible.builtin.copy:
+    src: "{{ __extraction_folder }}/TinyEditorsForConnections/editor/tiny.editors.connections_{{ tiny_version }}.jar"
+    dest: "{{ cnx_shared_area }}/provision/webresources/tiny.editors.connections_{{ tiny_version }}.jar"
+    mode: '644'
+    remote_src: true
+  become: true
+
+- name: Create Tiny customization
+  ansible.builtin.file:
+    path: "{{ cnx_shared_area }}/customization/javascript/tiny/editors"
+    state: directory
+    mode: '755'
+    owner: "{{ ansible_user_id }}"
+  become: true
+
+- name: Copy config to Shared Dir/customization/javascript/tiny/editors/connections
+  ansible.builtin.copy:
+    src: "{{ __extraction_folder }}/TinyEditorsForConnections/config/"
+    dest: "{{ cnx_shared_area }}/customization/javascript/tiny/editors/connections/"
+    mode: '644'
+    remote_src: true
+  become: true
+
+- name: Install tiny editors spelling
+  ansible.builtin.shell: |
+    set -e -o pipefail
+    cd /opt/IBM/WebSphere/AppServer/profiles/Dmgr01/bin
+    "./wsadmin.sh -c \"$AdminApp install {{ __extraction_folder }}/TinyEditorsForConnections/services/editorsServices_c6.ear \{-usedefaultbindings\}\""

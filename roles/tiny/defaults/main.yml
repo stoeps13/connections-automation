@@ -1,0 +1,6 @@
+---
+# defaults file for feb
+tiny_version: 4.9.2.41
+tiny_editors_package: "TinyEditorsForConnections_8.0_v{{ tiny_version }}.zip"
+tinyeditors_download_location: http://{{ install_sources_ip }}:8081
+cnx_shared_area: /opt/IBM/SharedArea
