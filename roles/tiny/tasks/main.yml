@@ -66,8 +66,23 @@
     remote_src: true
   become: true
 
-- name: Install tiny editors spelling
-  ansible.builtin.shell: |
-    set -e -o pipefail
-    cd /opt/IBM/WebSphere/AppServer/profiles/Dmgr01/bin
-    "./wsadmin.sh -c \"$AdminApp install {{ __extraction_folder }}/TinyEditorsForConnections/services/editorsServices_c6.ear \{-usedefaultbindings\}\""
+- name: Git clone wsadminlib
+  ansible.builtin.git:
+    repo: https://github.com/wsadminlib/wsadminlib.git
+    dest: "{{ __extraction_folder }}/wsadminlib"
+    single_branch: true
+    version: master
+
+    # - name: Copy config script to dmgrBin
+    #   ansible.builtin.template:
+    #     src: install_tinyapp.py.j2
+    #     dest: "{{ web }}"
+    #     mode: '644'
+
+    # TODO: Create template for App deployment
+    #
+    # - name: Install tiny editors spelling
+    #   ansible.builtin.shell: |
+    #     set -e -o pipefail
+    #  WASX7109E: Insufficient data for install task "MapWebModToVH   cd /opt/IBM/WebSphere/AppServer/profiles/Dmgr01/bin
+    #     ./wsadmin.sh -f install_tinyapp.py
