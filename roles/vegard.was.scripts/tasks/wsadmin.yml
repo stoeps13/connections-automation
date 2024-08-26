@@ -1,0 +1,8 @@
+- name: wsadmin {{ title }}
+  become: yes
+  # By replacing spaces we can use multi line strings in ansible, which doesn't break our cli call
+  shell: |
+    ./wsadmin.sh -lang jython -username {{__wasadmin }} -password {{ __wasadminpw }} -c "{{ script_content | replace('\n\n', '\n') | replace('\n', '; ') }}"
+  register: wsadmin
+  args:
+    chdir: "{{ __was_root_path }}/profiles/{{ __dmgrprfname }}/bin"

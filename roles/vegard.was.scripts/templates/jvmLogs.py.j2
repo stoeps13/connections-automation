@@ -1,0 +1,26 @@
+
+maxLogSize = 25
+maxLogHistory = 5
+
+servers = AdminTask.listServers().splitlines()
+
+for server in servers:
+#    try:
+
+    nodename = server.split('(')[1].split('/')[3]
+    servername = server.split('(')[1].split('/')[5].split('|')[0]
+
+    # output and errorStream
+    systemOut = AdminConfig.showAttribute(server, 'outputStreamRedirect')
+    systemErr = AdminConfig.showAttribute(server, 'errorStreamRedirect')
+
+    logSetting = '[[rolloverType BOTH] [rolloverSize ' + str(
+            maxLogSize) + '] [rolloverPeriod 24] [maxNumberOfBackupFiles ' + str(maxLogHistory) + ']]'
+ 
+    # modify settings for log Size and History
+    AdminConfig.modify(systemOut, logSetting)
+    AdminConfig.modify(systemErr, logSetting)
+
+if (AdminConfig.hasChanges()):
+    print('Changed')
+    AdminConfig.save()

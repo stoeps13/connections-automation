@@ -1,0 +1,130 @@
+---
+- name: Check if Conversion is already installed
+  stat: path="{{ __targetpath }}/ConnectionsDocs/Conversion/product/properties/version/1986-03.com.ibm_IBM_Connections_Docs_Conversion_Server-2.0.0.swidtag"
+  register: conversion
+  
+- debug:
+    var: conversion
+
+- name: Create folder for Conversion
+  file:
+    path: "{{ __targetpath }}/ConnectionsDocs/Conversion"
+    state: directory
+    mode: '0755'
+  when: not conversion.stat.exists
+
+- name: Make install.sh executable
+  file: 
+    path: "{{ __srcpath }}/docs/installscripts/DocsConversion/installer/install.sh"
+    mode: '0755'
+  when: not conversion.stat.exists
+
+- name: Make install_node.sh executable
+  file: 
+    path: "{{ __srcpath }}/docs/installscripts/DocsConversion/installer/install_node.sh"
+    mode: '0755'
+  when: not conversion.stat.exists
+
+- name: "Configure Conversion properties"
+  ini_file:
+    path: "{{ __srcpath }}/docs/installscripts/DocsConversion/installer/cfg.properties"
+    section: Conversion
+    option: "{{ item.key }}"
+    value:  "{{ item.value }}"
+    no_extra_spaces: yes
+    backup: no
+  with_dict: { 
+      conversion_install_root: "{{ __targetpath }}/ConnectionsDocs/Conversion", 
+      docs_shared_storage_type: "nfs",
+      viewer_shared_storage_type: "nfs",
+      docs_shared_storage_local_path: "{{ __shareddirectory }}/docs",
+      docs_shared_storage_remote_server: "{{ __nfsserver }}",
+      docs_shared_storage_remote_path: "{{ __shareddirectory }}/docs",
+      viewer_shared_storage_local_path: "{{ __shareddirectory }}/viewer",
+      viewer_shared_storage_remote_server: "{{ __nfsserver }}",
+      viewer_shared_storage_remote_path: "{{ __shareddirectory }}/viewer",
+      viewer_url: "https://{{ __cnxurl }}/viewer",
+      was_install_root: "{{ __was_root_path }}/profiles/{{ __dmgrprfname }}",
+      was_soap_port: "{{ __wassoapport }}",
+      scope: 'Cluster',
+      scope_name: 'ConversionCluster',
+      node_name: '',
+      sym_count: 4,
+      sym_start_port: 8100,
+      software_mode: 'Premise',
+      webserver_name: '',
+      restart_webservers: 'false',
+      non_job_mgr_mode: 'true'
+    }
+  when: not conversion.stat.exists
+
+- name: Copy template.sh
+  copy:
+    src: template.sh
+    dest: "{{ __srcpath }}/docs/installscripts/DocsConversion/config/sym_monitor_linux/template.sh"
+    force: true
+
+- name: Install Conversion
+  expect:
+    command: "./install.sh -wasadminID {{ __wasadmin }} -wasadminPW {{ __wasadminpw }} -acceptLicense -configFile cfg.properties -silentlyInstall"
+    responses:
+      (?)^User\:\s*: "\r"
+    chdir: "{{ __srcpath }}/docs/installscripts/DocsConversion/installer"
+    delegate_to: "{{ __dmgrhost }}"
+    creates:  "{{ __targetpath }}/ConnectionsDocs/Conversion/product/installer/version.txt"
+
+- name: Configure Conversion Node properties
+  ini_file:
+    path: "{{ __srcpath }}/docs/installscripts/DocsConversion/installer/cfg.node.properties"
+    section: Conversion
+    option: "{{ item.key }}"
+    value:  "{{ item.value }}"
+    no_extra_spaces: yes
+    backup: no
+  with_dict: { 
+    conversion_install_root: "{{ __targetpath }}/ConnectionsDocs/Conversion",
+    docs_shared_storage_type: "nfs",
+    viewer_shared_storage_type: "nfs",
+    docs_shared_storage_local_path: "{{ __shareddirectory }}/docs",
+    docs_shared_storage_remote_server: "{{ __nfsserver }}",
+    docs_shared_storage_remote_path: "{{ __shareddirectory }}/docs",
+    viewer_shared_storage_local_path: "{{ __shareddirectory }}/viewer",
+    viewer_shared_storage_remote_server: "{{ __nfsserver }}",
+    viewer_shared_storage_remote_path: "{{ __shareddirectory }}/viewer",
+    viewer_url: "https://{{ __cnxurl }}/viewer",
+    was_install_root: "{{ __was_root_path }}/profiles/{{ __nodeprfname }}",
+    was_soap_port: "{{ __wassoapport }}",
+    scope: "Cluster",
+    scope_name: "ConversionCluster",
+    node_name: "",
+    sym_count: "4",
+    sym_start_port: "8100",
+    software_mode: "Premise",
+    webserver_name: "",
+    restart_webservers: 'false',
+    non_job_mgr_mode: 'true'
+    }
+  when: not conversion.stat.exists
+
+- name: Check if Conversion is already installed on the node
+  stat: path="{{ __targetpath }}/ConnectionsDocs/Conversion/version/version.txt"
+  register: conversion_node
+  when: conversion_node.stat.isfile is defined and conversion_node.stat.isfile
+
+- name: Create folder for Conversion
+  file:
+    path: "{{ __targetpath }}/ConnectionsDocs/Conversion"
+    state: directory
+    mode: '0755'
+  when: conversion_node.stat.isfile is defined and conversion_node.stat.isfile
+
+- name: Conversion Node install
+  shell: |
+    cd {{ __srcpath }}/docs/installscripts/DocsConversion/installer
+    ./install_node.sh -wasadminID {{ __wasadmin }} -wasadminPW {{ __wasadminpw }} -acceptLicense -configFile cfg.node.properties
+  when: conversion_node.stat.isfile is defined and conversion_node.stat.isfile
+  register: conversion_node_install
+  changed_when: "'Deployment on node completed successfully' in conversion_node_install.stdout"
+  failed_when: "'Deployment on node completed successfully' not in conversion_node_install.stdout" 
+  args:
+    creates:  "{{ __targetpath }}/ConnectionsDocs/Conversion/product/installer/version.txt"

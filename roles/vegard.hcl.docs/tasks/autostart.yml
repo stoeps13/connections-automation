@@ -1,0 +1,11 @@
+---
+- name: Autostart AppServer with Node (Monitoring Policy)
+  import_role:
+    name: stoeps.was.scripts
+  delegate_to: "{{ __dmgrhost }}"
+  register: monitoringpolicy
+  throttle: 1
+  vars:
+    script_file_name: enableMonitoringPolicy.py
+    index: ''
+  changed_when: monitoringpolicy.stdout contains 'Changed'

@@ -1,0 +1,64 @@
+---
+- name: Update database to new schema
+  shell: |
+    source /home/{{ __instanceowner_name }}/.bashrc
+    cd {{ __installrootpath }}/docs/docs2.0CR3IF09/SetupDB/db2
+    bash updateDBSchema.sh
+  args:
+    executable: /bin/bash
+  delegate_to: "{{ __db2server }}"
+  become: true
+  register: updateschema
+  become_user: "{{ __instanceowner_name }}"
+  changed_when: updateschema.stdout contains 'your schema has been updated to version'
+
+- name: Update to CR3 IF09
+  shell: |
+    source /home/{{ __instanceowner_name }}/.bashrc
+    cd {{ __installrootpath }}/docs/docs2.0CR3IF09
+    python applypatch.py -u {{ __wasadmin }} -p {{ __wasadminpw }} -i true -f {{ __was_root_path }}/profiles/{{ __nodeprfname }}/bin/wsadmin.sh -l https://{{ __cnxurl }}/files -a connectionsAdmin
+  args:
+    executable: /bin/bash
+
+- name: Copy concord.proxy.filter.jar to WebSphere Temp
+  copy:
+    src: "{{ __installrootpath }}/docs/docs2.0CR3IF09/DocsProxyFilter/concord.proxy.filter.jar"
+    dest: "{{ __was_root_path }}/temp/concord.proxy.filter.jar"
+    remote_src: yes
+
+- name: Update concord.proxy.filter
+  import_role:
+    name: stoeps.was.scripts
+  delegate_to: "{{ __dmgrhost }}"
+  vars:
+    script_file_name: docsproxyfilterupdate.py
+    index: ""
+  changed_when: ihsimport.stdout contains 'Changed'
+
+- name: Delete Webresources
+  file:
+    path: "{{ item }}"
+    state: absent
+  with_items:
+    - "{{ __provisionpath }}/com.ibm.concord.lcfiles.extension.provision_2.0.0.20151209-1532.jar"
+    - "{{ __provisionpath }}/com.ibm.concord.viewer.lcfiles.extension.provision_2.0.0.20151209-1532.jar"
+    - "{{ __shareddirectory }}/library/com.ibm.concord.viewer.lcfiles.daemon.jar"
+    - "{{ __shareddirectory }}/library/com.ibm.docs.lcfiles.daemon.jar"
+
+- name: Update Docs and ViewerExtension (extract files)
+  unarchive:
+    src: "{{ __installrootpath }}/docs/{{ item }}"
+    dest: "{{ __provisionpath }}"
+    remote_src: yes
+  with_items:
+    - docs2.0CR3IF09/ViewerLCCustomizeApp/Viewer_LC35_OSGIExtension.zip
+    - docs2.0CR3IF09/DocsLCExtension/Concord_LC35_OSGIExtension.zip
+
+- name: Copy Daemonlib
+  copy:
+    src:  "{{ __installrootpath }}/docs/{{ item }}"
+    dest: "{{ __shareddirectory }}/library"
+    remote_src: yes
+  with_items:
+    - "docs2.0CR3IF09/ViewerLCCustomizeApp/com.ibm.concord.viewer.lcfiles.daemon.jar"
+    - "docs2.0CR3IF09/DocsLCExtension/com.ibm.docs.lcfiles.daemon.jar"

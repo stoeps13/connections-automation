@@ -1,0 +1,58 @@
+---
+- name: Check if Viewer is already installed
+  stat: path="{{ __targetpath }}/ConnectionsDocs/Viewer/version"
+  register: viewer
+
+- name: Create folder for Viewer
+  file:
+    path: "{{ __targetpath }}/ConnectionsDocs/Viewer"
+    state: directory
+    mode: '0755'
+  when: not viewer.stat.exists
+
+- name: Make install.sh executable
+  file:
+    path: "{{ __srcpath }}/docs/installscripts/Viewer/installer/install.sh"
+    mode: '0755'
+  when: not viewer.stat.exists
+
+- name: "Configure Viewer properties"
+  ini_file:
+    path: "{{ __srcpath }}/docs/installscripts/Viewer/installer/cfg.properties"
+    section: Viewer
+    option: "{{ item.key }}"
+    value:  "{{ item.value }}"
+    no_extra_spaces: yes
+    backup: no
+  with_dict: {
+      viewer_install_root: "{{ __targetpath }}/ConnectionsDocs/Viewer",
+      shared_data_dir: "{{ __shareddirectory }}/viewer",
+      was_install_root: "{{ __was_root_path }}/profiles/{{ __nodeprfname }}",
+      was_soap_port: "{{ __wassoapport }}",
+      conversion_url: "https://{{ __cnxurl }}/conversion",
+      files_path: "{{ __shareddirectory }}/files/upload",
+      editor_installed: "Yes",
+      docs_url: "https://{{ __cnxurl }}/docs",
+      docs_shared_data_dir: "{{ __shareddirectory }}/docs",
+      scope: "Cluster",
+      scope_name: "ViewerCluster",
+      node_name: '',
+      browser_cache: "No",
+      enable_print: "No",
+      auth_type: "FORM",
+      auth_host: "",
+      multi_tenancy: "false",
+      convert_on_upload: "yes",
+      housekeeping_frequency: "weekly",
+      housekeeping_age_threshold_of_rendition_latest_version: 30,
+      housekeeping_size_threshold_of_rendition_cache: 256
+    }
+  when: not viewer.stat.exists
+
+- name: Install Viewer
+  shell: |
+    cd {{ __srcpath }}/docs/installscripts/Viewer/installer
+    ./install.sh -wasadminID {{ __wasadmin }} -wasadminPW {{ __wasadminpw }} -acceptLicense -configFile cfg.properties
+  args:
+    creates: "{{ __targetpath }}/ConnectionsDocs/Viewer/product/installer/version.txt"
+  when: not viewer.stat.exists

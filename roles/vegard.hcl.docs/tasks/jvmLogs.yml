@@ -1,0 +1,22 @@
+---
+- name: Set Logfiles Rollover
+  import_role:
+    name: stoeps.was.scripts
+  delegate_to: "{{ __dmgrhost }}"
+  register: jvmlogs
+  throttle: 1
+  vars:
+    script_file_name: jvmLogs.py
+    index: ''
+  changed_when: jvmlogs.stdout contains 'Changed'
+
+- name: JVM Language to en
+  import_role:
+    name: stoeps.was.scripts
+  delegate_to: "{{ __dmgrhost }}"
+  register: jvmLanguage
+  throttle: 1
+  vars:
+    script_file_name: jvmLanguage.py
+    index: ''
+  changed_when: jvmLanguage.stdout contains 'Changed'

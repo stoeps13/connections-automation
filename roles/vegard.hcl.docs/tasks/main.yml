@@ -1,0 +1,151 @@
+---
+# Install HCL Connections Docs 2.0 CR3 IF09
+- name: Install tools for Docs
+  ansible.builtin.package:
+    name: "{{ item }}"
+  with_items:
+    - dos2unix
+
+- name: Get db2server from inventory
+  ansible.builtin.set_fact:
+    __db2server: "{{ groups['databaseserver'][0] }}"
+  when: __db2server == ""
+
+- name: Print DB2 Server name
+  ansible.builtin.debug:
+    var: __db2server
+    verbosity: 2
+
+- name: Create password hash for user
+  ansible.builtin.set_fact:
+    userhash: "{{ __docs_dbuser_password | password_hash('sha512', __secretsalt ) }}"
+
+- name: Create database user for docs
+  ansible.builtin.user:
+    name: "{{ __docs_dbuser }}"
+    password: "{{ userhash }}"
+  delegate_to: "{{ __db2server }}"
+
+- name: Fetch existing DBs
+  become: true
+  become_user: "{{ __instanceowner_name }}"
+  ansible.builtin.shell: |
+    set -e -o pipefail
+    source /home/{{ __instanceowner_name }}/.bashrc; \
+    db2 list db directory \
+    | grep alias \
+    | awk '{print $4}' \
+    | grep -i concord \
+    | sort | tr '\r\n' ' ' \
+    | tr '\n' ' '
+  register: existingdbs
+  delegate_to: "{{ __db2server }}"
+  changed_when: false
+
+- name: Create concord database database if not present
+  ansible.builtin.shell: |
+    set -e -o pipefail
+    source /home/{{ __instanceowner_name }}/.bashrc
+    db = 'CONCORD'
+    existingdbs=$(echo '{{ existingdbs.stdout }}')
+
+    echo "Check db ${db}"
+
+    # Get database name
+    dbname=$(grep "CREATE DATABASE" {{ __installrootpath }}/docs/HCL_Docs_v2.0.2/SetupDB/db2/createdb.sql | awk '{print $3}')
+
+    if [[ $(echo $existingdbs | grep $dbname) ]]
+      then
+        echo "${db}: already created"
+      else
+        echo "${db}: creating now"
+          db2 -td@ -vf {{ __installrootpath }}/docs/HCL_Docs_v2.0.2/SetupDB/db2/createdb.sql
+          cd {{ __installrootpath }}/docs/HCL_Docs_v2.0.2/SetupDB/db2 }}
+          ./updateDBSchema.sh
+          db2 -td@ -vf {{ __installrootpath }}/docs/HCL_Docs_v2.0.2/SetupDB/db2/appGrants.sql
+    fi
+  args:
+    executable: /bin/bash
+  become: true
+  become_user: "{{ __instanceowner_name }}"
+  register: dbcreate
+  delegate_to: "{{ __db2server }}"
+  changed_when: "not 'already created' in dbcreate.stdout"
+  failed_when: "not 'completed successfully' in dbcreate.stdout and not 'already exists in either the local database' in dbcreate.stdout and not 'already created' in dbcreate.stdout"
+
+# - name: Create Application Server Cluster (delegate to DMGR)
+
+- name: Create websphere variables for Docs Responsefile
+  ansible.builtin.set_fact:
+    nodeinfo: "{{ nodeinfo|default([]) + [ { 'fqdn': hostvars[item].inventory_hostname, 'hostname': hostvars[item].inventory_hostname.split('.')[0], 'nodename': hostvars[item].inventory_hostname.split('.')[0] + '_node01' } ] }}"
+  loop: "{{ query('inventory_hostnames','docsserver') }}"
+
+- name: Print Node name
+  ansible.builtin.debug:
+    var: nodeinfo[0]
+    verbosity: 2
+
+- name: Create Docs Clusters
+  ansible.builtin.import_role:
+    name: vegard.was.scripts
+  delegate_to: "{{ __dmgrhost }}"
+  register: scripts_docscluster
+  throttle: 1
+  vars:
+    scripts_file_name: createDocsCluster.py
+    nodename: "{{ nodeinfo[0].nodename }}"
+    index: ''
+  changed_when: scripts_docscluster.stdout contains 'Changed'
+
+- name: Set JVM Logs
+  ansible.builtin.import_tasks: jvmLogs.yml
+
+- name: Configure Autostart
+  ansible.builtin.import_tasks: autostart.yml
+
+- name: Create folder for install scripts
+  ansible.builtin.file:
+    path: "{{ __srcpath }}/docs/installscripts"
+    state: directory
+    mode: '0755'
+
+- name: Create folder for install scripts
+  ansible.builtin.file:
+    path: "{{ __srcpath }}/docs/installscripts/{{ item.split('_')[0]  }}"
+    state: directory
+    mode: '0755'
+  with_items:
+    - DocsApp_2.0.2.zip
+    - DocsConversion_2.0.2.zip
+    - DocsLCExtension_2.0.2.zip
+    - DocsProxyFilter_2.0.2.zip
+    - Viewer_2.0.2.zip
+    - ViewerLCCustomizeApp_2.0.2.zip
+
+- name: Extract Docs Installer Scripts
+  unarchive:
+    src: "{{ __srcpath }}/docs/HCL_Docs_v2.0.2/IBMConnectionsDocs-repo/native/{{ item }}"
+    dest: "{{ __srcpath }}/docs/installscripts/{{ item.split('_')[0]  }}"
+    remote_src: yes
+  with_items:
+    - DocsApp_2.0.2.zip
+    - DocsLCExtension_2.0.2.zip
+    - DocsProxyFilter_2.0.2.zip
+    - Viewer_2.0.2.zip
+    - ViewerLCCustomizeApp_2.0.2.zip
+    - DocsConversion_2.0.2.zip
+
+- import_tasks: viewer.yml
+
+- import_tasks: viewerlc.yml
+
+- import_tasks: docsapp.yml
+
+- import_tasks: docslc.yml
+
+- import_tasks: proxyfilter.yml
+
+- import_tasks: update_cr3.yml
+
+- import_tasks: conversion.yml
+#

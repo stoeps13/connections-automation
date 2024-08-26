@@ -1,0 +1,12 @@
+servers = AdminTask.listServers('[-serverType APPLICATION_SERVER]').splitlines()
+
+state = 'RUNNING'
+
+for server in servers:
+    print 'Set nodeRestartState for %s to: %s' % (server.split('(')[0], state)
+    monitoringPolicy = AdminConfig.list("MonitoringPolicy", server)
+    AdminConfig.modify(monitoringPolicy, '[[nodeRestartState ' + state + ']]')
+
+if (AdminConfig.hasChanges()):
+    print('Changed')
+    AdminConfig.save()

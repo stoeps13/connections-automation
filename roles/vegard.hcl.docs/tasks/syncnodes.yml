@@ -1,0 +1,14 @@
+---
+
+- name: Synchronize all nodes
+  import_role:
+    name: stoeps.was.scripts
+  delegate_to: "{{ __dmgrhost }}"
+  register: syncnode
+  throttle: 1
+  vars:
+    script_file_name: syncnodes.py
+    index: ''
+  ignore_errors: yes
+
+    

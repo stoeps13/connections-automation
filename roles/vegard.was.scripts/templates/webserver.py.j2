@@ -1,0 +1,110 @@
+class WasServers:
+
+    def __init__(self):
+        # Get a list of all servers in WAS cell (dmgr, nodeagents, AppServer,
+        # webserver)
+        self.AllServers = self.getAllServers()
+        self.WebServers = self.getWebServers()
+        self.AppServers = self.getAllServersWithoutWeb()
+        # self.serverNum, self.jvm, self.cell, self.node, self.serverName = self.getAttrServers()
+        self.serverNum, self.jvm, self.cell, self.node, self.serverName = self.getAttrServers()
+
+    def getAllServers(self):
+        # get a list of all servers
+        self.servers = AdminTask.listServers().splitlines()
+        return self.servers
+
+    def getAppServers(self):
+        # get a list of all application servers
+        # includes webserver, but no dmgr and nodeagents
+        self.servers = AdminTask.listServers(
+            '[-serverType APPLICATION_SERVER]').splitlines()
+        return self.servers
+
+    def getWebServers(self):
+        # get a list of all webservers
+        self.webservers = AdminTask.listServers(
+            '[-serverType WEB_SERVER]').splitlines()
+        return self.webservers
+
+    def getAllServersWithoutWeb(self):
+        # inclusive dmgr and nodeagents
+        self.AppServers = self.AllServers
+        for webserver in self.WebServers:
+            self.AppServers.remove(webserver)
+        return self.AppServers
+
+    def getAttrServers(self):
+        # get jvm, node, cell from single application server
+        srvNum = 0
+        jvm = []
+        cell = []
+        node = []
+        servername = []
+        for server in self.AppServers:
+            srvNum += 1
+            javavm = AdminConfig.list('JavaVirtualMachine', server)
+            jvm.append(javavm)
+            srv = server.split('/')
+            cell.append(srv[1])
+            node.append(srv[3])
+            servername.append(srv[5].split('|')[0])
+        self.jvm = jvm
+        cell = cell
+        node = node
+        servername = servername
+        # return ( serverNum, jvm, cell, node, serverName )
+        return (srvNum, self.jvm, cell, node, servername)
+
+WS1 = WasServers()
+
+def getServerList(app, webserver):
+    addServer = "NEW"
+    addedServers = ""
+    mapServers = AdminApp.view(app, '-MapModulesToServers').splitlines()
+    for mapServer in mapServers:
+        servers = mapServer.splitlines()
+        for server in servers:
+            if not server.find("Server:") == -1:
+                if addedServers.find(addServer) == -1:
+                    addedServers += "+" + server[9:]
+                addServer = server[9:]
+    if addedServers.find(webserver) == -1:
+        addedServers += "+" + webserver
+    return addedServers[1:]
+
+
+def getCommand(app):
+    fullservername = ''
+    webcount = 0
+    webservers = AdminTask.listServers('[-serverType WEB_SERVER]').splitlines()
+    for server in webservers:
+        srv = server.split('/')
+        if webcount == 0:
+            fullservername += 'WebSphere:cell=' + srv[1] + ',node=' + srv[3] + ',server=' + (srv[5].split('|')[0])
+        else:
+            fullservername += '+WebSphere:cell=' + srv[1] + ',node=' + srv[3] + ',server=' + (srv[5].split('|')[0])
+        webcount += 1
+    addServers = getServerList(app, fullservername)
+    module_ids = AdminApp.listModules(app).splitlines()
+    command = "AdminApp.edit('" + app + "', '[ -MapModulesToServers ["
+    for module_id in module_ids:
+        start = module_id.find('#')
+        module_id = module_id[start + 1:].replace("+", ",")
+        endpoint = AdminApp.view(app).find(module_id)
+        startpoint = AdminApp.view(app).rfind('Module:', 0, endpoint)
+        module_name = AdminApp.view(app)[startpoint + 9:endpoint - 7]
+        module_name = module_name.replace("\r","")
+        module_name = '"' + module_name + '"'
+        command += "[ " + module_name + " " + module_id + " " + addServers + " ]"
+    command += "]]' )"
+    return command
+
+apps = AdminApp.list().splitlines()
+for app in apps:
+    exec getCommand(app)
+
+
+if (AdminConfig.hasChanges()):
+    print('Changed')
+    AdminConfig.save()

@@ -1,0 +1,54 @@
+---
+- name: Check if Proxyfilter is already installed
+  stat: path="{{ __targetpath }}/ConnectionsDocs/DocsProxyFilter"
+  register: docsproxy
+
+- name: Create db2 variables for Connections Responsefile
+  set_fact:
+    __db2server: "{{ groups['databaseserver'][0] }}"
+  when: __db2server == "" and not docslc.stat.exists
+
+- name: Create folder for Docs Proxy
+  file:
+    path: "{{ __targetpath }}/ConnectionsDocs/DocsProxyFilter"
+    state: directory
+    mode: '0755'
+  when: not docsproxy.stat.exists
+
+- name: Make install.sh executable
+  file: 
+    path: "{{ __srcpath }}/docs/installscripts/DocsProxyFilter/installer/install.sh"
+    mode: '0755'
+  when: not docsproxy.stat.exists
+
+    # Check if version.txt is available and only if not run following tasks
+
+- name: "Configure Docs Proxy properties"
+  ini_file:
+    path: "{{ __srcpath }}/docs/installscripts/DocsProxyFilter/installer/cfg.properties"
+    section: Proxy
+    option: "{{ item.key }}"
+    value: "{{ item.value }}"
+    no_extra_spaces: yes
+    backup: no
+  with_dict: {
+    docs_install_root: "{{ __targetpath }}/ConnectionsDocs/Docs",
+    was_proxy_profile_root: "{{ __was_root_path }}/profiles/{{ __nodeprfname }}",
+    was_soap_port: "{{ __wassoapport }}",
+    was_ipc_port: "",
+    scope: "Cluster",
+    proxy_scope_name: "DocsProxyCluster",
+    proxy_node_name: "",
+    docs_context_root: "/docs",
+    software_mode :  "Premise",
+    docs_scope_name: "DocsCluster",
+    webserver_name: "",
+    restart_webservers: "True",
+  }
+  when: not docsproxy.stat.exists
+
+- name: Install Docs Proxy
+  shell: |
+    cd {{ __srcpath }}/docs/installscripts/DocsProxyFilter/installer
+    ./install.sh -wasadminID {{ __wasadmin }} -wasadminPW {{ __wasadminpw }} -acceptLicense -configFile cfg.properties -silentlyInstall
+  when: not docsproxy.stat.exists

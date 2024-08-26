@@ -1,0 +1,22 @@
+clusters = ['ConversionCluster', 'DocsCluster', 'ViewerCluster']
+proxies = ['EditorProxyCluster']
+
+for cluster in clusters:
+    # Nodename is missing in variable list
+    try:
+        AdminTask.createCluster('[-clusterConfig [-clusterName ' + cluster + ' -preferLocal true]]')
+        AdminTask.createClusterMember('[-clusterName ' + cluster + ' -memberConfig [-memberNode {{ nodename }} -memberName ' + cluster + '_server1 -memberWeight 2 -genUniquePorts true -replicatorEntry false] -firstMember [-templateName default -nodeGroup DefaultNodeGroup -coreGroup DefaultCoreGroup -resourcesScope cluster]]') 
+    except:
+        print "Already created"
+
+for proxy in proxies:
+    # Create Proxy Cluster
+    try:
+        AdminTask.createCluster('[-clusterConfig [-clusterName ' + proxy + ' -clusterType PROXY_SERVER]]')
+        AdminTask.createClusterMember('[-clusterName ' + proxy + ' -memberConfig [-memberNode {{ nodename }} -memberName ' + proxy + '_server1 -genUniquePorts true] -firstMember [-templateName proxy_server_foundation -nodeGroup DefaultNodeGroup -coreGroup DefaultCoreGroup]]') 
+    except:
+        print "Already created"
+
+if (AdminConfig.hasChanges()):
+    print('Changed')
+    AdminConfig.save()

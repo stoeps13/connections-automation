@@ -1,0 +1,23 @@
+---
+# Author: Daniel Weber
+
+- name: Set Script Target
+  set_fact:
+    script_dir_target: "{{ __was_root_path }}/profiles/{{ __dmgrprfname }}/bin"
+- name: Set Script File
+  set_fact:
+    script_file_target: "{{ script_dir_target }}/{{ scripts_file_name }}{{ index }}"
+
+- name: "Copy script {{ scripts_file_name }} to was bin dir"
+  become: yes
+  template: "src={{ scripts_file_name }}.j2 dest={{ script_file_target }}"
+
+- name: "Execute {{ scripts_file_name }} in {{ script_file_target }}"
+  become: yes
+  shell: |
+    ./wsadmin.sh -lang jython -username {{ __wasadmin }} -password {{ __wasadminpw }} -f {{ script_file_target }}
+  args:
+    chdir: "{{ __was_root_path }}/profiles/{{ __dmgrprfname }}/bin"
+  register: wsadmin_result
+  changed_when: "'Changed' in wsadmin_result.stdout"
+  failed_when: "'error' in wsadmin_result.stdout"

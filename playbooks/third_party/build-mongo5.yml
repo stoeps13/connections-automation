@@ -1,6 +1,0 @@
-# Setup Nginx
----
-- name: Build Mongo5 Image
-  hosts: docker_registry
-  roles:
-    - roles/mongo5

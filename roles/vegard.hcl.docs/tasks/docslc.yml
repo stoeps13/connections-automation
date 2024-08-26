@@ -1,0 +1,65 @@
+---
+- name: Check if Docs Extensions is already installed
+  stat: path="{{ __targetpath }}/ConnectionsDocs/Docs/extension"
+  register: docslc
+
+- name: Create db2 variables for Connections Responsefile
+  set_fact:
+    __db2server: "{{ groups['databaseserver'][0] }}"
+  when: __db2server == ""
+
+- name: Create folder for Docs Extensions
+  file:
+    path: "{{ __targetpath }}/ConnectionsDocs/Docs/extension"
+    state: directory
+    mode: '0755'
+  when: not docslc.stat.exists
+
+- name: Make install.sh executable
+  file:
+    path: "{{ __srcpath }}/docs/installscripts/DocsLCExtension/installer/install.sh"
+    mode: '0755'
+  when: not docslc.stat.exists
+
+    # Check if version.txt is available and only if not run following tasks
+
+- name: "Configure Docs extensions properties"
+  ini_file:
+    path: "{{ __srcpath }}/docs/installscripts/DocsLCExtension/installer/cfg.properties"
+    section: ICExt
+    option: "{{ item.key }}"
+    value: "{{ item.value }}"
+    no_extra_spaces: yes
+    backup: no
+  with_dict: {
+      ext_install_root: "{{ __targetpath }}/ConnectionsDocs/Docs/extension",
+      was_install_root: "{{ __was_root_path }}/profiles/{{ __nodeprfname }}",
+      was_soap_port: "{{ __wassoapport }}",
+      ic_extension_path: "{{ __shareddirectory }}/provision/webresources",
+      deamon_shared_path: "{{ __shareddirectory }}",
+      files_scope: "Cluster",
+      files_scope_name: "AppsCluster",
+      files_node_name: "",
+      news_scope: "Cluster",
+      news_scope_name: "InfraCluster",
+      news_node_name: "",
+      common_scope: "Cluster",
+      common_scope_name: "InfraCluster",
+      common_node_name: "",
+      docs_server_url: "https://{{ __cnxurl }}/docs",
+      ignore_event: "false",
+      docs_admin_j2c_alias: "docsAdmin",
+      ic_version :  4.5,
+      restart_connections: "False",
+      ccm_enabled: "False",
+      auth_type: 	"BASIC"
+  }
+  when: not docslc.stat.exists
+
+- name: Install Docs Extensions
+  shell: |
+    cd {{ __srcpath }}/docs/installscripts/DocsLCExtension/installer
+    ./install.sh -wasadminID {{ __wasadmin }} -wasadminPW {{ __wasadminpw }} -acceptLicense -configFile cfg.properties -silentlyInstall
+  args:
+    creates: "{{ __targetpath }}/ConnectionsDocs/Docs/extension/version/version.txt"
+  when: not docslc.stat.exists

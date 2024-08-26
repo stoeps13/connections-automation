@@ -1,0 +1,25 @@
+---
+- name: Update database to new schema
+  shell: |
+    source /home/{{ __instanceowner_name }}/.bashrc
+    cd {{ __installrootpath }}/docs/docs2.0CR3/SetupDB/db2
+    bash updateDBSchema.sh
+  args:
+    executable: /bin/bash
+  delegate_to: "{{ __db2server }}"
+  become: true
+  register: updateschema
+  become_user: "{{ __instanceowner_name }}"
+  #changed_when: updateschema.stdout contains 'your schema has been updated to version'
+
+- name: test output
+  debug:
+    var: updateschema
+
+- name: Update to CR3
+  shell: |
+    source /home/{{ __instanceowner_name }}/.bashrc
+    cd {{ __installrootpath }}/docs/docs2.0CR3
+    python applypatch.py -u {{ __wasadmin }} -p {{ __wasadminpw }} -i true -f {{ __was_root_path }}/profiles/{{ __nodeprfname }}/bin/wsadmin.sh -l https://{{ __cnxurl }}/files -a connectionsAdmin
+  args:
+    executable: /bin/bash

@@ -1,0 +1,14 @@
+'''
+    Author:         Christoph Stoettner
+    Mail:           stoeps@vegardit.com
+    Copyright:      2020 Vegard IT GmbH
+    Description:    Update proxy filter for if09
+
+'''
+
+AdminTask.updateAsset('[-contents {{ __was_root_path }}/WebSphere/AppServer/temp/concord.proxy.filter.jar -assetID WebSphere:assetname=concord.proxy.filter.jar -operation replace -AssetOptions [[concord.proxy.filter.jar "" "" "${USER_INSTALL_ROOT}/installedAssets/concord.proxy.filter.jar/BASE/concord.proxy.filter.jar" "WebSphere:spec=Java archive" "" .*\.dll=755#.*\.so=755#.*\.a=755#.*\.sl=755 false]]]') 
+
+# Only save when something is changed
+if (AdminConfig.hasChanges()):
+    print('Changed')
+    AdminConfig.save()

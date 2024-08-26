@@ -1,0 +1,1 @@
+$1  -headless -invisible -conversionmode -hidemenu -nofirststartwizard "-accept=socket,host=0.0.0.0,port=${2};urp;StarOffice.ServiceManager" &

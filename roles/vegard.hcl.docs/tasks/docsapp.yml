@@ -1,0 +1,71 @@
+---
+- name: Check if Docs is already installed
+  stat: path="{{ __targetpath }}/ConnectionsDocs/Docs/version"
+  register: docs
+
+- name: Create db2 variables for Connections Responsefile
+  set_fact:
+    __db2server: "{{ groups['databaseserver'][0] }}"
+  when: __db2server == ""
+
+- name: Create folder for Docs Editor
+  file:
+    path: "{{ __targetpath }}/ConnectionsDocs/Docs"
+    state: directory
+    mode: '0755'
+  when: not docs.stat.exists
+
+- name: Make install.sh executable
+  file:
+    path: "{{ __srcpath }}/docs/installscripts/DocsApp/installer/install.sh"
+    mode: '0755'
+  when: not docs.stat.exists
+    # Check if version.txt is available and only if not run following tasks
+
+- name: "Configure Docs properties"
+  ini_file:
+    path: "{{ __srcpath }}/docs/installscripts/DocsApp/installer/cfg.properties"
+    section: Docs
+    option: "{{ item.key }}"
+    value: "{{ item.value }}"
+    no_extra_spaces: yes
+    backup: no
+  with_dict: {
+    docs_install_root: "{{ __targetpath }}/ConnectionsDocs/Docs",
+    shared_data_dir: "{{ __shareddirectory }}/docs",
+    was_install_root: "{{ __was_root_path }}/profiles/{{ __nodeprfname }}",
+    integrate_with_LC: 'True',
+    use_initial_name: 'False',
+    LC_connect_attempt_count: 20,
+    LC_connect_attempt_interval: 500,
+    was_soap_port: "{{ __wassoapport }}",
+    scope: Cluster,
+    scope_name: DocsCluster,
+    node_name: "",
+    db_type: db2,
+    db_hostname: "{{ __db2server }}",
+    db_port: "{{ __db2port }}",
+    db_name :  "{{ __docsdbname }}",
+    db_jdbc_driver_path: "{{ __root_path }}/WebSphere/jdbc",
+    conversion_url: "https://{{ __cnxurl }}/conversion",
+    ic_admin_j2c_alias: connectionsAdmin,
+    files_url: "https://{{ __cnxurl }}/files",
+    email_url: "https://{{ __cnxurl }}/connections",
+    auth_type: FORM,
+    auth_host: "",
+    mt: 'False',
+    software_mode: Premise,
+    spreadsheet_nodejs_install: 'False',
+    webserver_name: "",
+    restart_webservers: 'False',
+    non_job_mgr_mode: 'True'
+  }
+  when: not docs.stat.exists
+
+- name: Install Docs
+  shell: |
+    cd {{ __srcpath }}/docs/installscripts/DocsApp/installer
+    #./install.sh -wasadminID {{ __wasadmin }} -wasadminPW {{ __wasadminpw }} -dbadminID {{ __docs_dbuser }} -dbadminPW {{ __docs_dbuser_password }} -acceptLicense -configFile cfg.properties -silentlyInstall
+  when: not docs.stat.exists
+  args:
+    creates: "{{ __targetpath }}/ConnectionsDocs/Docs/product/installer/version.txt"

@@ -1,0 +1,52 @@
+import time
+# Workaround for old python from IBM, that doesn't offer booleans
+# https://stackoverflow.com/a/31042962/9428314
+try: True, False
+except NameError: True = 1==1; False = 1==0
+
+# Enable security as requirement for CNX
+print 'Enable WAS security'
+AdminTask.configureAdminWIMUserRegistry('[-verifyRegistry true ]')
+
+node = "{{ cnxNode }}" # Add loop / variable for multiple webserver
+
+nodes = AdminTask.listUnmanagedNodes().splitlines()
+if node not in nodes:
+    dmgr = '{{ __dmgrprfname }}'
+    http_server = '{{ webserver_plgname }}'
+    cell = '{{ __cell }}'
+    was_app_server = '{{ __was_root_path }}'
+
+    print '[Changed]'
+    print 'Add unmanaged node {{ cnxNode }} and register it as webserver'
+    AdminTask.createUnmanagedNode('[-nodeName {{ cnxNode }} -hostName {{ ihsHostname }} -nodeOperatingSystem linux]')
+    
+    AdminTask.createWebServer('{{ cnxNode }}', '[-name {{ webserver_plgname }} -templateName IHS -serverConfig [-webPort 80 -serviceName -webInstallRoot {{ __ihs_install_location }} -webProtocol HTTP -configurationFile -errorLogfile -accessLogfile -pluginInstallRoot {{ __plg_install_location }} -webAppMapping ALL] -remoteServerConfig [-adminPort {{ __ihs_admin_port }} -adminUserID {{ __ihs_admin }} -adminPasswd {{ __ihs_admin_pw }} -adminProtocol HTTP]]')
+    # We need to save the node/webserver since on keystore copy/regenerate plugin it would be not recognized otherwise
+    AdminConfig.save()
+
+    print 'Trust webserver {{ ihsHostname }}'
+    # retrieveSignerInfoFromPort just SHOWS us the cert signer info, but not store it. For this purpose, we need retrieveSignerFromPort
+    #AdminTask.retrieveSignerInfoFromPort('[-host {{ ihsHostname }} -port 443 -sslConfigName CellDefaultSSLSettings -sslConfigScopeName (cell):' + cell + ' ]')
+    # https://www.ibm.com/support/knowledgecenter/de/SSAW57_8.5.5/com.ibm.websphere.nd.multiplatform.doc/ae/rxml_atsignercert.html#rxml_atsignercert__cmd6
+    AdminTask.retrieveSignerFromPort('[-host {{ ihsHostname }} -port 443 -certificateAlias ansible-custom-cert{{ index }} -keyStoreName CellDefaultTrustStore -sslConfigName CellDefaultSSLSettings -sslConfigScopeName (cell):' + cell + ' ]')
+    AdminConfig.save()
+
+    print 'Copy keystore'
+    cfg_generator = AdminControl.completeObjectName('WebSphere:name=PluginCfgGenerator,*')
+    AdminControl.invoke(cfg_generator, 'propagateKeyring', '[' + was_app_server + '/profiles/' + dmgr + '/config ' + cell + ' ' + node + ' {{ webserver_plgname }} ]')
+
+    print 'Re-generate plugin'
+    AdminControl.invoke(cfg_generator, 'generate', '[' + was_app_server + '/profiles/' + dmgr + '/config ' + cell + ' ' + node + ' {{ webserver_plgname }} false]')
+    time.sleep(2)
+
+    print 'Propagate plugin'
+    AdminControl.invoke(cfg_generator, 'propagate', '[' + was_app_server + '/profiles/' + dmgr + '/config ' + cell + ' ' + node +' {{ webserver_plgname }} ]')
+
+    print 'Save config'
+    
+    if (AdminConfig.hasChanges()):
+        print('Saving changes')
+        AdminConfig.save()
+else:
+    print 'Node already registered'

@@ -1,0 +1,36 @@
+'''
+    Author:         Christoph Stoettner
+    Mail:           stoeps@vegardit.com
+    Copyright:      2020 Vegard IT GmbH
+    Description:    Get Root Certificates from Nodes and publish in CMS (Webserver) Keystores
+
+'''
+
+# Get all webservers and nodeagents
+webservers = AdminTask.listServers('[-serverType WEB_SERVER]').splitlines()
+nodeagents = AdminTask.listServers('[-serverType NODE_AGENT]').splitlines()
+
+# Export Root certificate of all nodes
+for nodeagent in nodeagents:
+    nodename = nodeagent.split('/')[3]
+    cell     = nodeagent.split('/')[1]
+    AdminTask.extractSignerCertificate('[-keyStoreName NodeDefaultTrustStore -keyStoreScope (cell):' + cell + ':(node):' + nodename + ' -certificateFilePath /tmp/' + nodename + '.cer -base64Encoded true -certificateAlias root ]')
+
+# Import the certifiers in each webserver CMS Keystore
+for server in webservers:
+    srv     = server.split('/')
+    cell    = srv[1]
+    webnode = srv[3]
+    srvname = srv[5].split('|')[0]
+    for nodeagent in nodeagents:
+        nodename = nodeagent.split('/')[3]
+        # Import to CMS Keystore
+        AdminTask.addSignerCertificate('[-keyStoreName CMSKeyStore -keyStoreScope (cell):' + cell + ':(node):' + webnode + ':(server):' + srvname + ' -certificateFilePath /tmp/' + nodename + '.cer -base64Encoded true -certificateAlias ' + nodename + '-root ]') 
+    # Push certificates to the Webserver Plugins
+    generator = AdminControl.completeObjectName('type=PluginCfgGenerator,*')
+    AdminControl.invoke(generator, 'propagateKeyring', '[{{ __was_root_path }}/profiles/{{ __dmgrprfname }}/config ' + cell + ' ' + webnode + ' ' + srvname + ']')  
+
+# Only save when something is changed
+if (AdminConfig.hasChanges()):
+    print('Changed')
+    AdminConfig.save()

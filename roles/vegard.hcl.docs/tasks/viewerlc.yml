@@ -1,0 +1,63 @@
+---
+- name: Check if Viewer Extensions is already installed
+  stat: path="{{ __targetpath }}/ConnectionsDocs/Viewer/extension"
+  register: viewerlc
+
+- name: Create db2 variables for Connections Responsefile
+  set_fact:
+    __db2server: "{{ groups['databaseserver'][0] }}"
+  when: __db2server == ""
+
+- name: Create folder for Viewer Extension
+  file:
+    path: "{{ __targetpath }}/ConnectionsDocs/Viewer/extension"
+    state: directory
+    mode: '0755'
+  when: not viewerlc.stat.exists
+
+- name: Make install.sh executable
+  file:
+    path: "{{ __srcpath }}/docs/installscripts/ViewerLCCustomizeApp/installer/install.sh"
+    mode: '0755'
+  when: not viewerlc.stat.exists
+
+    # Check if version.txt is available and only if not run following tasks
+
+- name: "Configure Viewer extensions properties"
+  ini_file:
+    path: "{{ __srcpath }}/docs/installscripts/ViewerLCCustomizeApp/installer/cfg.properties"
+    section: ICExt
+    option: "{{ item.key }}"
+    value: "{{ item.value }}"
+    no_extra_spaces: yes
+    backup: no
+  with_dict: {
+    ext_install_root: "{{ __targetpath }}/ConnectionsDocs/Viewer/extension",
+    was_install_root: "{{ __was_root_path }}/profiles/{{ __nodeprfname }}",
+    was_soap_port: "{{ __wassoapport }}",
+    ic_extension_path: "{{ __shareddirectory }}/provision/webresources",
+    deamon_shared_path: "{{ __shareddirectory }}",
+    enable_upload_conversion: "Yes",
+    viewer_admin_j2c_alias: "viewerAdmin",
+    files_scope: "Cluster",
+    files_scope_name: "AppsCluster",
+    files_node_name: "",
+    news_scope: "Cluster",
+    news_scope_name: "InfraCluster",
+    news_node_name: "",
+    common_scope: "Cluster",
+    common_scope_name: "InfraCluster",
+    common_node_name: "",
+    viewer_server_url: "https://{{ __cnxurl }}/viewer",
+    restart_connections: "False",
+    ccm_enabled: "False"
+  }
+  when: not viewerlc.stat.exists
+
+- name: Install Viewer extensions
+  shell: |
+    cd {{ __srcpath }}/docs/installscripts/ViewerLCCustomizeApp/installer
+    ./install.sh -wasadminID {{ __wasadmin }} -wasadminPW {{ __wasadminpw }} -acceptLicense -configFile cfg.properties
+  args:
+    creates: "{{ __targetpath }}/ConnectionsDocs/Viewer/extension/version/version.txt"
+  when: not viewerlc.stat.exists
