@@ -2,6 +2,6 @@
 # defaults file for vegard.feb
 install_root_folder: "{{ hcl_program_folder }}"
 feb_root_folder: "{{ install_root_folder }}/CommunitySurveys"
-install_file_name: HCL_Connections_Community_Surveys_Lin.tar
+install_file_name: HCL_Connections_Community_Surveys_8.7_Lin.tar
 install_extraction_folder: "{{ tmp_dir }}/feb"
 feb_config_folder: "/opt/ibm/feb"
