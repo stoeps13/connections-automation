@@ -62,7 +62,7 @@
     msg: 'The installation folder is empty. Proceeding.'
 
 - name: Install Community Surveys
-  ansible.builtin.command: "{{ iim_install_location }}/eclipse/tools/imcl -input {{ install_extraction_folder }}/feb-response.xml -acceptLicense -dL {{ imshared_location }} -s"
+  ansible.builtin.command: "{{ iim_install_location }}/eclipse/tools/imcl -input {{ install_extraction_folder }}/feb-response.xml -acceptLicense -s"
   become: true
 
 - name: Create stax.properties
