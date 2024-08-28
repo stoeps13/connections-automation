@@ -1,0 +1,94 @@
+---
+# tasks file for vegard.feb
+#
+- name: Create FEB database
+  ansible.builtin.shell: |
+    set -e -o pipefail
+    whoami
+    source ~/.bashrc
+    cd /home/db2inst1
+    if [[ ! $(db2 list database directory | grep alias | grep FEBDB) ]]; then
+      db2 "CREATE DB FEBDB using codeset UTF-8 territory us PAGESIZE 32768"
+      db2 "CONNECT TO FEBDB"
+      db2 "CREATE BUFFERPOOL BUFFERFEB IMMEDIATE SIZE 250 PAGESIZE 32K"
+      db2 "CREATE USER TEMPORARY TABLESPACE LARGE_USERTEMP PAGESIZE 32k MANAGED BY AUTOMATIC STORAGE EXTENTSIZE 16 PREFETCHSIZE 16 BUFFERPOOL BUFFERFEB"
+      db2 "GRANT DBADM ON DATABASE TO USER LCUSER"
+      db2 "GRANT SECADM ON DATABASE TO USER LCUSER"
+      db2 "GRANT ACCESSCTRL ON DATABASE TO USER LCUSER"
+      db2 "GRANT DATAACCESS ON DATABASE TO USER LCUSER" && echo "Successfully created"
+    else
+      echo "Database already present"
+    fi
+  register: febdb_creation
+  changed_when: '"Database already present" not in febdb_creation.stdout'
+  failed_when: '"Successfully created" not in febdb_creation.stdout and "Database already present" not in febdb_creation.stdout'
+  become_user: db2inst1
+  delegate_to: "{{ hostvars[groups['db2_servers'][0]]['inventory_hostname'] }}"
+  become: true
+
+- name: Create FEB download folder
+  ansible.builtin.file:
+    path: "{{ install_extraction_folder }}"
+    state: directory
+    mode: '755'
+    owner: "{{ ansible_user_id }}"
+  become: true
+
+- name: Download package
+  ansible.builtin.unarchive:
+    src: "{{ tinyeditors_download_location }}/{{ install_file_name }}"
+    dest: "{{ install_extraction_folder }}"
+    remote_src: true
+
+- name: Copy Response file
+  ansible.builtin.template:
+    src: feb-response.xml.j2
+    dest: "{{ install_extraction_folder }}/feb-response.xml"
+    mode: '644'
+    owner: "{{ ansible_user_id }}"
+
+- name: Check if CommunitySurveys folder is empty before proceeding
+  ansible.builtin.find:
+    paths: '{{ feb_root_folder }}'
+  register: feb_files_found
+
+- name: Check if installation folder is empty
+  ansible.builtin.fail:
+    msg: "The folder {{ feb_root_folder }} is not empty"
+  when: feb_files_found.matched > 0
+
+- name: Folder is empty proceed with installation
+  ansible.builtin.debug:
+    msg: 'The installation folder is empty. Proceeding.'
+
+- name: Install Community Surveys
+  ansible.builtin.command: "{{ iim_install_location }}/eclipse/tools/imcl -input {{ install_extraction_folder }}/feb-response.xml -acceptLicense -dL {{ imshared_location }} -s"
+  become: true
+
+- name: Create stax.properties
+  ansible.builtin.copy:
+    src: "{{ was_install_location }}/java/jre/lib/stax.properties.sample"
+    dest: "{{ was_install_location }}/java/jre/lib/stax.properties"
+    remote_src: true
+    mode: '644'
+  become: true
+
+- name: Add entries to stax.properties
+  ansible.builtin.lineinfile:
+    dest: "{{ was_install_location }}/java/jre/lib/stax.properties"
+    line: |
+      javax.xml.stream.XMLInputFactory=com.ibm.xml.xlxp.api.stax.XMLInputFactoryImpl
+      javax.xml.stream.XMLOutputFactory=com.ibm.xml.xlxp.api.stax.XMLOutputFactoryImpl
+    state: present
+    mode: '644'
+    insertafter: EOF
+    create: true
+  become: true
+
+    # - name: Extract string files
+    #
+    # - name: Copy webresources
+    #
+    # - name: Register strings files in LCC.xml
+    #
+    # - name: Add surveys widget to widgets-config.xml

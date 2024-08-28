@@ -1,0 +1,6 @@
+---
+# Setup Nginx
+- name: Install Community Surveys
+  hosts: cnx_was_servers[0]
+  roles:
+    - roles/vegard.feb

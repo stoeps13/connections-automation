@@ -1,0 +1,6 @@
+---
+# Setup Nginx
+- name: Install Tiny Editors (stoeps version)
+  hosts: dmgr
+  roles:
+    - roles/vegard.tiny

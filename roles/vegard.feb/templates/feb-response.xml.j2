@@ -1,0 +1,43 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<agent-input>
+  <variables>
+  <variable name='sharedLocation' value='{{ imshared_location }}'/>
+  </variables>
+  <server>
+  <repository location='{{ install_extraction_folder }}/FormsImage'/>
+  </server>
+  <profile id='CommunitySurveys' installLocation='{{ feb_root_folder }}'>
+    <data key='cic.selector.arch' value='x86_64'/>
+    <data key='user.profile.was.location,com.ibm.nitro.iim' value='{{ was_install_location }}'/>
+    <data key='user.profile.was.profile.name,com.ibm.nitro.iim' value='AppSrv01'/>
+    <data key='user.profile.was.host,com.ibm.nitro.iim' value='{{ dmgr_hostname }}'/>
+    <data key='user.profile.was.port,com.ibm.nitro.iim' value='8879'/>
+    <data key='user.profile.was.admin.name,com.ibm.nitro.iim' value='{{ was_username }}'/>
+    <data key='user.profile.was.server.name,com.ibm.nitro.iim' value="Util-{{ hostvars[groups['cnx_was_servers'][0]]['inventory_hostname'].split('.') }}"/>
+    <data key='user.profile.was.profile.location,com.ibm.nitro.iim' value='{{ was_install_location }}/profiles/AppSrv01'/>
+    <data key='user.profile.was.admin.password,com.ibm.nitro.iim' value='{{ was_password | b64encode }}'/>
+    <data key='user.profile.was.data.source.name,com.ibm.nitro.iim' value='IBM_FORMS_DATA_SOURCE'/>
+    <data key='user.profile.was.jdbc.library.location,com.ibm.nitro.iim' value='{{ __db2_default_jdbc_file }}'/>
+    <data key='user.profile.was.database.password,com.ibm.nitro.iim' value='{{ db_password | b64encode }}'/>
+    <data key='user.profile.was.jdbc.provider.name,com.ibm.nitro.iim' value='IBM_FORMS_JDBC_PROVIDER'/>
+    <data key='user.profile.was.database.server.name,com.ibm.nitro.iim' value="{{ hostvars[groups['db2_servers'][0]]['inventory_hostname'] }}"/>
+    <data key='user.profile.was.database.name,com.ibm.nitro.iim' value='FEBDB'/>
+    <data key='user.profile.was.database.driver.type,com.ibm.nitro.iim' value='4'/>
+    <data key='user.profile.was.database.type,com.ibm.nitro.iim' value='DB2'/>
+    <data key='user.profile.was.database.user,com.ibm.nitro.iim' value='db2inst1'/>
+    <data key='user.profile.was.database.server.port,com.ibm.nitro.iim' value='50000'/>
+    <data key='user.profile.was.mail.transport.server,com.ibm.nitro.iim' value='localhost'/>
+    <data key='user.profile.was.mail.transport.password,com.ibm.nitro.iim' value='XjTveChg5ba6olBVMK/Reg=='/>
+    <data key='user.profile.was.mail.transport.password.verify,com.ibm.nitro.iim' value='XjTveChg5ba6olBVMK/Reg=='/>
+    <data key='user.profile.was.mail.transport.protocol,com.ibm.nitro.iim' value='smtp'/>
+    <data key='user.profile.was.mail.session.name,com.ibm.nitro.iim' value='COMMUNITY_SURVEYS_MAIL_SESSION'/>
+    <data key='user.profile.portlet.job.type,com.ibm.nitro.iim' value='UNKNOWN'/>
+    <data key='user.profile.was.job.type,com.ibm.nitro.iim' value='INSTALL'/>
+    <data key='user.profile.job.type,com.ibm.nitro.iim' value='INSTALL'/>
+  </profile>
+  <install>
+    <!-- Community Surveys 8.7.0.0 -->
+    <offering profile='CommunitySurveys' id='com.ibm.nitro.iim' version='8.7.0.20200708-1945-52' features='binary.feature'/>
+  </install>
+  <preference name='com.ibm.cic.common.core.preferences.eclipseCache' value='${sharedLocation}'/>
+</agent-input>
