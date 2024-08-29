@@ -109,6 +109,11 @@
   when:
     - inventory_hostname in groups['ihs_servers']
 
+- name: Stop IHS processes
+  ansible.builtin.shell: |
+    {{ ihs_root_folder }}/bin/adminctl stop
+
+  become: true
 - name: Enable Systemd (ihs)
   ansible.builtin.systemd_service:
     name: "{{ item.dest }}"
