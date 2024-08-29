@@ -47,43 +47,57 @@
     mode: '644'
     owner: "{{ ansible_user_id }}"
 
+- name: Check if CommunitySurveys folder exists
+  ansible.builtin.stat:
+    path: '{{ feb_root_folder }}'
+  register: feb_folder_exists
+
 - name: Check if CommunitySurveys folder is empty before proceeding
   ansible.builtin.find:
     paths: '{{ feb_root_folder }}'
   register: feb_files_found
+  when: feb_folder_exists.stat.exists
 
-- name: Check if installation folder is empty
-  ansible.builtin.fail:
-    msg: "The folder {{ feb_root_folder }} is not empty"
-  when: feb_files_found.matched > 0
+- name: Skip install if CommunitySurveys folder is not empty
+  block:
 
-- name: Folder is empty proceed with installation
-  ansible.builtin.debug:
-    msg: 'The installation folder is empty. Proceeding.'
+    - name: Check if installation folder is empty
+      ansible.builtin.fail:
+        msg: "The folder {{ feb_root_folder }} is not empty"
+      when:
+        - feb_files_found.matched > 0
 
-- name: Install Community Surveys
-  ansible.builtin.command: "{{ iim_install_location }}/eclipse/tools/imcl -input {{ install_extraction_folder }}/feb-response.xml -acceptLicense -s"
-  become: true
+  rescue:
 
-- name: Create stax.properties
-  ansible.builtin.copy:
-    src: "{{ was_install_location }}/java/jre/lib/stax.properties.sample"
-    dest: "{{ was_install_location }}/java/jre/lib/stax.properties"
-    remote_src: true
-    mode: '644'
-  become: true
+    - name: Folder is empty proceed with installation
+      ansible.builtin.debug:
+        msg: 'The installation folder is empty. Proceeding.'
 
-- name: Add entries to stax.properties
-  ansible.builtin.lineinfile:
-    dest: "{{ was_install_location }}/java/jre/lib/stax.properties"
-    line: |
-      javax.xml.stream.XMLInputFactory=com.ibm.xml.xlxp.api.stax.XMLInputFactoryImpl
-      javax.xml.stream.XMLOutputFactory=com.ibm.xml.xlxp.api.stax.XMLOutputFactoryImpl
-    state: present
-    mode: '644'
-    insertafter: EOF
-    create: true
-  become: true
+    - name: Install Community Surveys
+      ansible.builtin.command: "{{ iim_install_location }}/eclipse/tools/imcl -input {{ install_extraction_folder }}/feb-response.xml -acceptLicense -s"
+      become: true
+
+  always:
+
+    - name: Create stax.properties
+      ansible.builtin.copy:
+        src: "{{ was_install_location }}/java/jre/lib/stax.properties.sample"
+        dest: "{{ was_install_location }}/java/jre/lib/stax.properties"
+        remote_src: true
+        mode: '644'
+      become: true
+
+    - name: Add entries to stax.properties
+      ansible.builtin.lineinfile:
+        dest: "{{ was_install_location }}/java/jre/lib/stax.properties"
+        line: |
+          javax.xml.stream.XMLInputFactory=com.ibm.xml.xlxp.api.stax.XMLInputFactoryImpl
+          javax.xml.stream.XMLOutputFactory=com.ibm.xml.xlxp.api.stax.XMLOutputFactoryImpl
+        state: present
+        mode: '644'
+        insertafter: EOF
+        create: true
+      become: true
 
     # - name: Extract string files
     #
