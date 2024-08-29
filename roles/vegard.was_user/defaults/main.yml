@@ -1,0 +1,9 @@
+---
+# defaults file for vegard.was-user
+was_run_user: cnxwas
+was_run_group: cnxwas
+was_root_folder: "{{ was_install_location }}"
+ihs_root_folder: "{{ ihs_install_location }}"
+was_password: "{{ was_password }}"
+was_username: "{{ was_username }}"
+

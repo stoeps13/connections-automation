@@ -1,0 +1,6 @@
+---
+# Setup Nginx
+- name: Set WebSphere user to non-root and enable autostart
+  hosts: was_servers, dmgr, ihs_servers
+  roles:
+    - roles/vegard.was_user

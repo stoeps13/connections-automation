@@ -1,0 +1,118 @@
+---
+# tasks file for vegard.was-user
+#
+# Run on all was_servers
+# - create systemd files for dmgr and appsrv
+# - chown was run user for all was and shared files
+# - create systemd files for ihs
+# - check owner
+- name: Create group for non-root user
+  ansible.builtin.group:
+    name: "{{ was_run_group }}"
+    state: present
+  become: true
+
+- name: Add non-root user to run WebSphere
+  ansible.builtin.user:
+    name: "{{ was_run_user }}"
+    comment: WebSphere Run User
+    uid: 2100
+    group: "{{ was_run_group }}"
+    append: true
+  become: true
+
+- name: Stop WebSphere processes (Dmgr)
+  ansible.builtin.shell: |
+    cd {{ was_root_folder }}/profiles/Dmgr01/bin
+    ./stopManager.sh -username {{ was_username }} -password {{ was_password }}
+  become: true
+  ignore_errors: true
+  when:
+    - inventory_hostname in groups['dmgr']
+
+- name: Stop WebSphere processes (Nodes)
+  ansible.builtin.shell: |
+    cd {{ was_root_folder }}/profiles/AppSrv01/bin
+    ./stopNode.sh -username {{ was_username }} -password {{ was_password }} -stopservers
+  become: true
+  ignore_errors: true
+  when:
+    - inventory_hostname in groups['was_servers']
+
+- name: Chown WebSphere tree
+  ansible.builtin.file:
+    path: "{{ was_root_folder }}"
+    owner: "{{ was_run_user }}"
+    group: "{{ was_run_group }}"
+    recurse: true
+  become: true
+  when:
+    - inventory_hostname in groups['dmgr'] or inventory_hostname in groups['was_servers']
+
+- name: Copy templates to systemd (dmgr)
+  ansible.builtin.template:
+    src: "{{ item.src }}"
+    dest: "/etc/systemd/system/{{ item.dest }}"
+    mode: '644'
+  become: true
+  loop:
+    - { src: 'was-dmgr.service.j2', dest: 'was-dmgr.service' }
+  when:
+    - inventory_hostname in groups['dmgr']
+
+- name: Enable Systemd (dmgr)
+  ansible.builtin.systemd_service:
+    name: "{{ item.dest }}"
+    enabled: true
+    state: started
+  become: true
+  loop:
+    - { src: 'was-dmgr.service.j2', dest: 'was-dmgr.service' }
+  when:
+    - inventory_hostname in groups['dmgr']
+
+- name: Copy templates to systemd (was-node)
+  ansible.builtin.template:
+    src: "{{ item.src }}"
+    dest: "/etc/systemd/system/{{ item.dest }}"
+    mode: '644'
+  become: true
+  loop:
+    - { src: 'was-node.service.j2', dest: 'was-node.service' }
+  when:
+    - inventory_hostname in groups['was_servers']
+
+- name: Enable Systemd (was-node)
+  ansible.builtin.systemd_service:
+    name: "{{ item.dest }}"
+    enabled: true
+    state: started
+  become: true
+  loop:
+    - { src: 'was-node.service.j2', dest: 'was-node.service' }
+  when:
+    - inventory_hostname in groups['was_servers']
+
+- name: Copy templates to systemd (ihs)
+  ansible.builtin.template:
+    src: "{{ item.src }}"
+    dest: "/etc/systemd/system/{{ item.dest }}"
+    mode: '644'
+  become: true
+  loop:
+    - { src: 'was-ihs.service.j2', dest: 'was-ihs.service' }
+    - { src: 'was-ihs-admin.service.j2', dest: 'was-ihs-admin.service' }
+  when:
+    - inventory_hostname in groups['ihs_servers']
+
+- name: Enable Systemd (ihs)
+  ansible.builtin.systemd_service:
+    name: "{{ item.dest }}"
+    enabled: true
+    state: started
+  become: true
+  loop:
+    - { src: 'was-ihs.service.j2', dest: 'was-ihs.service' }
+    - { src: 'was-ihs-admin.service.j2', dest: 'was-ihs-admin.service' }
+  when:
+    - inventory_hostname in groups['ihs_servers']

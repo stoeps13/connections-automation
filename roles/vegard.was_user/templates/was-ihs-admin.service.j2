@@ -1,0 +1,18 @@
+[Unit]
+Description=The IBM HTTP Server Admin
+After=network.target remote-fs.target nss-lookup.target
+Documentation=https://help.hcltechsw.com/connections/v7/admin/welcome/welcome_admin.html
+
+[Service]
+Type=forking
+Environment=APACHE_STARTED_BY_SYSTEMD=true
+ExecStart={{ ihs_root_folder }}/bin/adminctl start
+ExecStop={{ ihs_root_folder }}/bin/adminctl graceful-stop
+ExecReload={{ ihs_root_folder }}/bin/adminctl graceful
+KillMode=mixed
+PrivateTmp=true
+Restart=on-abort
+OOMPolicy=continue
+
+[Install]
+WantedBy=multi-user.target

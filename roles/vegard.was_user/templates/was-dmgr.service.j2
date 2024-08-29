@@ -1,0 +1,15 @@
+[Unit]
+Description=IBM WebSphere Application Server - Deployment Manager
+After=network.target remote-fs.target nss-lookup.target
+
+[Service]
+Type=forking
+PIDFile={{ was_root_folder }}/profiles/Dmgr01/logs/dmgr/dmgr.pid
+ExecStart={{ was_root_folder }}/profiles/Dmgr01/bin/startManager.sh
+ExecStop={{ was_root_folder }}/profiles/Dmgr01/bin/stopManager.sh -username {{ was_username }} -password {{ was_password }}
+LimitNOFILE=infinity
+User={{ was_run_user }}
+Group={{ was_run_group }}
+
+[Install]
+WantedBy=multi-user.target
