@@ -1,0 +1,25 @@
+---
+# tasks file for vegard.was-stop
+- name: Stop Systemd DMGR
+  ansible.builtin.systemd_service:
+    name: was-dmgr.service
+    state: stopped
+  become: true
+
+- name: Stop Systemd NodeAgents
+  ansible.builtin.systemd_service:
+    name: was-node.service
+    state: stopped
+  become: true
+
+- name: Stop IHS
+  ansible.builtin.systemd_service:
+    name: was-ihs.service
+    state: stopped
+  become: true
+
+- name: Stop IHS Admin
+  ansible.builtin.systemd_service:
+    name: was-ihs-admin.service
+    state: stopped
+  become: true

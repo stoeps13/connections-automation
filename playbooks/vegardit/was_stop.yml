@@ -1,0 +1,6 @@
+---
+# Setup Nginx
+- name: Stop WebSphere and IHS
+  hosts: was_servers, dmgr
+  roles:
+    - roles/vegard.was_stop
