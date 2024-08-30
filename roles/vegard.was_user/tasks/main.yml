@@ -65,7 +65,7 @@
     - inventory_hostname in groups['dmgr']
 
 - name: Enable Systemd (dmgr)
-  ansible.builtin.systemd_service:
+  ansible.builtin.systemd:
     name: "{{ item.dest }}"
     enabled: true
     state: started
@@ -87,7 +87,7 @@
     - inventory_hostname in groups['was_servers']
 
 - name: Enable Systemd (was-node)
-  ansible.builtin.systemd_service:
+  ansible.builtin.systemd:
     name: "{{ item.dest }}"
     enabled: true
     state: started
@@ -115,7 +115,7 @@
 
   become: true
 - name: Enable Systemd (ihs)
-  ansible.builtin.systemd_service:
+  ansible.builtin.systemd:
     name: "{{ item.dest }}"
     enabled: true
     state: started
