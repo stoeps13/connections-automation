@@ -5,21 +5,29 @@
     name: was-dmgr.service
     state: stopped
   become: true
+  when:
+    - inventory_hostname in groups['dmgr']
 
 - name: Stop Systemd NodeAgents
   ansible.builtin.systemd:
     name: was-node.service
     state: stopped
   become: true
+  when:
+    - inventory_hostname in groups['was_servers']
 
 - name: Stop IHS
   ansible.builtin.systemd:
     name: was-ihs.service
     state: stopped
   become: true
+  when:
+    - inventory_hostname in groups['ihs_servers']
 
 - name: Stop IHS Admin
   ansible.builtin.systemd:
     name: was-ihs-admin.service
     state: stopped
   become: true
+  when:
+    - inventory_hostname in groups['ihs_servers']
