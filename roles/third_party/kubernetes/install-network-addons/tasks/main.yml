@@ -1,3 +1,6 @@
 ---
-- name:          Install addons
-  include_tasks: install_addons.yml
+# - name:          Install addons
+#   include_tasks: install_addons.yml
+#
+- name: Install Cilium
+  include_tasks: install_cilium.yml
