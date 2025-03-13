@@ -12,7 +12,7 @@ __nginx_version:                "{{ nginx_version | default('1.26.1') }}"
 __nginx_url:                    "http://nginx.org/download/nginx-{{ __nginx_version }}.tar.gz"
 __nginx_download_dir:           "/tmp/nginx-{{ __nginx_version }}"
 
-__nginx_headers_more_version:   "0.37"
+__nginx_headers_more_version:   "0.38"
 __nginx_headers_more_url:       "https://github.com/openresty/headers-more-nginx-module/archive/refs/tags/v{{ __nginx_headers_more_version }}.tar.gz"
 __nginx_headers_more_version_download_dir:           "/tmp/headers-more-nginx-module-{{ __nginx_headers_more_version }}"
 
@@ -48,7 +48,7 @@ __mw_proxy_address:             "{{ load_balancer_dns | default('localhost') }}"
 __mw_proxy_port:                "{{ mw_proxy_port | default('30301') }}"
 
 __customizer_conf_template:     "customizer.conf.j2"
-__customizer_conf_location:     "{{ __conf_d_location }}/customizer.conf" 
+__customizer_conf_location:     "{{ __conf_d_location }}/customizer.conf"
 
 __param_nofile_soft:            "64000"
 __param_nofile_hard:            "64000"

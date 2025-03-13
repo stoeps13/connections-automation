@@ -13,7 +13,7 @@
 
 - name:               Is this a Docs Conversion upgrade?
   debug:              var=conversion_upgrade
-  
+
 - name:               Install needed packages
   package:
     name:             "{{ item }}"
@@ -21,6 +21,17 @@
   loop:
     - xorg-x11-server-Xvfb
     - libSM.i686
+
+- name: Replace install_sym.py
+  ansible.builtin.copy:
+    src: install_sym.py
+    dest: "{{ __conversion_cfg_prop_location }}/conversion/install_sym.py"
+
+- name: Update LibreOffice version
+  ansible.builtin.replace:
+    path: "{{ __extraction_folder }}/{{ __conversion_install_folder }}/config/conversion-config.json"
+    regexp: "libreoffice7.2"
+    replace: "libreoffice7.6"
 
 # cfg.properties and cfg.node.properties content are the same so omit copying unlike install_docs_editor_sec_node.yml
 # upgrade actually uses the cfg file in the program folder but updating it anyway in case we need it

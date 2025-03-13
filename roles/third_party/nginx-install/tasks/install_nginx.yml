@@ -1,51 +1,59 @@
-- name:                     Install nginx
-  package:
-    name:                   nginx
-    state:                  latest
-    allow_downgrade:        yes
-  when:                     not __build_nginx|bool
+---
+- name: Install nginx
+  ansible.builtin.package:
+    name: nginx
+    state: latest
+    allow_downgrade: true
+  when: not __build_nginx|bool
 
-- name:                     Build and Install nginx
-  include_tasks:            download_and_build_nginx.yml
-  when:                     __build_nginx|bool
+- name: Build and Install nginx
+  ansible.builtin.include_tasks: download_and_build_nginx.yml
+  when: __build_nginx|bool
 
-- name:                     Create Nginx folders
-  file:
-    path:                   "{{ item }}"
-    state:                  directory
+- name: Create Nginx folders
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: "750"
+    owner: nginx
+    group: nginx
   with_items:
-   - "{{ __nginx_install_dir }}/ssl"
+    - "{{ __nginx_install_dir }}/ssl"
 
-- name:                     Apply nginx.conf
-  template:
-    src:                    "{{ __nginx_conf_template }}"
-    dest:                   "{{ __nginx_conf_location }}"
+- name: Apply nginx.conf
+  ansible.builtin.template:
+    src: "{{ __nginx_conf_template }}"
+    dest: "{{ __nginx_conf_location }}"
+    mode: "640"
+    owner: nginx
+    group: nginx
 
-- name:                     Apply cnf file
-  template:
-    src:                    "{{ __nginx_cnf_template }}"
-    dest:                   "{{ __nginx_cnf_location }}"
+- name: Apply cnf file
+  ansible.builtin.template:
+    src: "{{ __nginx_cnf_template }}"
+    dest: "{{ __nginx_cnf_location }}"
+    mode: "640"
+    owner: nginx
+    group: nginx
 
-- name:                     Create SSL certificates
-  command:                  "{{ item }}"
-  with_items:
-    - openssl req -x509 -nodes -days 1825 -newkey rsa:4096 -sha256 -config {{ __nginx_cnf_location }} -subj "{{ __ssl_root_ca }}"  -keyout {{ __nginx_key_file }}  -out {{ __nginx_crt_file }} -batch
+- name: Create SSL certificates
+  ansible.builtin.command: 'openssl req -x509 -nodes -days 1825 -newkey rsa:4096 -sha256 -config {{ __nginx_cnf_location }} -subj "{{ __ssl_root_ca }}"  -keyout {{ __nginx_key_file }}  -out {{ __nginx_crt_file }} -batch'
 
-- name:                     Start Nginx service
-  service:
-    name:                   nginx
-    state:                  restarted
-    enabled:                yes
-    daemon_reload:          yes
+- name: Start Nginx service
+  ansible.builtin.service:
+    name: nginx
+    state: restarted
+    enabled: true
+    daemon_reload: true
 
-- name:                     Add the NGINX certificate to trust store (if DMGR is up)
+- name: Add the NGINX certificate to trust store (if DMGR is up)
+  delegate_to: "{{ dmgr_hostname }}"
   block:
     - include_role:
-        name:               roles/third_party/ibm/wasnd/was-dmgr-config-add-cert-truststore
+        name: roles/third_party/ibm/wasnd/was-dmgr-config-add-cert-truststore
       vars:
         __trust_cert_host: "{{ inventory_hostname }}"
-  delegate_to:             "{{ dmgr_hostname }}"
   rescue:
-    - name:                 Display warning if certificate is not added
+    - name: Display warning if certificate is not added
       debug:
-        msg:                "Warning: Unable to add the NGINX certificate to the DMGR trust store. This might be because the DMGR is not running. Please add the certificate manually."
+        msg: "Warning: Unable to add the NGINX certificate to the DMGR trust store. This might be because the DMGR is not running. Please add the certificate manually."

@@ -12,5 +12,5 @@
   ignore_errors: true
 
 - name: Install cilium
-  ansible.builtin.command: cilium install
+  ansible.builtin.command: /usr/local/bin/cilium install
   ignore_errors: true

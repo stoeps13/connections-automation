@@ -49,7 +49,7 @@
       state:                present
       system:               yes
     when:                   nginx_needs_update
-    
+
   - name:                   Add the headers-more-nginx-module module
     shell:
       chdir:                "{{ __nginx_download_dir }}"
@@ -66,7 +66,7 @@
       state:                present
     when:
       - ansible_distribution == "SLES"
-      
+
   - name:                   Compile NGINX from source
     shell:
       chdir:                "{{ __nginx_download_dir }}"

@@ -108,7 +108,6 @@
   with_items:
     - "{{ __success_file }}"
     - "{{ __ic360_success_file }}"
-    - "{{ __sharepoint_success_file }}"
   when:
     - __cnx_force_repopulation |bool
 
@@ -162,23 +161,23 @@
   when:
     - not migrations_already_done.stat.exists
 
-- name:                  "Verify if Sharepoint migration has already run"
-  stat:
-    path:                "{{ __sharepoint_success_file }}"
-  register:              sharepoint_migrations_already_done
-
-- name:                  Run Sharepoint migration for Connections 7
-  include_tasks:         ../../../third_party/ibm/db2-install/tasks/run_db_command.yaml
-  register:              sharepoint_migration_result
-  vars:
-    db_command:          "{{ __db2_migration_cmd }} {{ __installation_folder }}/{{ item }}"
-  with_items:
-   - "connections.sql/homepage/db2/upgrade-60CR4-70.sql"
-  when:
-    - not sharepoint_migrations_already_done.stat.exists
-    - __db_version == '7.0'
-    - __db_enable_upgrades |bool
-
+# - name:                  "Verify if Sharepoint migration has already run"
+#   stat:
+#     path:                "{{ __sharepoint_success_file }}"
+#   register:              sharepoint_migrations_already_done
+#
+# - name:                  Run Sharepoint migration for Connections 7
+#   include_tasks:         ../../../third_party/ibm/db2-install/tasks/run_db_command.yaml
+#   register:              sharepoint_migration_result
+#   vars:
+#     db_command:          "{{ __db2_migration_cmd }} {{ __installation_folder }}/{{ item }}"
+#   with_items:
+#    - "connections.sql/homepage/db2/upgrade-60CR4-70.sql"
+#   when:
+#     - not sharepoint_migrations_already_done.stat.exists
+#     - __db_version == '7.0'
+#     - __db_enable_upgrades |bool
+#
 - name:                  Run Profiles migration for Connections 8
   include_tasks:         ../../../third_party/ibm/db2-install/tasks/run_db_command.yml
   vars:
@@ -269,13 +268,13 @@
    - ic360_migration_result is not skipped
    - not ic360_migrations_already_done.stat.exists
 
-- name:                  "Create {{ __sharepoint_success_file }} file"
-  file:
-    path:                "{{ __sharepoint_success_file }}"
-    state:               touch
-  when:
-   - sharepoint_migration_result is not skipped
-   - not sharepoint_migrations_already_done.stat.exists
+# - name:                  "Create {{ __sharepoint_success_file }} file"
+#   file:
+#     path:                "{{ __sharepoint_success_file }}"
+#     state:               touch
+#   when:
+#    - sharepoint_migration_result is not skipped
+#    - not sharepoint_migrations_already_done.stat.exists
 
 - name:                  Clean up installation folder(s)
   file:
@@ -283,4 +282,4 @@
     state:               absent
   when:
     -  not __keep_db_extraction_folder
-    
+

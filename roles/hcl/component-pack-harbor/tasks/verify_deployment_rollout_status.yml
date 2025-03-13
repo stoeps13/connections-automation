@@ -1,6 +1,6 @@
 ---
 - name:               Check if all Deployments (except retrievalservice and indexingservice) are ready
-  shell:              "kubectl -n {{ __default_namespace }} rollout status deploy $(kubectl -n {{ __default_namespace }} get deploy | grep -vE \"retrievalservice|indexingservice|NAME\" | awk '{print $1}') --timeout=300s > /dev/null"
+  shell:              "kubectl -n {{ __default_namespace }} rollout status deploy $(kubectl -n {{ __default_namespace }} get deploy | grep -vE \"retrievalservice|indexingservice|kudos-boards|NAME\" | awk '{print $1}') --timeout=300s > /dev/null"
   when:
     - inventory_hostname == groups['k8s_masters'][0]
   become_user:        "{{ __sudo_user }}"
