@@ -13,15 +13,27 @@ __hcl_program_folder: "{{ hcl_program_folder | default('/opt/HCL') }}"
 __extraction_folder: "{{ __hcl_program_folder }}/InstallBinaries/TinyEditors"
 __installation_folder: "{{ __extraction_folder }}/TinyEditorsForConnections"
 
-__tinyeditors_config_file_path: "{{ tinyeditors_config_file_path | default('/opt/ephox') }}"
-__tinyeditors_config_file_name: "{{ tinyeditors_config_file_name | default('application.conf') }}"
-__tinyeditors_conf_template: "configure-tiny-editors.j2"
-__tinyeditors_conf_destination: "{{ __tinyeditors_config_file_path }}/{{ __tinyeditors_config_file_name }}"
-__profile_name: "{{ profile_name | default('Dmgr01') }}"
-__was_install_location: "{{ was_install_location  | default('/opt/IBM/WebSphere/AppServer') }}"
-__was_username: "{{ was_username }}"
-__was_password: "{{ was_password }}"
-__dmgr_soap_port: "{{ dmgr_soap_port | default('8879')}}"
-__dmgr_hostname: "{{ groups['dmgr'][0] }}"
-__was_cellname: "{{ was_cellname | default('ConnectionsCell') }}"
-__was_hostname: "{{ inventory_hostname }}"
+__tinyeditors_config_file_path:   "{{ tinyeditors_config_file_path | default('/opt/ephox') }}"
+__tinyeditors_config_file_name:   "{{ tinyeditors_config_file_name | default('application.conf') }}"
+__tinyeditors_conf_template:      "configure-tiny-editors.j2"
+__tinyeditors_conf_destination:   "{{ __tinyeditors_config_file_path }}/{{ __tinyeditors_config_file_name }}"
+__tinyeditorservice_template:     "configure-tiny-editor-service.j2"
+
+__profile_name:                   "{{ profile_name | default('Dmgr01') }}"
+__was_install_location:           "{{ was_install_location  | default('/opt/IBM/WebSphere/AppServer') }}"
+__was_username:                   "{{ was_username }}"
+__was_password:                   "{{ was_password }}"
+__dmgr_soap_port:                 "{{ dmgr_soap_port | default('8879')}}"
+__dmgr_hostname:                  "{{ groups['dmgr'][0] }}"
+__was_cellname:                   "{{ was_cellname | default('ConnectionsCell') }}"
+__was_hostname:                   "{{ inventory_hostname }}"
+
+__cnx_deploy_type:                "{{ cnx_deploy_type | default('small') }}"
+__tinysvc_link_common: >-
+  {{ tinysvc_link_common
+     | default(
+         'Apps' if __cnx_deploy_type == 'small' else
+         'Infra' if __cnx_deploy_type == 'medium' else
+         'Common'
+       )
+  }}
