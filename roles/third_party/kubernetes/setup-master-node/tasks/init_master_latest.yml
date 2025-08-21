@@ -48,6 +48,7 @@
   register:           master_certificate_key
   when:
     - inventory_hostname == groups['k8s_masters'][0]
+    - master_already_initialized.rc != 0
     - ((groups.k8s_workers | difference(groups.k8s_masters) | list)== []  and (groups.k8s_masters|length) == 1 and (groups.k8s_workers|length) == 1 ) != true
 
 - name:               Show me master_certificate_key
@@ -55,6 +56,7 @@
     msg:              "{{ master_certificate_key.content | b64decode | replace('\n', '') }}"
   when:
     - inventory_hostname == groups['k8s_masters'][0]
+    - master_already_initialized.rc != 0
     - ((groups.k8s_workers | difference(groups.k8s_masters) | list)== []  and (groups.k8s_masters|length) == 1 and (groups.k8s_workers|length) == 1 ) != true
   ignore_errors:      true
 
@@ -77,4 +79,5 @@
   register:           join_command
   when:
     - inventory_hostname == groups['k8s_masters'][0]
+    - master_already_initialized.rc != 0
     - ((groups.k8s_workers | difference(groups.k8s_masters) | list)== []  and (groups.k8s_masters|length) == 1 and (groups.k8s_workers|length) == 1 ) != true

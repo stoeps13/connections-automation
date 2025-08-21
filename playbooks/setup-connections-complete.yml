@@ -12,13 +12,13 @@
 #
 # - name:                  Setup IBM SDI
 #   import_playbook:       third_party/setup-tdi.yml
-
+#
 # - name:                  Setup WebSphere ND
 #   import_playbook:       third_party/setup-webspherend.yml
-#
-- name:                  Setup HCL Connections
-  import_playbook:       hcl/setup-connections-only.yml
 
-- name:                  Update HCL Connections
-  import_playbook:       hcl/setup-connections-ifix.yml
-  when:                  ifix_apar is defined
+- name: Setup HCL Connections
+  import_playbook: hcl/setup-connections-only.yml
+
+- name: Update HCL Connections
+  import_playbook: hcl/setup-connections-ifix.yml
+  when: ifix_apar is defined

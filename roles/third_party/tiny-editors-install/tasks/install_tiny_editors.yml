@@ -5,7 +5,7 @@
 
 - name: "Change the ownership of CONNECTIONS_CUSTOMIZATION_PATH and CONNECTIONS_PROVISION_PATH from root to {{ __tinyeditors_username }}"
   become: true
-  ansible.builtin.ansible.builtin.file:
+  ansible.builtin.file:
     path: "{{ item }}"
     recurse: true
     owner: "{{ __tinyeditors_username }}"
