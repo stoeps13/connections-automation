@@ -1,6 +1,6 @@
 ---
 - name:                    Install Tiny Editors
-  hosts:                   dmgr
+  hosts:                   dmgr, cnx_was_servers
   become:                  true
   vars:
     uninstall_tinyeditors: false
