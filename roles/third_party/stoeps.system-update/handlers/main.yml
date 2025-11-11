@@ -1,0 +1,7 @@
+#SPDX-License-Identifier: MIT-0
+---
+# handlers file for stoeps.system-update
+- name: reboot if kernel updated
+  ansible.builtin.reboot:
+    reboot_timeout: 300
+  when: dnf_result.results | selectattr('name', 'match', '^kernel') | list | length > 0

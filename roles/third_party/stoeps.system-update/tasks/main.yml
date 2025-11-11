@@ -1,0 +1,14 @@
+#SPDX-License-Identifier: MIT-0
+---
+# tasks file for stoeps.system-update
+- name: Upgrade all packages
+  ansible.builtin.dnf:
+    name: "*"
+    releasever: 9
+    state: latest
+  register: dnf_result
+  notify: reboot if kernel updated
+
+- name: Autoremove unneeded packages
+  ansible.builtin.dnf:
+    autoremove: true
