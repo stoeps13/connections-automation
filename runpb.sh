@@ -1,42 +1,46 @@
 #!/usr/bin/env bash
 
+printf "\n\t   ___                            _   _                 ";
+printf "\n\t  / __\\___  _ __  _ __   ___  ___| |_(_) ___  _ __  ___ ";
+printf "\n\t / /  / _ \\| '_ \\| '_ \\ / _ \\/ __| __| |/ _ \\| '_ \\/ __|";
+printf "\n\t/ /__| (_) | | | | | | |  __/ (__| |_| | (_) | | | \\__ \\";
+printf "\n\t\\____/\\___/|_| |_|_| |_|\\___|\\___|\\__|_|\\___/|_| |_|___/";
+printf "\n\t                                                        ";
+printf "\n\t   _         _                        _   _             ";
+printf "\n\t  /_\\  _   _| |_ ___  _ __ ___   __ _| |_(_) ___  _ __  ";
+printf "\n\t //_\\\\| | | | __/ _ \\| '_ \` _ \\ / _\` | __| |/ _ \\| '_ \\ ";
+printf "\n\t/  _  \\ |_| | || (_) | | | | | | (_| | |_| | (_) | | | |";
+printf "\n\t\\_/ \\_/\\__,_|\\__\\___/|_| |_| |_|\\__,_|\\__|_|\\___/|_| |_|";
+printf "\n\t\n";
+
 # Check if commandline argument is given
 if [ $# -eq 0 ]; then
  printf "\n\tPlease add the environment name after the script\n"
- printf "\tExample: $(basename $BASH_SOURCE) stoeps-cnx8-db2\n\n"
+ printf "\tExample:\n\t\t\t$(basename $BASH_SOURCE) stoeps-cnx8-db2\n\n"
  exit 1
 fi
 
 ANSIBLE_ENV=$1
 CMD_OPT="-i environments/${ANSIBLE_ENV}/inventory.ini --vault-password-file .vault-secret"
 
-# ansible-playbook ${CMD_OPT} playbooks/setup-connections-complete.yml
-# ansible-playbook ${CMD_OPT} playbooks/third_party/setup-nginx.yml 
-# ansible-playbook ${CMD_OPT} playbooks/third_party/setup-containerd.yml
-# ansible-playbook ${CMD_OPT} playbooks/setup-component-pack-complete-harbor.yml
-# ansible-playbook ${CMD_OPT} playbooks/hcl/harbor/setup-deploy-apisix.yml
-# ansible-playbook ${CMD_OPT} playbooks/third_party/setup-tiny-editors.yml
-# ansible-playbook ${CMD_OPT} playbooks/hcl/setup-connections-docs.yml
-# ansible-playbook ${CMD_OPT} playbooks/third_party/update-system.yml
-#
-printf "\nEnvironment: \t$1"
-printf "\nPlaybook: \t$2\n"
+printf "\n\tEnvironment: \t$1"
+printf "\n\tPlaybook: \t$2\n"
 
 case $2 in
 
-  apisix)
+  apisix | api | apilayer)
     ansible-playbook ${CMD_OPT} playbooks/hcl/harbor/setup-deploy-apisix.yml
     ;;
 
-  cnx)
+  cnx | connections | blue | hclcnx)
     ansible-playbook ${CMD_OPT} playbooks/setup-connections-complete.yml
     ;;
 
-  componentpack)
+  componentpack | cp | pink)
     ansible-playbook ${CMD_OPT} playbooks/setup-component-pack-complete-harbor.yml
     ;;
 
-  docs)
+  docs | hcldocs | cnxdocs)
     ansible-playbook ${CMD_OPT} playbooks/hcl/setup-connections-docs.yml
     ;;
 
@@ -44,19 +48,23 @@ case $2 in
     ansible-playbook ${CMD_OPT} playbooks/third_party/update-system.yml
     ;;
 
-  tiny)
+  tiny | editors | tinyeditors)
     ansible-playbook ${CMD_OPT} playbooks/third_party/setup-tiny-editors.yml
     ;;
 
   *)
-    printf "\nSelect a deployment\n"
-    printf "\tapisix         - Deploy new Api layer\n"
-    printf "\tcnx            - Deploy Connections complete\n"
-    printf "\tcomponentpack  - Deploy Componentpack latest\n"
-    printf "\tdocs           - Deploy CNX Docs\n"
-    printf "\tosupdate       - Update all OS packages\n"
-    printf "\ttiny           - Deploy Tiny Editors\n"
+    printf "\n\tSelect a deployment\n"
+    printf "\t===================\n"
+    printf "\tapisix        \tDeploy new Api layer\n"
+    printf "\tcnx           \tDeploy Connections complete\n"
+    printf "\tcomponentpack \tDeploy Componentpack latest\n"
+    printf "\tdocs          \tDeploy CNX Docs\n"
+    printf "\tosupdate      \tUpdate all OS packages\n"
+    printf "\ttiny          \tDeploy Tiny Editors\n"
     printf "\n"
+    printf "\tUse the name as second commandline option\n"
+    printf "\tExample:\n"
+    printf "\t\t\t$(basename $BASH_SOURCE) stoeps-cnx8-db2 apisix\n\n"
     ;;
 esac
 
