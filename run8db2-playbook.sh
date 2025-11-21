@@ -8,6 +8,7 @@ echo -n "$@" | grep -q -- "-v" && export ANSIBLE_STDOUT_CALLBACK=yaml
 # ansible-playbook -i environments/stoeps-cnx8-db2/inventory.ini playbooks/third_party/setup-nginx.yml "$@"
 # ansible-playbook -i environments/stoeps-cnx8-db2/inventory.ini playbooks/third_party/setup-containerd.yml "$@"
 # ansible-playbook -i environments/stoeps-cnx8-db2/inventory.ini playbooks/setup-component-pack-complete-harbor.yml "$@"
-ansible-playbook -i environments/stoeps-cnx8-db2/inventory.ini playbooks/third_party/setup-tiny-editors.yml "$@"
-ansible-playbook -i environments/stoeps-cnx8-db2/inventory.ini playbooks/hcl/setup-connections-docs.yml "$@"
+ansible-playbook -i environments/stoeps-cnx8-db2/inventory.ini playbooks/hcl/harbor/setup-deploy-apisix.yml
+# ansible-playbook -i environments/stoeps-cnx8-db2/inventory.ini playbooks/third_party/setup-tiny-editors.yml "$@"
+# ansible-playbook -i environments/stoeps-cnx8-db2/inventory.ini playbooks/hcl/setup-connections-docs.yml "$@"
 
