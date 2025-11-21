@@ -3,3 +3,8 @@ cnx-automation
 
 .DS_Store
 environments/hcl
+environments/stoeps-*
+.python-version
+main.py
+pyproject.toml
+uv.lock
