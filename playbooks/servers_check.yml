@@ -3,5 +3,5 @@
   hosts:                   all 
   become:                  true
   tasks:
-    - debug:  var=ansible_default_ipv4.address
+    - debug:  var=ansible_facts['default']['ipv4']['address']
 

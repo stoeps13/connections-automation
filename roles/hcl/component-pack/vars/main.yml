@@ -73,7 +73,7 @@ __ic_admin_username:                         "{{ was_username | default('wasadmi
 __ic_admin_password:                         "{{ was_password | default('password') }}"
 __frontend_fqdn:                             "{{ frontend_fqdn | default(localhost) }}"
 __ic_internal:                               "{{ ic_internal | default('localhost') }}"
-__k8s_master_ip:                             "{{ hostvars[groups['k8s_masters'][0]]['ansible_facts['default']['ipv4']']['address'] }}"
+__k8s_master_ip:                             "{{ hostvars[groups['k8s_masters'][0]]['ansible_facts['default']['ipv4']['address'] }}"
 __master_ip:                                 "{{ load_balancer_dns | default( __k8s_master_ip ) }}"
 __es_ca_password:                            "{{ es_ca_password | default('password') }}"
 __es_key_password:                           "{{ es_key_password | default('password') }}"
@@ -82,7 +82,7 @@ __search_secret:                             "{{ search_secret | default('passwo
 __solr_secret:                               "{{ solr_secret | default('password') }}"
 __skip_configure_redis:                      "{{ skip_configure_redis | default('false') }}"
 
-__nfsMasterAddress:                          "{{ nfsMasterAddress | default( hostvars[groups['nfs_servers'][0]]['ansible_facts['default']['ipv4']']['address'] ) }}"
+__nfsMasterAddress:                          "{{ nfsMasterAddress | default( hostvars[groups['nfs_servers'][0]]['ansible_facts['default']['ipv4']['address'] ) }}"
 __persistentVolumePath:                      "{{ persistentVolumePath | default('pv-connections') }}"
 #__connections_volumes:                       "nfs.server={{ __nfsMasterAddress }},persistentVolumePath=/{{ __persistentVolumePath }}"
 __connections_volumes:                       "{{ __ansible_cache_charts }}/connections-volumes.yml"

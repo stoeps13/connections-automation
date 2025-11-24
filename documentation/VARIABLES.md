@@ -63,7 +63,7 @@ Name | Default | Description
 db_type | DB2 | Database type to be passed to the Connections installer
 db_username | LCUSER | Database user to be passed to the Connections installer
 db_password | password | Database user password to be passed to the Connections installer
-db_port | 50001 if ansible_distribution == 'SLES' else 50000 | The default TCP/IP service port will be set to 50001 if ansible_distribution is SUSE, else the default port will be 50000
+db_port | 50001 if ansible_facts['distribution']== 'SLES' else 50000 | The default TCP/IP service port will be set to 50001 if ansible_facts['distribution']is SUSE, else the default port will be 50000
 db_hostname | *none* - required | Database hostname
 db_jdbc_file | /opt/IBM/db2/V11.1/java | Database JDBC driver path
 
@@ -82,7 +82,7 @@ db2_instance_type | ese | DB2 instance type
 db2_instance_group | db2group | DB2 instance group
 db2_instance_autostat | YES |  True will enable the DB2 database instance for automatically start
 db2_instance_svcname | db2c_db2inst1 | DB2 instance service name
-db2_instance_port | 50001 if ansible_distribution == 'SLES' else 50000 | The default TCP/IP service port will be set to 50001 if ansible_distribution is SUSE; otherwise, the default port will be 50000
+db2_instance_port | 50001 if ansible_facts['distribution']== 'SLES' else 50000 | The default TCP/IP service port will be set to 50001 if ansible_facts['distribution']is SUSE; otherwise, the default port will be 50000
 db2_instance_fcm_port | 60000 | port used by the Fast Communications Manager
 db2_instance_max_lnodes | 6 | Maximum node counts
 db2_instance_text_search | NO | Yes configures integrated Db2 Text Search server
@@ -241,7 +241,7 @@ cnx_db_update_file | 65cr1-database-updates.zip | File name to download for data
 db_type | DB2 | Database type to be passed to the Connections installer
 db_username | LCUSER | Database user to be passed to the Connections installer
 db_password | password | Database user password to be passed to the Connections installer
-db_port | 50001 if ansible_distribution == 'SLES' else 50000 | The default TCP/IP service port will be set to 50001 if ansible_distribution is SUSE, else the default port will be 50000
+db_port | 50001 if ansible_facts['distribution']== 'SLES' else 50000 | The default TCP/IP service port will be set to 50001 if ansible_facts['distribution']is SUSE, else the default port will be 50000
 smtp_hostname | *none* - required | <for future use, you can set it to *localhost*>
 ifix_apar | *none* - required when install Connections fix | APAR number of fix
 ifix_file | *none* - required when install Connections fix | fix file name from `{{ cnx_repository_url }}`
@@ -328,7 +328,7 @@ kube_binaries_download_url | https://cdn.dl.k8s.io/release | Kubernetes binary d
 ic_internal | localhost | Connections server internal frontend host (eg. IHS host)
 load_balancer_dns | localhost | Specify a DNS name for the control plane.
 pod_subnet | 192.168.0.0/16 | Specify range of IP addresses for the pod network. If set, the control plane will automatically allocate CIDRs for every node.
-kubectl_user |  ansible_env['SUDO_USER'] | Kubectl is setup for all the users listed here
+kubectl_user |  ansible_facts['env']['SUDO_USER'] | Kubectl is setup for all the users listed here
 calico_version | 3.30.3 | Calico version to be installed
 helm_version | 3.19.0 | Helm version to be installed
 haproxy_version | 3.1.3 | HAProxy version to be installed. For RedHat, and AlmaLinux, the version available via the yum install command will be installed.
@@ -367,7 +367,7 @@ force_regenerate_ingress | false | When set to true, bootstrap installation over
 force_regenerate_mongo | false | When set to true, bootstrap installation overwrites existing certs/secret for mongo
 force_regenerate_opensearch | false | When set to true, bootstrap installation overwrites existing certs/secret for opensearch
 default_namespace | connections | Kubernetes namespace
-nfsMasterAddress | hostvars[groups['nfs_servers'][0]]['ansible_default_ipv4']['address'] | NFS master IP
+nfsMasterAddress | hostvars[groups['nfs_servers'][0]]['ansible_facts['default']['ipv4']['address'] | NFS master IP
 persistentVolumePath | pv-connections | Persistent volume location to be created
 ingress_multi_domain_enabled | false | Set to true when frontend is on a different domain as the Component Pack nodes
 setup_installation | true | True will prepare generated charts location, download and extract the Component Pack zip

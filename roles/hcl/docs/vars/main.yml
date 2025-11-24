@@ -38,7 +38,7 @@ __db_concord_username:               "{{ db_concord_username | default('DOCSUSER
 __db2_user:                          "{{ db2_user | default('db2inst1') }}"
 __install_version_db2:               "{{ 'V12.1' if __install_latest_db2 else 'V11.5' }}"
 #
-__firstNfsNode:                      "{{ '' if (groups['nfs_servers'] is not defined) else (hostvars[groups['nfs_servers'][0]]['ansible_facts['default']['ipv4']']['address']) }}"
+__firstNfsNode:                      "{{ '' if (groups['nfs_servers'] is not defined) else (hostvars[groups['nfs_servers'][0]]['ansible_facts['default']['ipv4']['address']) }}"
 __nfsMasterAddress:                  "{{ nfsMasterAddress | default( __firstNfsNode ) }}"
 #
 __cnx_data_path_on_cnx_server:       "{{ cnx_data_path_on_cnx_server | default('/opt/IBM/SharedArea') }}"

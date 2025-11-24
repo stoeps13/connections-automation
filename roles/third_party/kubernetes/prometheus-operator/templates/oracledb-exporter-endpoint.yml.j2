@@ -12,7 +12,7 @@ metadata:
     app: oracledb-exporter-{{ host.split(".")[0] }}
 subsets:
 - addresses:
-  - ip: {{ hostvars[host]['ansible_facts['default']['ipv4']']['address'] }}
+  - ip: {{ hostvars[host]['ansible_facts['default']['ipv4']['address'] }}
   ports:
   - name: metrics
     port: {{ __oracledb_exporter_port }}
