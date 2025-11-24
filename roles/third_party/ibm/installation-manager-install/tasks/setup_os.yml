@@ -3,17 +3,17 @@
   apt:
     name: ['unzip', 'tar', 'wget']
     state: present
-  when: ansible_os_family == "Debian"
+  when: ansible_facts['os_family'] == "Debian"
 
 - name:          Install pre-requisites Zypper
   zypper:
     name: ['unzip', 'tar', 'wget','libgtk-2_0-0']
     state: present
-  when: ansible_os_family == "Suse"
+  when: ansible_facts['os_family'] == "Suse"
 
 - name:          Install pre-requisites Yum
   yum:
     name: ['unzip', 'tar', 'wget', 'apr-util']
     state: present
   when:
-    - ansible_distribution == "RedHat" or ansible_distribution == "AlmaLinux"
+    - ansible_facts['distribution']== "RedHat" or ansible_facts['distribution']== "AlmaLinux"

@@ -15,7 +15,7 @@ __was_password:                 "{{ was_password }}"
 __connections_admin:            "{{ connections_admin | default('jjones1') }}"
 __connections_admin_password:   "{{ connections_admin_password | default('password') }}"
 
-__sudo_user:                    "{{ kubectl_user | default( ansible_env['SUDO_USER'] ) }}"
+__sudo_user:                    "{{ kubectl_user | default( ansible_facts['env']['SUDO_USER'] ) }}"
 __default_namespace:            "{{ default_namespace | default('connections') }}"
 __frontend_fqdn:                "{{ frontend_fqdn | default(localhost) }}"
 __python_path:                  "{{ python_path | default('/usr/bin/python3') }}"

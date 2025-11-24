@@ -55,7 +55,7 @@
     - upgrade_jre_needed | default(false)
 
 - name:                     Backing up old jre dir
-  command:                  mv "{{ __tdi_user_install_dir }}/jvm/jre" "{{ __tdi_user_install_dir }}/jvm/jre_{{ ansible_date_time.iso8601 }}"
+  command:                  mv "{{ __tdi_user_install_dir }}/jvm/jre" "{{ __tdi_user_install_dir }}/jvm/jre_{{ ansible_facts['date_time']['iso8601'] }}"
   when:
     - jre_stat.stat.exists
     - tdi_already_installed.stat.exists

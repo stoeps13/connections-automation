@@ -1,11 +1,11 @@
 ---
 - name:                     Show me Linux distribution
   debug:
-    msg:                    "{{ ansible_distribution }}"
+    msg:                    "{{ ansible_facts['distribution']}}"
 
 - name:                     Show me Linux distribution version
   debug:
-    msg:                    "{{ ansible_distribution_version }}"
+    msg:                    "{{ ansible_facts['distribution_version'] }}"
 
 - name:                     Add Docker repo
   get_url:
@@ -18,8 +18,8 @@
     regexp:                 '^baseurl.*$'
     replace:                'baseurl=https://download.docker.com/linux/centos/7/x86_64/stable'
   when:
-    - ansible_os_family == "RedHat"
-    - ansible_distribution_major_version == "7"
+    - ansible_facts['os_family'] == "RedHat"
+    - ansible_facts['distribution_major_version'] == "7"
 
 - name:                     Replace baseurl on RedHat 8
   replace:
@@ -27,8 +27,8 @@
     regexp:                 '^baseurl.*$'
     replace:                'baseurl=https://download.docker.com/linux/centos/8/x86_64/stable'
   when:
-    - ansible_distribution == "RedHat"
-    - ansible_distribution_major_version == "8"
+    - ansible_facts['distribution']== "RedHat"
+    - ansible_facts['distribution_major_version'] == "8"
 
 - name:                     Enable Docker stable repo
   ini_file:
@@ -57,7 +57,7 @@
     state:                  present
     allow_downgrade:        yes
   when:
-    - ansible_os_family == "RedHat"
+    - ansible_facts['os_family'] == "RedHat"
 
 - name:                     Install docker-ce {{ __docker_version }}
   package:
@@ -65,7 +65,7 @@
     state:                  present
     allow_downgrade:        yes
   when:
-    - ansible_os_family == "RedHat"
+    - ansible_facts['os_family'] == "RedHat"
 
 - name:                     Install docker-ce-cli {{ __docker_version }}
   package:
@@ -73,15 +73,15 @@
     state:                  present
     allow_downgrade:        yes
   when:
-    - ansible_os_family == "RedHat"
+    - ansible_facts['os_family'] == "RedHat"
 
 - name:                     Install pip and passlib modules for Docker
   vars:
-    ansible_python_interpreter:     /usr/bin/python3
+    ansible_facts['discovered_interpreter_python']:     /usr/bin/python3
   pip:
     name:                   ['docker', 'passlib', 'six']
   when:
-    - ansible_os_family == "RedHat"
+    - ansible_facts['os_family'] == "RedHat"
 
 - name:                     Prepare Docker folders
   file:

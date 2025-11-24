@@ -12,7 +12,7 @@ metadata:
     app: connections-jmx-{{ server.split(".")[0] }}-{{ app.name | lower }}
 subsets:
 - addresses:
-  - ip: {{ hostvars[server]['ansible_default_ipv4']['address'] }}
+  - ip: {{ hostvars[server]['ansible_facts['default']['ipv4']']['address'] }}
   ports:
   - name: metrics
     port: {{ app.port }}

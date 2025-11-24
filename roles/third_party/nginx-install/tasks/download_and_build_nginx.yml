@@ -65,7 +65,7 @@
     name: make
     state: present
   when:
-    - ansible_distribution == "SLES"
+    - ansible_facts['distribution']== "SLES"
 
 - name: Compile NGINX from source
   shell:

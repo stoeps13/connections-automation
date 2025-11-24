@@ -31,7 +31,7 @@ __cnx_install_location:      "{{ cnx_install_location  | default('/opt/HCL/Conne
 __cnx_tmp_dir:               "{{ cnx_tmp_dir  | default('/opt/HCL/CnxTempDir') }}"
 
 __skip_nfs_mount:            "{{ skip_nfs_mount_for_connections | default(false) }}"
-__firstNfsNode:              "{{ hostvars[groups['nfs_servers'][0]]['ansible_default_ipv4']['address'] }}"
+__firstNfsNode:              "{{ hostvars[groups['nfs_servers'][0]]['ansible_facts['default']['ipv4']']['address'] }}"
 
 __nfsMasterAddress:          "{{ nfsMasterAddress | default( __firstNfsNode ) }}"
 
@@ -85,7 +85,7 @@ __smtp_port:                 "{{ smtp_port  | default('25') }}"
 __db_username:               "{{ db_username  | default('LCUSER') }}"
 __db_password:               "{{ db_password }}"
 __db_hostname:               "{{ db_hostname }}"
-__db_port:                   "{{ db_port  | default('50001' if ansible_distribution == 'SLES' else '50000') }}"
+__db_port:                   "{{ db_port  | default('50001' if ansible_facts['distribution']== 'SLES' else '50000') }}"
 
 __install_latest_db2:        "{{ install_latest_db2 | default(true) }}"
 __db2_default_jdbc_file:     "{{ '/opt/IBM/db2/V12.1/java' if __install_latest_db2 else '/opt/IBM/db2/V11.5/java' }}"

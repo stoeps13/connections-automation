@@ -42,20 +42,20 @@
 - name:                 Copy wct_plugins_{{ __ihs_hostname }}.zip to local
   fetch:
     src:                "/tmp/wct_plugins_{{ __ihs_hostname }}.zip"
-    dest:               "/tmp/wct_plugins_{{ __ihs_hostname }}-{{ ansible_date_time.iso8601_basic_short }}.zip"
+    dest:               "/tmp/wct_plugins_{{ __ihs_hostname }}-{{ ansible_facts['date_time']['iso8601']_basic_short }}.zip"
     flat:               yes
   become:               false
 
 - name:                 Copy wct_plugins_{{ __ihs_hostname }}.zip from local to {{ dmgr_hostname }}
   copy:
-    src:                "/tmp/wct_plugins_{{ __ihs_hostname }}-{{ ansible_date_time.iso8601_basic_short }}.zip"
+    src:                "/tmp/wct_plugins_{{ __ihs_hostname }}-{{ ansible_facts['date_time']['iso8601']_basic_short }}.zip"
     dest:               "/tmp/wct_plugins_{{ __ihs_hostname }}.zip"
   delegate_to:          "{{ dmgr_hostname }}"
   become:               false
 
-- name:                 Remove /tmp/wct_plugins_{{ __ihs_hostname }}-{{ ansible_date_time.iso8601_basic_short }}.zip from local
+- name:                 Remove /tmp/wct_plugins_{{ __ihs_hostname }}-{{ ansible_facts['date_time']['iso8601']_basic_short }}.zip from local
   file:
-    path:               "/tmp/wct_plugins_{{ __ihs_hostname }}-{{ ansible_date_time.iso8601_basic_short }}.zip"
+    path:               "/tmp/wct_plugins_{{ __ihs_hostname }}-{{ ansible_facts['date_time']['iso8601']_basic_short }}.zip"
     state:              absent
   become:               false
 
@@ -140,20 +140,20 @@
 - name:                 Copy /tmp/wct_generated_plugins_{{ __ihs_hostname }}.zip from dmgr to local
   fetch:
     src:                "/tmp/wct_generated_plugins_{{ __ihs_hostname }}.zip"
-    dest:               "/tmp/wct_generated_plugins_{{ __ihs_hostname }}-{{ ansible_date_time.iso8601_basic_short }}.zip"
+    dest:               "/tmp/wct_generated_plugins_{{ __ihs_hostname }}-{{ ansible_facts['date_time']['iso8601']_basic_short }}.zip"
     flat:               yes
   delegate_to:          "{{ dmgr_hostname }}"
   become:               false
 
 - name:                 Copy /tmp/wct_generated_plugins_{{ __ihs_hostname }}.zip from local to {{ inventory_hostname }}
   copy:
-    src:                "/tmp/wct_generated_plugins_{{ __ihs_hostname }}-{{ ansible_date_time.iso8601_basic_short }}.zip"
+    src:                "/tmp/wct_generated_plugins_{{ __ihs_hostname }}-{{ ansible_facts['date_time']['iso8601']_basic_short }}.zip"
     dest:               "/tmp/wct_generated_plugins_{{ __ihs_hostname }}.zip"
   become:               false
 
-- name:                 Remove /tmp/wct_generated_plugins_{{ __ihs_hostname }}-{{ ansible_date_time.iso8601_basic_short }}.zip from local
+- name:                 Remove /tmp/wct_generated_plugins_{{ __ihs_hostname }}-{{ ansible_facts['date_time']['iso8601']_basic_short }}.zip from local
   file:
-    path:               "/tmp/wct_generated_plugins_{{ __ihs_hostname }}-{{ ansible_date_time.iso8601_basic_short }}.zip"
+    path:               "/tmp/wct_generated_plugins_{{ __ihs_hostname }}-{{ ansible_facts['date_time']['iso8601']_basic_short }}.zip"
     state:              absent
   become:               false
 

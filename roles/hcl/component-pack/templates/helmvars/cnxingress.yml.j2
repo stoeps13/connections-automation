@@ -6,7 +6,7 @@ global:
 multiDomainEnabled: {{ __ingress_multi_domain_enabled  }}
 ingress:
   hosts:
-    domain: {{ hostvars[inventory_hostname]['ansible_domain'] }}
+    domain: {{ hostvars[inventory_hostname]['ansible_facts['domain']'] }}
     publicdomain: {{ frontend_domain }}
 
 replicaCount: {{ __replica_count }}

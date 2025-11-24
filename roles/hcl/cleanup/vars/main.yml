@@ -7,7 +7,7 @@ __force_destroy_oracle:                   "{{ force_destroy_oracle | default(fal
 __force_destroy_containerd_images:        "{{ force_destroy_containerd_images | default(false) }}"
 __force_destroy_tdi:                      "{{ force_destroy_tdi | default(false) }}"
 
-__nfsMasterAddress:                       "{{ nfsMasterAddress | default( hostvars[groups['nfs_servers'][0]]['ansible_default_ipv4']['address'] ) }}"
+__nfsMasterAddress:                       "{{ nfsMasterAddress | default( hostvars[groups['nfs_servers'][0]]['ansible_facts['default']['ipv4']']['address'] ) }}"
 __persistentVolumePath:                   "{{ persistentVolumePath | default('pv-connections') }}"
 __nfs_master_files_dest:                  "{{ __nfsMasterAddress }}:/{{ __persistentVolumePath }}"
 __nfs_master_files_mount:                 "/mnt/pv-connections"

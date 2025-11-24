@@ -19,17 +19,17 @@
       ]
     state: present
   when:
-    - ansible_os_family == "RedHat"
-    - ansible_distribution_major_version == "7"
+    - ansible_facts['os_family'] == "RedHat"
+    - ansible_facts['distribution_major_version'] == "7"
 
 - name: Install epel-release on RHEL
   yum:
-    name: https://dl.fedoraproject.org/pub/epel/epel-release-latest-{{ ansible_distribution_major_version }}.noarch.rpm
+    name: https://dl.fedoraproject.org/pub/epel/epel-release-latest-{{ ansible_facts['distribution_major_version'] }}.noarch.rpm
     state: present
     disable_gpg_check: true
   when:
-    - ansible_os_family == "RedHat"
-    - ansible_distribution_major_version == "8" or ansible_distribution_major_version == "9"
+    - ansible_facts['os_family'] == "RedHat"
+    - ansible_facts['distribution_major_version'] == "8" or ansible_facts['distribution_major_version'] == "9"
 
 - name: Install pre-requisites Yum on RHEL
   yum:
@@ -51,23 +51,23 @@
       ]
     state: present
   when:
-    - ansible_os_family == "RedHat"
-    - ansible_distribution_major_version == "8" or ansible_distribution_major_version == "9"
+    - ansible_facts['os_family'] == "RedHat"
+    - ansible_facts['distribution_major_version'] == "8" or ansible_facts['distribution_major_version'] == "9"
 
 - name: Install pre-requisites Yum on AlmaLinux
   yum:
     name: ["python3-pip"]
     state: present
   when:
-    - ansible_distribution == "AlmaLinux"
-    - ansible_distribution_major_version == "9"
+    - ansible_facts['distribution']== "AlmaLinux"
+    - ansible_facts['distribution_major_version'] == "9"
 
 - name: Install pre-requisites Yum for Conversion service
   yum:
     name: ["ImageMagick", "libSM.i686"]
     state: present
   when:
-    - ansible_os_family == "RedHat"
+    - ansible_facts['os_family'] == "RedHat"
     - inventory_hostname in groups["conversion_servers"]
 
 - name: Install pre-requisites Zypper for SUSE
@@ -90,14 +90,14 @@
       ]
     state: present
   when:
-    - ansible_distribution == "SLES"
+    - ansible_facts['distribution']== "SLES"
 
 - name: Install pre-requisites Zypper for Conversion service
   zypper:
     name: ["ImageMagick", "libSM7"]
     state: present
   when:
-    - ansible_distribution == "SLES"
+    - ansible_facts['distribution']== "SLES"
     - inventory_hostname in groups["conversion_servers"]
 
 - name: Set file descriptors limits
@@ -112,4 +112,4 @@
     name: pexpect
     state: latest
   when:
-    - ansible_distribution == "RedHat" or ansible_distribution == "AlmaLinux"
+    - ansible_facts['distribution']== "RedHat" or ansible_facts['distribution']== "AlmaLinux"

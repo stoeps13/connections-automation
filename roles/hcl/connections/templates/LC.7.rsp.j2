@@ -40,7 +40,7 @@
     <data key='user.was.profileName' value='{{ __profile_name }}'/>
     <data key='user.was.dmCellName' value='{{ __was_cellname }}'/>
     <data key='user.was.dmHostname' value='{{ dmgr_hostname }}'/>
-    <data key='user.was.domainName' value='.{{ ansible_domain }}'/>
+    <data key='user.was.domainName' value='.{{ ansible_facts['domain'] }}'/>
     <data key='user.was.adminuser.id' value='{{ was_username }}'/>
     <data key='user.was.adminuser.password' value='{{ __was_encoded_password.stdout | trim }}'/>
 {% for app in __installer_deployment_type %}

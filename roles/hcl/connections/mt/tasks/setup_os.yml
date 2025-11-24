@@ -4,7 +4,7 @@
     name:                     ['perl', 'vim-common']
     state:                    present
   when:
-    - ansible_os_family == "RedHat"
+    - ansible_facts['os_family'] == "RedHat"
 
 - name:                       Verify if public key is generated
   stat:

@@ -6,8 +6,8 @@
     enablerepo: "extras"
     state: present
   when:
-    - ansible_distribution == "CentOS"
-    - ansible_distribution_major_version == "7"
+    - ansible_facts['distribution']== "CentOS"
+    - ansible_facts['distribution_major_version'] == "7"
 
 - name: Install python pre-requisites for Pexpect for CentOS7
   ansible.builtin.package:
@@ -17,8 +17,8 @@
       - 'python-pip'
     state: present
   when:
-    - ansible_distribution == "CentOS"
-    - ansible_distribution_major_version == "7"
+    - ansible_facts['distribution']== "CentOS"
+    - ansible_facts['distribution_major_version'] == "7"
 
 - name: Install pre-requisites Yum
   ansible.builtin.package:
@@ -27,7 +27,7 @@
       - 'httpd-tools'
     state: present
   when:
-    - ansible_os_family == "RedHat"
+    - ansible_facts['os_family'] == "RedHat"
 
 - name: Install Pexpect
   ansible.builtin.package:

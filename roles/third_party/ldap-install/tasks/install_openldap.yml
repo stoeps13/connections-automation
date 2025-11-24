@@ -3,35 +3,35 @@
   set_fact:
     __ldap_modify_cmd:      "{{ __symas_bin_path }}{{ __ldap_modify_cmd }}"
   when:
-    - ansible_distribution == "RedHat" or ansible_distribution == "SLES"
+    - ansible_facts['distribution']== "RedHat" or ansible_facts['distribution']== "SLES"
 
 - name:                     Install OpenLDAP and dependencies on CentOS
   yum:
     name:                   ['openldap', 'compat-openldap', 'openldap-clients', 'openldap-servers', 'openldap-servers-sql', 'openldap-devel']
     state:                   present
   when:
-    - ansible_distribution == "CentOS"
+    - ansible_facts['distribution']== "CentOS"
 
 - name:                     Install EPEL Release on Almalinux
   yum:
     name:                   epel-release
     state:                  present
   when:
-    - ansible_distribution ==  "AlmaLinux"
+    - ansible_facts['distribution']==  "AlmaLinux"
 
 - name:                     Install OpenLDAP and dependencies on Almalinux
   yum:
     name:                   ['openldap', 'openldap-clients', 'openldap-servers', 'openldap-devel']
     state:                   present
   when:
-    - ansible_distribution == "AlmaLinux"
+    - ansible_facts['distribution']== "AlmaLinux"
 
 - name:                     Install OpenLDAP and dependencies on SUSE
   zypper:
     name:                   ['openldap2-client']
     state:                   present
   when:
-    - ansible_distribution == "SLES"
+    - ansible_facts['distribution']== "SLES"
 
 - name:                     "Verify if database is already created"
   stat:
@@ -41,7 +41,7 @@
 - name:                     Install OpenLDAP and dependencies on RHEL
   include_tasks:            install_symas_openldap.yml
   when:
-    - ansible_distribution == "RedHat" or ansible_distribution == "SLES" and not ldap_database_already_created.stat.exists
+    - ansible_facts['distribution']== "RedHat" or ansible_facts['distribution']== "SLES" and not ldap_database_already_created.stat.exists
 
 - name:                     Start slapd service
   service:
@@ -53,7 +53,7 @@
 - name:                     Enable the slapd service to be started at boot time
   command:                  "chkconfig slapd on"
   when:
-    - ansible_distribution == "RedHat" or ansible_distribution == "SLES"
+    - ansible_facts['distribution']== "RedHat" or ansible_facts['distribution']== "SLES"
 
 - name:                     Create get slappasswd command for Non-RedHat distribution
   set_fact:
@@ -65,7 +65,7 @@
   set_fact:
     slappasswd_command:     "{{ __symas_sbin_path }}slappasswd -h {SSHA} -s {{ __ldap_slappasswd }}"
   when:
-    - ansible_distribution == "RedHat" or ansible_distribution == "SLES" and not ldap_database_already_created.stat.exists
+    - ansible_facts['distribution']== "RedHat" or ansible_facts['distribution']== "SLES" and not ldap_database_already_created.stat.exists
 
 - name:                     Run get slappasswd command
   command:                  "{{ slappasswd_command }}"
@@ -92,8 +92,8 @@
     dest:                   "{{ __db_ldif_location }}"
   when:
     - not ldap_database_already_created.stat.exists
-    - ansible_distribution == "RedHat" or ansible_distribution == "CentOS" or ansible_distribution == "AlmaLinux"
-    - ansible_distribution_major_version >= "8"
+    - ansible_facts['distribution']== "RedHat" or ansible_facts['distribution']== "CentOS" or ansible_facts['distribution']== "AlmaLinux"
+    - ansible_facts['distribution_major_version'] >= "8"
 
 - name:                     "Render {{ __db_ldif_location }} for SUSE"
   template:
@@ -101,7 +101,7 @@
     dest:                   "{{ __db_ldif_location }}"
   when:
     - not ldap_database_already_created.stat.exists
-    - ansible_distribution == "SLES"
+    - ansible_facts['distribution']== "SLES"
     
 - name:                     Create LDAP database
   command:                  "{{ __ldap_modify_cmd }} {{ __db_ldif_location }}"

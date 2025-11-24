@@ -1,11 +1,11 @@
 ---
 - name:                     Show me Linux distribution
   debug:
-    msg:                    "{{ ansible_distribution }}"
+    msg:                    "{{ ansible_facts['distribution']}}"
 
 - name:                     Show me Linux distribution version
   debug:
-    msg:                    "{{ ansible_distribution_version }}"
+    msg:                    "{{ ansible_facts['distribution_version'] }}"
 
 - name:                     Install docker on SUSE
   zypper: 
@@ -14,7 +14,7 @@
 
 - name:                     Install pip and passlib modules for Docker
   vars:
-    ansible_python_interpreter:     /usr/bin/python3
+    ansible_facts['discovered_interpreter_python']:     /usr/bin/python3
   pip:
     name:                   ['docker', 'passlib', 'six']
   when:

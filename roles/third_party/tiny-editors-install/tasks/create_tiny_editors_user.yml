@@ -16,8 +16,8 @@
 - name: Convert ssh key for RHEL8
   command: ssh-keygen -p -m PEM -f /home/{{ __tinyeditors_username }}/.ssh/id_rsa -P "{{ tinyeditors_password }}" -N "{{ tinyeditors_password }}"
   when: 
-    - ansible_os_family == "RedHat"
-    - ansible_distribution_major_version == "8"
+    - ansible_facts['os_family'] == "RedHat"
+    - ansible_facts['distribution_major_version'] == "8"
 
 - name: Get default group name for {{ __tinyeditors_username }}
   command: id -gn "{{ __tinyeditors_username }}"

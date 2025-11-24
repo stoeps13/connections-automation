@@ -23,7 +23,7 @@
     dest:                   "{{ __nginx_repo_location }}"
   vars:
     dist:                   "centos"
-    version:                "{{ ansible_distribution_major_version }}"
+    version:                "{{ ansible_facts['distribution_major_version'] }}"
   when:
    - ansible_facts['distribution'] == "CentOS" and not __build_nginx|bool
 
@@ -33,7 +33,7 @@
     dest:                   "{{ __nginx_repo_location }}"
   vars:
     dist:                   "rhel"
-    version:                "{{ ansible_distribution_major_version }}"
+    version:                "{{ ansible_facts['distribution_major_version'] }}"
   when:
    - ansible_facts['distribution'] in ['RedHat', 'AlmaLinux', 'Rocky'] and not __build_nginx|bool
 
@@ -43,9 +43,9 @@
     dest:                   "{{ __nginx_repo_location_suse }}"
   vars:
     dist:                   "sles"
-    version:                "{{ ansible_distribution_major_version }}"
+    version:                "{{ ansible_facts['distribution_major_version'] }}"
   when:
-   - ansible_distribution == "SLES" and not __build_nginx|bool
+   - ansible_facts['distribution']== "SLES" and not __build_nginx|bool
 
 - name:                     Install prerequisites if building NGINX
   package:
@@ -62,9 +62,9 @@
     - libselinux-python
     - libsemanage-python
   when:
-   - ansible_os_family == "RedHat"
-   - ansible_distribution_major_version == "7"
-   - ansible_distribution != "SLES"
+   - ansible_facts['os_family'] == "RedHat"
+   - ansible_facts['distribution_major_version'] == "7"
+   - ansible_facts['distribution']!= "SLES"
 
 - name:                     Install prerequisites for semanage on SUSE
   package:
@@ -73,7 +73,7 @@
   with_items:
     - selinux-tools
   when:
-   - ansible_distribution == "SLES"
+   - ansible_facts['distribution']== "SLES"
 
 - name:                     Disable SELinux
   selinux:
@@ -88,7 +88,7 @@
   ignore_errors:            true
   notify:                   reboot
   when:
-   - ansible_distribution == "SLES"
+   - ansible_facts['distribution']== "SLES"
 
 - name:                     Set httpd_can_network_connect flag on and keep it persistent across reboots
   seboolean:

@@ -36,43 +36,43 @@
     name:                 '*'
     state:                latest
   when:
-    - ansible_distribution == "RedHat" or ansible_distribution == "AlmaLinux"
+    - ansible_facts['distribution']== "RedHat" or ansible_facts['distribution']== "AlmaLinux"
 
 - name:                   List existing HAProxy repository
   command:                "zypper lr -u"
   register: zypper_repos_output
   changed_when:           false
   when:
-    - ansible_distribution == "SLES"
+    - ansible_facts['distribution']== "SLES"
 
 - name:                   Check if HAProxy repository already exists
   set_fact:
     haproxy_repo_exists: "{{ zypper_repos_output.stdout_lines | select('search', repo_url) | list | length > 0 }}"
   vars:
-    repo_url: "https://download.opensuse.org/repositories/server:/http/{{ ansible_distribution_version }}/"
+    repo_url: "https://download.opensuse.org/repositories/server:/http/{{ ansible_facts['distribution_version'] }}/"
   when:
-    - ansible_distribution == "SLES" and zypper_repos_output.stdout_lines is defined
+    - ansible_facts['distribution']== "SLES" and zypper_repos_output.stdout_lines is defined
 
 - name:                   Add HAProxy repository for SUSE
   command:                "zypper addrepo {{ repo_url }}"
   vars:
-    repo_url: "https://download.opensuse.org/repositories/server:http/{{ ansible_distribution_version }}/server:http.repo"
+    repo_url: "https://download.opensuse.org/repositories/server:http/{{ ansible_facts['distribution_version'] }}/server:http.repo"
   when:
-    - ansible_distribution == "SLES" and not haproxy_repo_exists
+    - ansible_facts['distribution']== "SLES" and not haproxy_repo_exists
 
 - name:                   Refresh all zypper repositories on SUSE
   command:                zypper --non-interactive --gpg-auto-import-keys refresh
   when:
-    - ansible_distribution == "SLES"
+    - ansible_facts['distribution']== "SLES"
 
 - name:                   Install HAProxy package for SUSE
   command:                zypper install -y haproxy
   when:
-    - ansible_distribution == "SLES"
+    - ansible_facts['distribution']== "SLES"
 
 - name:                   Install HAProxy package
   yum:
     name:                 haproxy
     state:                present
   when:
-    - ansible_distribution == "RedHat" or ansible_distribution == "AlmaLinux"
+    - ansible_facts['distribution']== "RedHat" or ansible_facts['distribution']== "AlmaLinux"

@@ -15,7 +15,7 @@
 
 - name:                  Drain the node
   vars:
-    node_name:           "{{ inventory_hostname.split('.')[0] if ansible_distribution == 'SLES' else inventory_hostname }}"
+    node_name:           "{{ inventory_hostname.split('.')[0] if ansible_facts['distribution']== 'SLES' else inventory_hostname }}"
   command:               "{{ item }}"
   with_items:
    - "kubectl drain {{ node_name }} --delete-emptydir-data --ignore-daemonsets"
@@ -24,7 +24,7 @@
 
 - name:                  Drain the node (< v1.20)
   vars:
-    node_name:           "{{ inventory_hostname.split('.')[0] if ansible_distribution == 'SLES' else inventory_hostname }}"
+    node_name:           "{{ inventory_hostname.split('.')[0] if ansible_facts['distribution']== 'SLES' else inventory_hostname }}"
   command:               "{{ item }}"
   with_items:
    - "kubectl drain {{ node_name }} --delete-local-data --ignore-daemonsets"

@@ -3,7 +3,7 @@
     name:                   ['python3-pip']
     state:                  present
   when:
-    - ansible_os_family ==  "RedHat"
+    - ansible_facts['os_family'] ==  "RedHat"
 
 - name:                     Install JMESPath Python library
   pip:

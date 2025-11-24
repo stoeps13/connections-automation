@@ -32,7 +32,7 @@
     name:                   ['yum-utils', 'device-mapper-persistent-data', 'lvm2', 'python3-pip', 'unzip', 'httpd-tools']
     state:                  present
   when:
-    - ansible_os_family == "RedHat"
+    - ansible_facts['os_family'] == "RedHat"
 
 - name:                     Install pre-requisites Yum for CentOS 7 - epel-release
   package:
@@ -40,13 +40,13 @@
     enablerepo:             "extras"
     state:                  present
   when:
-    - ansible_distribution == "CentOS"
-    - ansible_distribution_major_version == "7"
+    - ansible_facts['distribution']== "CentOS"
+    - ansible_facts['distribution_major_version'] == "7"
 
 - name:                     Install pre-requisites Yum for CentOS 7
   package:
     name:                   ['python-setuptools', 'python2', 'python-pip', 'httpd-tools']
     state: present
   when:
-    - ansible_distribution == "CentOS"
-    - ansible_distribution_major_version == "7"
+    - ansible_facts['distribution']== "CentOS"
+    - ansible_facts['distribution_major_version'] == "7"

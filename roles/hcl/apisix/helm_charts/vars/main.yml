@@ -1,7 +1,7 @@
 # ansible/roles/helm_charts/vars/main.yml
 ---
 
-__sudo_user:                                 "{{ kubectl_user | default( ansible_env['SUDO_USER'] ) | default('lcuser') }}"
+__sudo_user:                                 "{{ kubectl_user | default( ansible_facts['env']['SUDO_USER'] ) | default('lcuser') }}"
 __frontend_fqdn:                             "{{ frontend_fqdn | default( inventory_hostname ) }}"
 __frontend_domain:                           "{{ cnx_application_ingress.split('.')[1:] | join('.') }}"
 __load_balancer_fqdn:                        "{{ cnx_component_pack_ingress | default( inventory_hostname ) }}"

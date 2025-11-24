@@ -1,6 +1,6 @@
 ---
 __ansible_cache:                             "/tmp/k8s_ansible"
-__sudo_user:                                 "{{ kubectl_user | default( ansible_env['SUDO_USER'] ) }}"
+__sudo_user:                                 "{{ kubectl_user | default( ansible_facts['env']['SUDO_USER'] ) }}"
 __setup_prometheus_operator:                 "{{ setup_prometheus_operator | default(true) }}"
 
 __monitoring_namespace:                      "{{ monitoring_namespace | default('monitoring') }}"

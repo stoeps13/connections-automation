@@ -25,7 +25,7 @@
 - name:              Record Helm version
   local_action:
     module:          shell
-    cmd:             printf '%s\n' "" "----- {{ ansible_date_time.date }} {{ ansible_date_time.time }} -----" "Helm version:" "{{ helm_installed.stdout }}" >> "{{ __cp_versions_file }}"
+    cmd:             printf '%s\n' "" "----- {{ ansible_facts['date_time']['date'] }} {{ ansible_facts['date_time']['time'] }} -----" "Helm version:" "{{ helm_installed.stdout }}" >> "{{ __cp_versions_file }}"
   become:            false
   when:              __record_cp_versions|bool
 

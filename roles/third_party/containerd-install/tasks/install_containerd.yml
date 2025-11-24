@@ -1,15 +1,15 @@
 ---
 - name:                     Show me Linux distribution
   debug:
-    msg:                    "{{ ansible_distribution }}"
+    msg:                    "{{ ansible_facts['distribution']}}"
 
 - name:                     Show me Linux distribution major version
   debug:
-    msg:                    "{{ ansible_distribution_major_version }}"
+    msg:                    "{{ ansible_facts['distribution_major_version'] }}"
 
 - name:                     Show me Linux distribution version
   debug:
-    msg:                    "{{ ansible_distribution_version }}"
+    msg:                    "{{ ansible_facts['distribution_version'] }}"
 
 - name:                     Add Docker repo (RHEL)
   get_url:
@@ -17,7 +17,7 @@
     dest:                   /etc/yum.repos.d/docker-ce.repo
     validate_certs:  false
   when:
-    - ansible_distribution == "RedHat"
+    - ansible_facts['distribution']== "RedHat"
 
 - name:                     Add Docker repo (AlmaLinux)
   get_url:
@@ -25,22 +25,22 @@
     dest:                   /etc/yum.repos.d/docker-ce.repo
     validate_certs:  false
   when:
-    - ansible_distribution == "AlmaLinux"
+    - ansible_facts['distribution']== "AlmaLinux"
 
 - name:                     Add Docker repo on SUSE
   get_url:
     url:                    https://download.docker.com/linux/sles/docker-ce.repo
     dest:                   /etc/zypp/repos.d/docker-ce.repo
   when:
-    - ansible_distribution == "SLES"    
+    - ansible_facts['distribution']== "SLES"    
 
-- name:                     Replace baseurl on SUSE {{ ansible_distribution_major_version }}
+- name:                     Replace baseurl on SUSE {{ ansible_facts['distribution_major_version'] }}
   replace:
     path:                   /etc/zypp/repos.d/docker-ce.repo
     regexp:                 '^baseurl.*$'
-    replace:                'baseurl=https://download.docker.com/linux/sles/{{ ansible_distribution_major_version }}/s390x/stable'
+    replace:                'baseurl=https://download.docker.com/linux/sles/{{ ansible_facts['distribution_major_version'] }}/s390x/stable'
   when:
-    - ansible_distribution == "SLES"    
+    - ansible_facts['distribution']== "SLES"    
 
 - name:                     Enable Docker stable repo
   ini_file:
@@ -49,7 +49,7 @@
     option:                 enabled
     value:                  1
   when:
-    - ansible_distribution != "SLES"
+    - ansible_facts['distribution']!= "SLES"
 
 - name:                     Enable Docker stable repo on SUSE
   ini_file:
@@ -58,7 +58,7 @@
     option:                 enabled
     value:                  1
   when:
-    - ansible_distribution == "SLES"    
+    - ansible_facts['distribution']== "SLES"    
 
 - name:                     Disable Docker Edge repo
   ini_file:
@@ -67,7 +67,7 @@
     option:                 enabled
     value:                  0
   when:
-    - ansible_distribution != "SLES"
+    - ansible_facts['distribution']!= "SLES"
 
 - name:                     Disable Docker Edge repo on SUSE
   ini_file:
@@ -76,7 +76,7 @@
     option:                 enabled
     value:                  0
   when:
-    - ansible_distribution == "SLES"    
+    - ansible_facts['distribution']== "SLES"    
     
 - name:                     Disable Docker Test repo
   ini_file:
@@ -85,7 +85,7 @@
     option:                 enabled
     value:                  0
   when:
-    - ansible_distribution != "SLES"
+    - ansible_facts['distribution']!= "SLES"
 
 - name:                     Disable Docker Test repo on SUSE
   ini_file:
@@ -94,7 +94,7 @@
     option:                 enabled
     value:                  0
   when:
-    - ansible_distribution == "SLES"    
+    - ansible_facts['distribution']== "SLES"    
     
 - name:                     Install containerd.io {{ __containerd_version }}
   package:
@@ -102,7 +102,7 @@
     state:                  present
     allow_downgrade:        yes
   when:
-    - ansible_distribution == "RedHat" or ansible_distribution == "AlmaLinux"
+    - ansible_facts['distribution']== "RedHat" or ansible_facts['distribution']== "AlmaLinux"
 
 - name:                     Create containerd folders
   file:
@@ -150,7 +150,7 @@
     replace:                'systemd_cgroup = true'
   when:
    - ansible_facts['distribution'] in ['RedHat', 'AlmaLinux', 'Rocky']
-   - ansible_distribution_major_version == "7"
+   - ansible_facts['distribution_major_version'] == "7"
 
 - name:                     Restart containerd
   service:

@@ -13,14 +13,14 @@
     path:                   /usr/share/openldap-servers
     state:                  directory
   when: 
-    - ansible_distribution == "SLES"
+    - ansible_facts['distribution']== "SLES"
 
 - name:                     "Copy template {{ __db_config_template }} to {{ __openldap_servers_folder_location }}"
   template:
     src:                    "{{ __db_config_template }}"
     dest:                   "{{ __openldap_servers_folder_location }}"
   when:
-    - ansible_os_family == "AlmaLinux" or "RedHat"
+    - ansible_facts['os_family'] == "AlmaLinux" or "RedHat"
 
 - name:                     Copy DB_CONFIG
   copy:
@@ -65,7 +65,7 @@
   when:
     - ldap_database_already_created.stat.exists |bool
     - not ldap_schema_already_created.stat.exists
-    - ansible_distribution == "RedHat" or ansible_distribution == "SLES"
+    - ansible_facts['distribution']== "RedHat" or ansible_facts['distribution']== "SLES"
 
 - name:                     "Create {{ __schema_ldif_success_file }} file"
   file:

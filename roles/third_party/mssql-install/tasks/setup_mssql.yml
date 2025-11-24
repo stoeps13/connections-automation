@@ -9,7 +9,7 @@
     url:                    https://packages.microsoft.com/config/rhel/7/mssql-server-2019.repo
     dest:                   /etc/yum.repos.d/mssql-server.repo
   when:
-    - ansible_os_family == "RedHat"
+    - ansible_facts['os_family'] == "RedHat"
     - mssql_server_already_running.rc != 0
 
 - name:                     Install MSSQL
@@ -19,7 +19,7 @@
   environment:
     ACCEPT_EULA:            "{{ __accept_eula }}"
   when:
-    - ansible_os_family == "RedHat"
+    - ansible_facts['os_family'] == "RedHat"
     - mssql_server_already_running.rc != 0
 
 - name:                     Initialize MSSQL database
@@ -29,7 +29,7 @@
     MSSQL_PID:              "{{ __mssql_product_id }}"
     MSSQL_SA_PASSWORD:      "{{ __mssql_sa_password }}"
   when:
-    - ansible_os_family == "RedHat"
+    - ansible_facts['os_family'] == "RedHat"
     - mssql_server_already_running.rc != 0
 
 - name:                     Add SQL Server command line tools repo
@@ -37,7 +37,7 @@
     url:                    https://packages.microsoft.com/config/rhel/7/prod.repo
     dest:                   /etc/yum.repos.d/msprod.repo
   when:
-    - ansible_os_family == "RedHat"
+    - ansible_facts['os_family'] == "RedHat"
     - mssql_server_already_running.rc != 0
 
 - name:                     Install MSSQL tools
@@ -47,7 +47,7 @@
   environment:
     ACCEPT_EULA:            "{{ __accept_eula }}"
   when:
-    - ansible_os_family == "RedHat"
+    - ansible_facts['os_family'] == "RedHat"
     - mssql_server_already_running.rc != 0
 
 - name:                     Start SQL Server service
@@ -60,5 +60,5 @@
 - name:                     Create profiles script
   shell:                    echo 'export PATH=$PATH:/opt/mssql/bin:/opt/mssql-tools/bin' | sudo tee "{{ __mssql_profiles_script }}"
   when:
-    - ansible_os_family == "RedHat"
+    - ansible_facts['os_family'] == "RedHat"
     - mssql_server_already_running.rc != 0

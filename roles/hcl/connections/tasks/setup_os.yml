@@ -11,7 +11,7 @@
         "xorg-x11-fonts-legacy",
       ]
     state: present
-  when: ansible_os_family == "Suse"
+  when: ansible_facts['os_family'] == "Suse"
 
 - name: Install pre-requisites Yum RHEL 7
   yum:
@@ -33,8 +33,8 @@
       ]
     state: present
   when:
-    - ansible_os_family == "RedHat"
-    - ansible_distribution_major_version == "7"
+    - ansible_facts['os_family'] == "RedHat"
+    - ansible_facts['distribution_major_version'] == "7"
 
 - name: Install pre-requisites Yum RHEL8/RHEL9
   yum:
@@ -56,8 +56,8 @@
       ]
     state: present
   when:
-    - ansible_os_family == "RedHat"
-    - ansible_distribution_major_version == "8" or ansible_distribution_major_version == "9"
+    - ansible_facts['os_family'] == "RedHat"
+    - ansible_facts['distribution_major_version'] == "8" or ansible_facts['distribution_major_version'] == "9"
 
 - name: Install pre-requisites Yum on app servers RHEL 7
   yum:
@@ -79,8 +79,8 @@
       ]
     state: present
   when:
-    - ansible_os_family == "RedHat"
-    - ansible_distribution_major_version == "7"
+    - ansible_facts['os_family'] == "RedHat"
+    - ansible_facts['distribution_major_version'] == "7"
   delegate_to: "{{ item }}"
   with_items: "{{ groups['was_servers'] }}"
 
@@ -105,8 +105,8 @@
       ]
     state: present
   when:
-    - ansible_os_family == "RedHat" or "AlmaLinux"
-    - ansible_distribution_major_version == "8" or ansible_distribution_major_version == "9"
+    - ansible_facts['os_family'] == "RedHat" or "AlmaLinux"
+    - ansible_facts['distribution_major_version'] == "8" or ansible_facts['distribution_major_version'] == "9"
   delegate_to: "{{ item }}"
   with_items: "{{ groups['was_servers'] }}"
 
@@ -116,7 +116,7 @@
     state: present
     disable_gpg_check: yes
   when:
-    - ansible_os_family == "Suse"
+    - ansible_facts['os_family'] == "Suse"
 
 - name: Install wkhtmltox-0.12.6-1.opensuse.leap15.x86_64.rpm from RPM on WAS servers
   zypper:
@@ -124,7 +124,7 @@
     state: present
     disable_gpg_check: yes
   when:
-    - ansible_os_family == "Suse"
+    - ansible_facts['os_family'] == "Suse"
   delegate_to: "{{ item }}"
   with_items: "{{ groups['was_servers'] }}"
 
@@ -134,8 +134,8 @@
     state: present
     disable_gpg_check: yes
   when:
-    - ansible_os_family == "RedHat"
-    - ansible_distribution_major_version == "7"
+    - ansible_facts['os_family'] == "RedHat"
+    - ansible_facts['distribution_major_version'] == "7"
 
 - name: Install wkhtmltox-0.12.6-1.centos7.x86_64.rpm from RPM on WAS servers
   yum:
@@ -143,8 +143,8 @@
     state: present
     disable_gpg_check: yes
   when:
-    - ansible_os_family == "RedHat"
-    - ansible_distribution_major_version == "7"
+    - ansible_facts['os_family'] == "RedHat"
+    - ansible_facts['distribution_major_version'] == "7"
   delegate_to: "{{ item }}"
   with_items: "{{ groups['was_servers'] }}"
 
@@ -154,8 +154,8 @@
     state: present
     disable_gpg_check: yes
   when:
-    - ansible_os_family == "RedHat"
-    - ansible_distribution_major_version == "8"
+    - ansible_facts['os_family'] == "RedHat"
+    - ansible_facts['distribution_major_version'] == "8"
 
 - name: Install wkhtmltox-0.12.6-1.centos8.x86_64.rpm from RPM on WAS servers
   yum:
@@ -163,8 +163,8 @@
     state: present
     disable_gpg_check: yes
   when:
-    - ansible_os_family == "RedHat"
-    - ansible_distribution_major_version == "8"
+    - ansible_facts['os_family'] == "RedHat"
+    - ansible_facts['distribution_major_version'] == "8"
   delegate_to: "{{ item }}"
   with_items: "{{ groups['was_servers'] }}"
 
@@ -174,8 +174,8 @@
     state: present
     disable_gpg_check: yes
   when:
-    - ansible_os_family == "RedHat" or "AlmaLinux"
-    - ansible_distribution_major_version == "9"
+    - ansible_facts['os_family'] == "RedHat" or "AlmaLinux"
+    - ansible_facts['distribution_major_version'] == "9"
 
 - name: Install wkhtmltox-0.12.6.1-2.almalinux9.x86_64.rpm from RPM on WAS servers
   yum:
@@ -183,8 +183,8 @@
     state: present
     disable_gpg_check: yes
   when:
-    - ansible_os_family == "RedHat" or "AlmaLinux"
-    - ansible_distribution_major_version == "9"
+    - ansible_facts['os_family'] == "RedHat" or "AlmaLinux"
+    - ansible_facts['distribution_major_version'] == "9"
   delegate_to: "{{ item }}"
   with_items: "{{ groups['was_servers'] }}"
 

@@ -26,7 +26,7 @@
     uid:                   1
     system:                yes
   when:
-    - ansible_distribution == "SLES"
+    - ansible_facts['distribution']== "SLES"
 
 - name:                   Create symbolic links for AWS SDK libraries
   file:
@@ -41,7 +41,7 @@
     - libaws-cpp-sdk-s3.so
     - libaws-cpp-sdk-transfer.so
   when:
-    - ansible_distribution == "AlmaLinux"
+    - ansible_facts['distribution']== "AlmaLinux"
 
 - name:                   Update LD_LIBRARY_PATH for {{ __db2_user }} user
   lineinfile:
@@ -49,21 +49,21 @@
     line:                 'export LD_LIBRARY_PATH={{ __db2_installation_folder }}/lib64:/usr/local/lib:$LD_LIBRARY_PATH'
     create:               yes
   when:
-    - ansible_distribution == "AlmaLinux"
+    - ansible_facts['distribution']== "AlmaLinux"
 
 - name:                   Source the updated .bashrc
   shell:                  source /home/{{ __db2_user }}/.bashrc
   become:                 yes
   become_user:            "{{ __db2_user }}"
   when:
-    - ansible_distribution == "AlmaLinux"
+    - ansible_facts['distribution']== "AlmaLinux"
 
 - name:                    "Install DB2"
   command:                 "{{ __installation_folder }}/db2setup -r {{ __db2_server_rsp_location }}"
   when:
-    - ansible_distribution != "SLES"
+    - ansible_facts['distribution']!= "SLES"
 
 - name:                    "Install DB2 for SUSE"
   command:                 "{{ __installation_folder }}/db2setup -r {{ __db2_server_rsp_location }} -f sysreq"
   when:
-    - ansible_distribution == "SLES"
+    - ansible_facts['distribution']== "SLES"

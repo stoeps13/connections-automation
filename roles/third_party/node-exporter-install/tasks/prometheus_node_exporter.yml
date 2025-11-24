@@ -70,13 +70,13 @@
     owner:         root
     group:         root
     mode:          0644
-  when: service_mgr | default(ansible_service_mgr) == 'systemd'
+  when: service_mgr | default(ansible_facts['service_mgr']) == 'systemd'
   notify:
     - restart node exporter
 
 - name:            Looking which version of upstart is install
   command:         initctl version
-  when: service_mgr | default(ansible_service_mgr) == 'upstart'
+  when: service_mgr | default(ansible_facts['service_mgr']) == 'upstart'
   register: upstart_version
   changed_when: false
 
@@ -87,7 +87,7 @@
     owner:         root
     group:         root
     mode:          0644
-  when: service_mgr | default(ansible_service_mgr) == 'upstart'
+  when: service_mgr | default(ansible_facts['service_mgr']) == 'upstart'
   notify:
     - reinit node exporter
     - restart node exporter
@@ -99,7 +99,7 @@
     owner:         root
     group:         root
     mode:          0755
-  when: service_mgr | default(ansible_service_mgr) in [ 'sysvinit', 'service' ]
+  when: service_mgr | default(ansible_facts['service_mgr']) in [ 'sysvinit', 'service' ]
   notify:
     - restart node exporter
 

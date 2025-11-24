@@ -3,14 +3,14 @@
     name:              ['unzip']
     state:             present
   when:
-    - ansible_distribution == "RedHat" or ansible_distribution == "AlmaLinux"
+    - ansible_facts['distribution']== "RedHat" or ansible_facts['distribution']== "AlmaLinux"
 
 - name:                Install pre-requisites Zypper
   zypper:
     name:              ['unzip']
     state:             present
   when:
-    - ansible_distribution == "SLES"
+    - ansible_facts['distribution']== "SLES"
 
 - name:                "Create {{ __jdbc_installation_folder }}"
   file:

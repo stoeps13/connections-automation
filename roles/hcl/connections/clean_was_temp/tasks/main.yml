@@ -10,7 +10,7 @@
    - not __cnx_uninstall
 
 - set_fact:
-    versionStampToSet:   "{{ '%Y%m%d.%H%M%S' | strftime(ansible_date_time.epoch) }}"
+    versionStampToSet:   "{{ '%Y%m%d.%H%M%S' | strftime(ansible_facts['date_time']['epoch']) }}"
 
 - debug:                 var=versionStampToSet
 

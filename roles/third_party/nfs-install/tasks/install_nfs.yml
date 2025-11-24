@@ -3,11 +3,11 @@
     name:                                           ['nfs-utils', 'cifs-utils']
     state:                                          present
   when:
-    - ansible_distribution != "SLES"
+    - ansible_facts['distribution']!= "SLES"
 
 - name:                                             Install nfs-server for SUSE
   zypper:
     name:                                           ['nfs-kernel-server', 'cifs-utils']
     state:                                          present
   when:
-    - ansible_distribution == "SLES"
+    - ansible_facts['distribution']== "SLES"

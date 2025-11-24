@@ -11,7 +11,7 @@ minio:
   image:
     tag: {{ __huddoboards_image_tag }}
   nfs:
-    server: {{ nfsMasterAddress | default( hostvars[groups['nfs_servers'][0]]['ansible_default_ipv4']['address'] ) }}
+    server: {{ nfsMasterAddress | default( hostvars[groups['nfs_servers'][0]]['ansible_facts['default']['ipv4']']['address'] ) }}
 {% if persistentVolumePath is defined %}
   persistentVolumePath: {{ persistentVolumePath }}
 {% endif %}
@@ -119,7 +119,7 @@ migration:
 
     # -------- DB2 variables ------------
     CONNECTIONS_DB_TYPE: db2
-{% if ansible_distribution == "SLES" %}
+{% if ansible_facts['distribution']== "SLES" %}
     CONNECTIONS_DB_PORT: 50001
 {% else %}
     CONNECTIONS_DB_PORT: 50000
