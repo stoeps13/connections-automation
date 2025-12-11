@@ -60,6 +60,10 @@ case $2 in
     ansible-playbook ${CMD_OPT} playbooks/third_party/setup-tiny-editors.yml
     ;;
 
+  facts)
+    ansible-playbook ${CMD_OPT} playbooks/ansible_facts.yml
+    ;;
+
   *)
     printf "\n\tSelect a deployment\n"
     printf "\t===================\n"

@@ -1,7 +1,7 @@
 ---
 - name: Network Getting Started First Playbook
   gather_facts: true
-  hosts: cnx8-db2-was.stoeps.home
+  hosts: was_servers
   tasks:
     - name: Print all available facts
       ansible.builtin.debug:

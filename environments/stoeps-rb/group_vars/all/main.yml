@@ -46,9 +46,9 @@ component_pack_download_location: http://{{ install_sources_ip }}:8081
 cnx_package: "HCL_Connections_8.0_lin.tar"
 connections_wizards_package_name: "HCL_Connections_8.0_wizards_lin_aix.tar"
 cnx_major_version: "8"
-cnx_fixes_version: "8.0.0.0_CR9"
+cnx_fixes_version: "8.0.0.0_CR12"
 cnx_fixes_files:
-  - { file_name: "HC8.0_CR9.zip" }
+  - { file_name: "HC8.0_CR12.zip" }
 cnx_updates_enabled: true
 
 tdi_upgrade_package_name: 7.2.0-ISS-SDI-FP0014.zip
