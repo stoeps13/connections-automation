@@ -1,5 +1,7 @@
 ---
 cnx_application_ingress: cnx8-rb.stoeps.home
+cnx_component_pack_ingress: cnx8-rb.stoeps.home
+ic_internal: "{{ hostvars[groups['ihs_servers'][0]]['inventory_hostname'] }}"
 
 was_username: wasadmin
 ldap_userid: jjones

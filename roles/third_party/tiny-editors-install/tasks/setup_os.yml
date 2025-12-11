@@ -2,19 +2,23 @@
 - name: Install pre-requisites Yum for CentOS 7 - epel-release
   ansible.builtin.package:
     name:
-      - 'epel-release'
+      - "epel-release"
     enablerepo: "extras"
     state: present
   when:
     - ansible_facts['distribution']== "CentOS"
     - ansible_facts['distribution_major_version'] == "7"
 
+- name: Install crypto python package
+  ansible.builtin.pip:
+    name: passlib
+
 - name: Install python pre-requisites for Pexpect for CentOS7
   ansible.builtin.package:
     name:
-      - 'python-setuptools'
-      - 'python2'
-      - 'python-pip'
+      - "python-setuptools"
+      - "python2"
+      - "python-pip"
     state: present
   when:
     - ansible_facts['distribution']== "CentOS"
@@ -23,8 +27,8 @@
 - name: Install pre-requisites Yum
   ansible.builtin.package:
     name:
-      - 'python3-pip'
-      - 'httpd-tools'
+      - "python3-pip"
+      - "httpd-tools"
     state: present
   when:
     - ansible_facts['os_family'] == "RedHat"

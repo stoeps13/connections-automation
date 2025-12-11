@@ -40,6 +40,14 @@ case $2 in
     ansible-playbook ${CMD_OPT} playbooks/setup-component-pack-complete-harbor.yml
     ;;
 
+  haproxy | lb)
+    ansible-playbook ${CMD_OPT} playbooks/third_party/setup-haproxy.yml
+    ;;
+
+  nginx | ngx)
+    ansible-playbook ${CMD_OPT} playbooks/third_party/setup-nginx.yml
+    ;;
+
   docs | hcldocs | cnxdocs)
     ansible-playbook ${CMD_OPT} playbooks/hcl/setup-connections-docs.yml
     ;;
@@ -58,6 +66,8 @@ case $2 in
     printf "\tapisix        \tDeploy new Api layer\n"
     printf "\tcnx           \tDeploy Connections complete\n"
     printf "\tcomponentpack \tDeploy Componentpack latest\n"
+    printf "\thaproxy       \tDeploy Load Balancer\n"
+    printf "\tnginx         \tDeploy Nginx \n"
     printf "\tdocs          \tDeploy CNX Docs\n"
     printf "\tosupdate      \tUpdate all OS packages\n"
     printf "\ttiny          \tDeploy Tiny Editors\n"
