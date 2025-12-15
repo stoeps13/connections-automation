@@ -66,6 +66,7 @@ dmgr_hostname: "{{ hostvars[groups['dmgr'][0]]['inventory_hostname'] }}"
 smtp_hostname: localhost
 
 db_type: DB2
+setup_db2_jdbc: true
 
 cnx_force_repopulation: false
 

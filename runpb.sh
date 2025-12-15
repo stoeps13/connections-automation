@@ -64,6 +64,14 @@ case $2 in
     ansible-playbook ${CMD_OPT} playbooks/ansible_facts.yml
     ;;
 
+  cnxstart)
+    ansible-playbook ${CMD_OPT} playbooks/third_party/was-cluster-start.yml
+    ;;
+
+  cnxstop)
+    ansible-playbook ${CMD_OPT} playbooks/third_party/was-cluster-stop.yml
+    ;;
+
   *)
     printf "\n\tSelect a deployment\n"
     printf "\t===================\n"
@@ -75,6 +83,8 @@ case $2 in
     printf "\tdocs          \tDeploy CNX Docs\n"
     printf "\tosupdate      \tUpdate all OS packages\n"
     printf "\ttiny          \tDeploy Tiny Editors\n"
+    printf "\tcnxstart      \tStart Application Cluster\n"
+    printf "\tcnxstop       \tStop Application Cluster\n"
     printf "\n"
     printf "\tUse the name as second commandline option\n"
     printf "\tExample:\n"
