@@ -1,0 +1,9 @@
+---
+# handlers file for stoeps.postfix
+- name: Postfix restart
+  ansible.builtin.systemd_service:
+    name: postfix.service
+    state: reloaded
+
+- name: Postmap virtual-mailbox
+  ansible.builtin.command: postmap /etc/postfix/virtual-mailbox

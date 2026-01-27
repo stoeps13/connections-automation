@@ -1,0 +1,10 @@
+# create new
+# [user account] [mailbox]
+{% for id in user_ids %}
+jjones{{ id }}@stoeps.home stoeps.home/jjones{{ id }}/Maildir/
+{% endfor %}
+
+{# Iteriert über jede E-Mail-Adresse in der Liste 'mail_users' #}
+{% for mail_address in mail_users %}
+{{ mail_address }}@stoeps.home stoeps.home/{{ mail_address }}/Maildir/
+{% endfor %}

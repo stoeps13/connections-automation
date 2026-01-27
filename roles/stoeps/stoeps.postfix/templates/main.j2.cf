@@ -1,0 +1,26 @@
+myhostname = {{ ansible_fqdn }}
+mydomain = {{ ansible_domain }}
+myorigin = $mydomain
+inet_interfaces = all
+inet_protocols = ipv4
+# mydestination = $myhostname, localhost.$mydomain, localhost, $mydomain
+mynetworks = 127.0.0.0/8, {{ hostvars[inventory_hostname]['ansible_facts']['default_ipv4']['network'] }}/{{ hostvars[inventory_hostname]['ansible_facts']['default_ipv4']['prefix'] }}
+home_mailbox = /home/vmail/%d/%n/Maildir
+smtpd_banner = $myhostname ESMTP
+disable_vrfy_command = yes
+smtpd_helo_required = yes
+message_size_limit = 10240000
+# SMTP-Auth settings
+smtpd_sasl_type = dovecot
+smtpd_sasl_path = private/auth
+smtpd_sasl_auth_enable = yes
+smtpd_sasl_security_options = noanonymous
+smtpd_sasl_local_domain = $myhostname
+smtpd_recipient_restrictions = permit_mynetworks, permit_auth_destination, permit_sasl_authenticated, reject
+
+# if specify multiple domains, specify comma or space separated
+virtual_mailbox_domains = $mydomain, virtual.host
+virtual_mailbox_base = /home/vmail
+virtual_mailbox_maps = hash:/etc/postfix/virtual-mailbox
+virtual_uid_maps = static:20000
+virtual_gid_maps = static:20000

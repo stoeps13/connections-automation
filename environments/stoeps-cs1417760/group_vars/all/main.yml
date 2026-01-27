@@ -1,0 +1,104 @@
+---
+cnx_application_ingress: cnx8-cs1417760.stoeps.home
+cnx_component_pack_ingress: cnx8-cs1417760.stoeps.home
+ic_internal: "{{ hostvars[groups['ihs_servers'][0]]['inventory_hostname'] }}"
+
+was_username: wasadmin
+ldap_userid: jjones
+ldap_nr_of_users: 1000
+setup_fake_ldap_users: true
+ldap_bind_user: cn=admin,dc=stoeps,dc=home
+ldap_realm: dc=stoeps,dc=home
+ldap_user_mail_domain: stoeps.home
+ldap_login_properties: uid
+custom_ldap_users_location: /var/home/stoeps/devel/automation/connections-automation/environments/stoeps-cs1417760/stoeps.ldif.j2
+
+ihs_username: ihsadmin
+ihs_major_version: 8
+
+connections_admin: jjones1
+
+db_hostname: "{{ hostvars[groups['db_servers'][0]]['inventory_hostname'] }}"
+db_enable_upgrades: true
+db_version: 7.0
+
+sudo_group: wheel
+
+# Non-mandatory changes
+
+# Type of HCL Connections deployment: small (default), medium and large.
+cnx_deploy_type: medium
+
+install_sources_ip: 10.0.22.1
+cnx_fixes_repository_url: http://{{ install_sources_ip }}:8081
+tdi_download_location: http://{{ install_sources_ip }}:8081
+db2_download_location: http://{{ install_sources_ip }}:8081
+connections_wizards_download_location: http://{{ install_sources_ip }}:8081
+iim_repository_url: http://{{ install_sources_ip }}:8081
+was_repository_url: http://{{ install_sources_ip }}:8081
+was_fixes_repository_url: http://{{ install_sources_ip }}:8081
+ihs_repository_url: http://{{ install_sources_ip }}:8081
+ihs_fixes_repository_url: http://{{ install_sources_ip }}:8081
+cnx_docs_download_location: http://{{ install_sources_ip }}:8081
+cnx_repository_url: http://{{ install_sources_ip }}:8081
+component_pack_download_location: http://{{ install_sources_ip }}:8081
+
+cnx_package: "HCL_Connections_8.0_lin.tar"
+connections_wizards_package_name: "HCL_Connections_8.0_wizards_lin_aix.tar"
+cnx_major_version: "8"
+cnx_fixes_version: "8.0.0.0_CR12"
+cnx_fixes_files:
+  - { file_name: "HC8.0_CR12.zip" }
+cnx_updates_enabled: true
+
+tdi_upgrade_package_name: 7.2.0-ISS-SDI-FP0014.zip
+tdi_upgrade_package_bin: SDI-7.2-FP0014.zip
+tdi_upgrade_package_folder_name: 7.2.0-ISS-SDI-FP0014
+jre_package_version: ibm-java-x86_64-80
+jre_package_name: ibm-java-jre-8.0-8.45-linux-x86_64.tgz
+upgrade_tdi_jre: true
+tdi_upgrade_enable: true
+
+# tdi_sol_location: http://{{ groups['installer'][0] }}:8081/tdisol_70_java8.tar
+
+dmgr_hostname: "{{ hostvars[groups['dmgr'][0]]['inventory_hostname'] }}"
+
+smtp_hostname: localhost
+
+db_type: DB2
+setup_db2_jdbc: true
+
+cnx_force_repopulation: false
+
+cnx_enable_moderation: false
+cnx_enable_invite: false
+cnx_enable_full_icec: true
+
+enable_prometheus_jmx_exporter: false
+
+setup_teams: false
+setup_kudosboards: false
+setup_outlook_addin: false
+
+frontend_fqdn: "cnx8-cs1417760.stoeps.home"
+
+setup_connections_docs: false
+cnx_docs_package_name: Docs_2.0.2-CF2.zip
+setup_connections_wizards: true
+
+force_destroy_db2: false
+force_destroy_oracle: false
+force_destroy_ihs: false
+force_destroy_websphere: false
+force_destroy_kubernetes: false
+install_tinyeditors: true
+tinyeditors_username: tiny
+tinyeditors_download_location: http://{{ install_sources_ip }}:8081
+tinyeditors_package_name: TinyEditorsForConnections_8.0_v4.9.2.45.zip
+
+docker_registry_username: "stoeps@vegardit.com"
+
+db_server: "{{ db_hostname }}"
+db_server_user: "{{ db_username }}"
+db_username: lcuser
+nfsMasterAddress: 10.0.22.143

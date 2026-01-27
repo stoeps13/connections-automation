@@ -1,0 +1,6 @@
+---
+# handlers file for stoeps.dovecot
+- name: Dovecot restart
+  ansible.builtin.systemd_service:
+    name: dovecot.service
+    state: reloaded

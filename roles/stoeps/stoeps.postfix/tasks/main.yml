@@ -1,0 +1,36 @@
+---
+# tasks file for stoeps.postfix
+- name: Install prerequisits
+  ansible.builtin.dnf:
+    name:
+      - postfix
+    state: present
+  when:
+    - ansible_facts['os_family'] == "RedHat"
+
+- name: Enable and start Postfix service
+  ansible.builtin.systemd_service:
+    name: postfix.service
+    state: started
+    enabled: true
+
+- name: Create /etc/postfix/main.cf
+  ansible.builtin.template:
+    src: main.j2.cf
+    dest: /etc/postfix/main.cf
+    owner: root
+    group: root
+    mode: "0644"
+    backup: false
+  notify: Postfix restart
+
+- name: Generate user accounts config
+  ansible.builtin.template:
+    src: virtual-mailbox.j2 # Path to your Jinja2 template
+    dest: /etc/postfix/virtual-mailbox
+    owner: root
+    group: root
+    mode: "0644"
+  vars:
+    user_ids: "{{ range(1, 100) | list }}"
+  notify: Postmap virtual-mailbox

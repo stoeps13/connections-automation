@@ -65,13 +65,15 @@ case $2 in
     ;;
 
   cnxstart)
-    ansible-playbook ${CMD_OPT} playbooks/third_party/was-cluster-start.yml
+    ansible-playbook ${CMD_OPT} playbooks/third_party/was-nd-start.yml
     ;;
 
   cnxstop)
-    ansible-playbook ${CMD_OPT} playbooks/third_party/was-cluster-stop.yml
+    ansible-playbook ${CMD_OPT} playbooks/third_party/was-nd-stop.yml
     ;;
-
+  mail)
+    ansible-playbook ${CMD_OPT} playbooks/stoeps/setup-mail.yaml
+    ;;
   *)
     printf "\n\tSelect a deployment\n"
     printf "\t===================\n"
@@ -83,6 +85,7 @@ case $2 in
     printf "\tdocs          \tDeploy CNX Docs\n"
     printf "\tosupdate      \tUpdate all OS packages\n"
     printf "\ttiny          \tDeploy Tiny Editors\n"
+    printf "\tmail          \tInstall Postfix and Dovecot\n"
     printf "\tcnxstart      \tStart Application Cluster\n"
     printf "\tcnxstop       \tStop Application Cluster\n"
     printf "\n"

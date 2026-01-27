@@ -1,0 +1,24 @@
+---
+- name: Manage Postfix
+  hosts: dmgr
+  become: true
+  any_errors_fatal: true
+  roles:
+    - roles/stoeps/stoeps.postfix
+    - roles/stoeps/stoeps.dovecot
+  tasks:
+    - name: Show hostname
+      debug:
+        msg: "{{ ansible_hostname }}"
+
+    - name: Show fully qualified domain name.
+      debug:
+        msg: "{{ ansible_fqdn }}"
+
+    - name: Show domain name
+      debug:
+        msg: "{{ ansible_domain }}"
+
+    # - name: Show Ansible facts
+    #   debug:
+    #     msg: "{{ ansible_facts }}"
