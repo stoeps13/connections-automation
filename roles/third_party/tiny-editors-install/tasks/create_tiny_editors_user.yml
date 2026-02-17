@@ -1,6 +1,6 @@
 ---
 - name: Create Tiny Editors user account and add it to the {{ sudo_group }} group
-  user: 
+  user:
     name: "{{ __tinyeditors_username }}"
     password: "{{ tinyeditors_password | password_hash('sha512') }}"
     groups: "{{ sudo_group }}"
@@ -15,7 +15,7 @@
 
 - name: Convert ssh key for RHEL8
   command: ssh-keygen -p -m PEM -f /home/{{ __tinyeditors_username }}/.ssh/id_rsa -P "{{ tinyeditors_password }}" -N "{{ tinyeditors_password }}"
-  when: 
+  when:
     - ansible_facts['os_family'] == "RedHat"
     - ansible_facts['distribution_major_version'] == "8"
 
@@ -25,16 +25,16 @@
   when: create_tinyeditors_user.changed
 
 - name: Default group of {{ __tinyeditors_username }}
-  debug: 
+  debug:
     msg: "{{  user_group.stdout }}"
   when: create_tinyeditors_user.changed
 
 - name: "Create authorized_keys for the {{ __tinyeditors_username }} user"
-  copy: 
+  copy:
     src: "/home/{{ __tinyeditors_username }}/.ssh/id_rsa.pub"
     dest: "/home/{{ __tinyeditors_username }}/.ssh/authorized_keys"
     owner: "{{ __tinyeditors_username }}"
     group: "{{ user_group.stdout }}"
-    mode: '0600'
+    mode: "0600"
     remote_src: true
   when: create_tinyeditors_user.changed

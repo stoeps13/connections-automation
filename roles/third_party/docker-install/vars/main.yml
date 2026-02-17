@@ -1,23 +1,23 @@
 ---
-__kubectl_user:                 "{{ kubectl_user | default( ansible_facts['env']['SUDO_USER'] ) }}"
+__kubectl_user: "{{ kubectl_user | default( ansible_facts['env']['SUDO_USER'] ) }}"
 
-__containerd_install_version:   "{{ containerd_version | default('1.7.24-3.1') }}"
-__containerd_version:           "{{ __containerd_install_version }}.el{{ ansible_facts['distribution_major_version'] }}"
-__docker_version:               "{{ docker_version | default('20.10.12') }}"
+__containerd_install_version: "{{ containerd_version | default('1.7.24-3.1') }}"
+__containerd_version: "{{ __containerd_install_version }}.el{{ ansible_facts['distribution_major_version'] }}"
+__docker_version: "{{ docker_version | default('20.10.12') }}"
 
-__docker_daemon_json_template:  "docker.daemon.overlay.json.j2"
-__docker_daemon_json_location:  "/etc/docker/daemon.json"
+__docker_daemon_json_template: "docker.daemon.overlay.json.j2"
+__docker_daemon_json_location: "/etc/docker/daemon.json"
 
-__registry_port:                "{{ registry_port | default('5000') }}"
-__registry_user:                "{{ registry_user | default('admin') }}"
-__registry_password:            "{{ registry_password | default('password') }}"
+__registry_port: "{{ registry_port | default('5000') }}"
+__registry_user: "{{ registry_user | default('admin') }}"
+__registry_password: "{{ registry_password | default('password') }}"
 
-__certs_folder:                 "/etc/docker/certs"
-__registry_cert:                "/etc/docker/certs.d/{{ inventory_hostname }}:5000"
+__certs_folder: "/etc/docker/certs"
+__registry_cert: "/etc/docker/certs.d/{{ inventory_hostname }}:5000"
 
-__overlay2_enabled:             "{{ overlay2_enabled | default(true) }}"
+__overlay2_enabled: "{{ overlay2_enabled | default(true) }}"
 
-__docker_cnf_template:          "cert.cnf.j2"
-__docker_cnf_location:          "{{ __certs_folder }}/{{ inventory_hostname }}.cnf"
+__docker_cnf_template: "cert.cnf.j2"
+__docker_cnf_location: "{{ __certs_folder }}/{{ inventory_hostname }}.cnf"
 
-__insecure_registries:          "{{ docker_insecure_registries | default( docker_registry_url ) }}"
+__insecure_registries: "{{ docker_insecure_registries | default( docker_registry_url ) }}"

@@ -1,103 +1,102 @@
 ---
-- name:              Create cache folder
+- name: Create cache folder
   file:
-    path:            "{{ __ansible_cache }}"
-    state:           directory
-    mode:            '0755'
+    path: "{{ __ansible_cache }}"
+    state: directory
+    mode: "0755"
 
-- name:              Remove swapfile from /etc/fstab
+- name: Remove swapfile from /etc/fstab
   mount:
-    name:            "{{ item }}"
-    fstype:          swap
-    state:           absent
+    name: "{{ item }}"
+    fstype: swap
+    state: absent
   with_items:
     - swap
     - none
 
-- name:              Disable swap
-  command:           swapoff -a
-  when:              ansible_facts['swaptotal_mb'] > 0
+- name: Disable swap
+  command: swapoff -a
+  when: ansible_facts['swaptotal_mb'] > 0
 
-- name:              Mount everything if something is missing
-  command:           mount -a
-  
+- name: Mount everything if something is missing
+  command: mount -a
 
-- name:              Enable Kubernetes repository
+- name: Enable Kubernetes repository
   template:
-    src:             "{{ __kubernetes_yum_repo_template }}"
-    dest:            "{{ __kubernetes_yum_repo_location }}"
+    src: "{{ __kubernetes_yum_repo_template }}"
+    dest: "{{ __kubernetes_yum_repo_location }}"
   when:
-   - ansible_facts['os_family'] == "RedHat"
-   - ansible_facts['distribution_major_version'] == "7"
+    - ansible_facts['os_family'] == "RedHat"
+    - ansible_facts['distribution_major_version'] == "7"
 
-- name:              Enable Kubernetes repository
+- name: Enable Kubernetes repository
   template:
-    src:             "{{ __kubernetes_yum_rhel8_template }}"
-    dest:            "{{ __kubernetes_yum_repo_location }}"
+    src: "{{ __kubernetes_yum_rhel8_template }}"
+    dest: "{{ __kubernetes_yum_repo_location }}"
   when:
-   - ansible_facts['os_family'] == "RedHat" or ansible_facts['os_family'] == "AlmaLinux"
-   - ansible_facts['distribution_major_version'] == "8" or ansible_facts['distribution_major_version'] == "9"
+    - ansible_facts['os_family'] == "RedHat" or ansible_facts['os_family'] == "AlmaLinux"
+    - ansible_facts['distribution_major_version'] == "8" or ansible_facts['distribution_major_version'] == "9"
 
-- name:                     Remove Docker repository file
+- name: Remove Docker repository file
   file:
-    path:                   /etc/zypp/repos.d/docker-ce.repo
-    state:                  absent
-  become:                   yes
+    path: /etc/zypp/repos.d/docker-ce.repo
+    state: absent
+  become: yes
   when:
     - ansible_facts['distribution']== "SLES"
 
-- name:              Remove existing Kubernetes repository from SUSE
-  command:           zypper removerepo kubernetes
-  when: 
+- name: Remove existing Kubernetes repository from SUSE
+  command: zypper removerepo kubernetes
+  when:
     - ansible_facts['distribution']== "SLES"
 
-- name:              Enable Kubernetes repository on SUSE
-  command:           zypper ar -f https://pkgs.k8s.io/core:/stable:/v{{ __kubernetes_major_minor_version }}/rpm/ kubernetes
-  when: 
+- name: Enable Kubernetes repository on SUSE
+  command: zypper ar -f https://pkgs.k8s.io/core:/stable:/v{{ __kubernetes_major_minor_version }}/rpm/ kubernetes
+  when:
     - ansible_facts['distribution']== "SLES"
 
-- name:              Install prereqs for RHEL 8 / CentOS 8
+- name: Install prereqs for RHEL 8 / CentOS 8
   yum:
-    name:            ['iproute-tc']
-    state:           present
+    name: ["iproute-tc"]
+    state: present
   when:
-   - ansible_facts['os_family'] == "RedHat"
-   - ansible_facts['distribution_major_version'] == "8"
+    - ansible_facts['os_family'] == "RedHat"
+    - ansible_facts['distribution_major_version'] == "8"
 
-- name:              Install prereqs for SUSE
+- name: Install prereqs for SUSE
   zypper:
-    name:            ['iproute2']
-    state:           present
-  when: 
+    name: ["iproute2"]
+    state: present
+  when:
     - ansible_facts['distribution']== "SLES"
-    
-- name:              "Load br_netfilter as per https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/#letting-iptables-see-bridged-traffic"
+
+- name: "Load br_netfilter as per https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/#letting-iptables-see-bridged-traffic"
   modprobe:
-    name:            br_netfilter
-    state:           present
+    name: br_netfilter
+    state: present
 
-- name:              Avoid issues with traffic routing as per documentation
+- name: Avoid issues with traffic routing as per documentation
   sysctl:
-    name:            "{{ item }}"
-    value:           '1'
-    sysctl_set:      yes
-    reload:          yes
+    name: "{{ item }}"
+    value: "1"
+    sysctl_set: yes
+    reload: yes
   with_items:
-   - "net.ipv4.conf.all.forwarding"
-   - "net.bridge.bridge-nf-call-ip6tables"
-   - "net.bridge.bridge-nf-call-iptables"
+    - "net.ipv4.conf.all.forwarding"
+    - "net.bridge.bridge-nf-call-ip6tables"
+    - "net.bridge.bridge-nf-call-iptables"
 
-- name:              Disable SELinux to support Kubelet as per documentation
+- name: Disable SELinux to support Kubelet as per documentation
   selinux:
-    state:           disabled
-  ignore_errors:     true
-  notify:            reboot
+    state: disabled
+  ignore_errors: true
+  notify: reboot
 
-- name:              Set httpd_can_network_connect flag on and keep it persistent across reboots
+- name: Set httpd_can_network_connect flag on and keep it persistent across reboots
   seboolean:
-    name:            httpd_can_network_connect
-    state:           yes
-    persistent:      yes
-  ignore_errors:     true
+    name: httpd_can_network_connect
+    state: yes
+    persistent: yes
+  ignore_errors: true
   when:
     - ansible_facts['os_family'] == "RedHat" or "AlmaLinux"

@@ -1,25 +1,25 @@
 ---
-- name:                    Reload systemd
+- name: Reload systemd
   systemd:
-    daemon-reload:         yes
+    daemon-reload: yes
 
-- name:                    Remove existing Kubernetes repository file if it exists
+- name: Remove existing Kubernetes repository file if it exists
   file:
-    path:                  /etc/yum.repos.d/kubernetes.repo
-    state:                 absent
-  ignore_errors:           yes
+    path: /etc/yum.repos.d/kubernetes.repo
+    state: absent
+  ignore_errors: yes
   when:
     - ansible_facts['distribution']!= "SLES"
 
-- name:                    Remove existing Kubernetes repository file if it exists on SUSE
+- name: Remove existing Kubernetes repository file if it exists on SUSE
   file:
-    path:                  /etc/zypp/repos.d/kubernetes.repo
-    state:                 absent
-  ignore_errors:           yes
+    path: /etc/zypp/repos.d/kubernetes.repo
+    state: absent
+  ignore_errors: yes
   when:
     - ansible_facts['distribution']== "SLES"
 
-- name:                    Create Kubernetes repository file at /etc/yum.repos.d
+- name: Create Kubernetes repository file at /etc/yum.repos.d
   copy:
     content: |
       [kubernetes]
@@ -33,7 +33,7 @@
   when:
     - ansible_facts['distribution']!= "SLES"
 
-- name:                    Create Kubernetes repository file at /etc/zypp/repos.d on SUSE
+- name: Create Kubernetes repository file at /etc/zypp/repos.d on SUSE
   copy:
     content: |
       [kubernetes]
@@ -47,22 +47,22 @@
   when:
     - ansible_facts['distribution']== "SLES"
 
-- name:                    Clean YUM cache
-  command:                 "{{ item }}"
-  become:                  yes
+- name: Clean YUM cache
+  command: "{{ item }}"
+  become: yes
   with_items:
-     - "yum clean all"
-     - "yum makecache"
-     - "yum clean expire-cache"
+    - "yum clean all"
+    - "yum makecache"
+    - "yum clean expire-cache"
   when:
     - ansible_facts['distribution']!= "SLES"
 
-- name:                    Clean Zypper cache. This step is needed to cleanup old kubernetes from Zypper if any.
-  command:                 "{{ item }}"
-  become:                  yes
+- name: Clean Zypper cache. This step is needed to cleanup old kubernetes from Zypper if any.
+  command: "{{ item }}"
+  become: yes
   with_items:
-     - "zypper clean --all"
-     - "zypper --gpg-auto-import-keys update -y"
-     - "zypper refresh"
+    - "zypper clean --all"
+    - "zypper --gpg-auto-import-keys update -y"
+    - "zypper refresh"
   when:
     - ansible_facts['distribution']== "SLES"

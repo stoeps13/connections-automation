@@ -1,163 +1,161 @@
-- name:                  "Verify if migrations are already done"
+- name: "Verify if migrations are already done"
   stat:
-    path:                "{{ __success_file }}"
-  register:              migrations_already_done
+    path: "{{ __success_file }}"
+  register: migrations_already_done
 
-- name:                  Clean up installation folder(s)
+- name: Clean up installation folder(s)
   file:
-    path:                "{{ __db_extraction_folder }}"
-    state:               absent
+    path: "{{ __db_extraction_folder }}"
+    state: absent
   when:
     - (not __keep_db_extraction_folder)
 
-- name:                  Check if installation folder exists
+- name: Check if installation folder exists
   stat:
-    path:                "{{ __installation_folder }}"
-  register:              installation_folder
+    path: "{{ __installation_folder }}"
+  register: installation_folder
 
-- name:                  Create installation folder
+- name: Create installation folder
   file:
-    path:                "{{ __db_extraction_folder }}"
-    state:               directory
+    path: "{{ __db_extraction_folder }}"
+    state: directory
 
 # Wizard is needed to do runstats.sql regularly
-- name:                  Download and unzip installation "{{ __download_location}}/{{ __package_name }}" to the {{ __db_extraction_folder }}
+- name: Download and unzip installation "{{ __download_location}}/{{ __package_name }}" to the {{ __db_extraction_folder }}
   unarchive:
-    src:                 "{{ __download_location }}/{{ __package_name }}"
-    dest:                "{{ __db_extraction_folder }}"
-    remote_src:          yes
-    validate_certs:      false
+    src: "{{ __download_location }}/{{ __package_name }}"
+    dest: "{{ __db_extraction_folder }}"
+    remote_src: yes
+    validate_certs: false
   when:
     - not installation_folder.stat.exists
-  retries:               3
+  retries: 3
 
-- name:                  Stop CNX cluster for database cleanup
+- name: Stop CNX cluster for database cleanup
   include_role:
-    name:                roles/third_party/ibm/wasnd/was-dmgr-stop-cluster
+    name: roles/third_party/ibm/wasnd/was-dmgr-stop-cluster
     apply:
-      delegate_to:       "{{ dmgr_hostname }}"
-      become:            true
-      ignore_errors:     yes
-  when:                  __cnx_force_repopulation |bool
+      delegate_to: "{{ dmgr_hostname }}"
+      become: true
+      ignore_errors: yes
+  when: __cnx_force_repopulation |bool
 
 # Observed lingering connections even after CNX is stopped so do a force application.
-- name:                  Force application to disconnect for database cleanup
-  include_tasks:         ../../../third_party/ibm/db2-install/tasks/run_db_command.yml
+- name: Force application to disconnect for database cleanup
+  include_tasks: ../../../third_party/ibm/db2-install/tasks/run_db_command.yml
   vars:
-    db_command:           "db2 force application all"
+    db_command: "db2 force application all"
   when:
     - __cnx_force_repopulation |bool
-  ignore_errors:         yes
+  ignore_errors: yes
 
-- name:                  Drop Connections Databases
+- name: Drop Connections Databases
   include_tasks:
-    file:                ../../../third_party/ibm/db2-install/tasks/run_db_command.yml
+    file: ../../../third_party/ibm/db2-install/tasks/run_db_command.yml
     apply:
-      ignore_errors:     yes
+      ignore_errors: yes
   vars:
-    db_command:          "{{ __db2_migration_cmd }} {{ __installation_folder }}/{{ item }}"
+    db_command: "{{ __db2_migration_cmd }} {{ __installation_folder }}/{{ item }}"
   with_items:
-   - "connections.sql/activities/db2/dropDb.sql"
-   - "connections.sql/blogs/db2/dropDb.sql"
-   - "connections.sql/dogear/db2/dropDb.sql"
-   - "connections.sql/communities/db2/dropDb.sql"
-   - "connections.sql/files/db2/dropDb.sql"
-   - "connections.sql/forum/db2/dropDb.sql"
-   - "connections.sql/homepage/db2/dropDb.sql"
-   - "connections.sql/metrics/db2/dropDb.sql"
-   - "connections.sql/mobile/db2/dropDb.sql"
-   - "connections.sql/profiles/db2/dropDb.sql"
-   - "connections.sql/pushnotification/db2/dropDb.sql"
-   - "connections.sql/wikis/db2/dropDb.sql"
+    - "connections.sql/activities/db2/dropDb.sql"
+    - "connections.sql/blogs/db2/dropDb.sql"
+    - "connections.sql/dogear/db2/dropDb.sql"
+    - "connections.sql/communities/db2/dropDb.sql"
+    - "connections.sql/files/db2/dropDb.sql"
+    - "connections.sql/forum/db2/dropDb.sql"
+    - "connections.sql/homepage/db2/dropDb.sql"
+    - "connections.sql/metrics/db2/dropDb.sql"
+    - "connections.sql/mobile/db2/dropDb.sql"
+    - "connections.sql/profiles/db2/dropDb.sql"
+    - "connections.sql/pushnotification/db2/dropDb.sql"
+    - "connections.sql/wikis/db2/dropDb.sql"
   when:
     - __cnx_force_repopulation |bool
-  ignore_errors:         yes
+  ignore_errors: yes
 
-
-- name:                  Drop IC360 database
+- name: Drop IC360 database
   include_tasks:
-    file:                ../../../third_party/ibm/db2-install/tasks/run_db_command.yml
+    file: ../../../third_party/ibm/db2-install/tasks/run_db_command.yml
     apply:
-      ignore_errors:     yes
+      ignore_errors: yes
   vars:
-    db_command:          "{{ __db2_migration_cmd }} {{ __installation_folder }}/{{ item }}"
+    db_command: "{{ __db2_migration_cmd }} {{ __installation_folder }}/{{ item }}"
   with_items:
-   - "connections.sql/ic360/db2/dropDb.sql"
+    - "connections.sql/ic360/db2/dropDb.sql"
   when:
     - __cnx_force_repopulation |bool
     - __db_version is version('7.0', '>=')
-  ignore_errors:         yes
+  ignore_errors: yes
 
-- name:                  Drop ICEC database only
+- name: Drop ICEC database only
   include_tasks:
-    file:                ../../../third_party/ibm/db2-install/tasks/run_db_command.yml
+    file: ../../../third_party/ibm/db2-install/tasks/run_db_command.yml
     apply:
-      ignore_errors:     yes
+      ignore_errors: yes
   vars:
-    db_command:          "{{ __db2_icec_migration_cmd }} {{ __installation_folder }}/{{ item }}"
+    db_command: "{{ __db2_icec_migration_cmd }} {{ __installation_folder }}/{{ item }}"
   with_items:
-   - "connections.sql/icec/db2/dropDb.sql"
+    - "connections.sql/icec/db2/dropDb.sql"
   when:
     - __cnx_force_repopulation |bool
-  ignore_errors:         yes
+  ignore_errors: yes
 
-- name:                  "Delete {{ __success_file }} file"
+- name: "Delete {{ __success_file }} file"
   file:
-    path:                "{{ item }}"
-    state:               absent
+    path: "{{ item }}"
+    state: absent
   with_items:
     - "{{ __success_file }}"
     - "{{ __ic360_success_file }}"
   when:
     - __cnx_force_repopulation |bool
 
-- name:                  "Verify if should proceed with creating databases if cleanup was done"
+- name: "Verify if should proceed with creating databases if cleanup was done"
   stat:
-    path:                "{{ __success_file }}"
-  register:              migrations_already_done
+    path: "{{ __success_file }}"
+  register: migrations_already_done
 
-- name:                  Restart DB
+- name: Restart DB
   include_role:
-    name:                roles/third_party/ibm/db2-install/db2-restart
+    name: roles/third_party/ibm/db2-install/db2-restart
   when:
     - not migrations_already_done.stat.exists
 
-
-- name:                  Creating Connections databases (except ICEC)
-  include_tasks:         ../../../third_party/ibm/db2-install/tasks/run_db_command.yml
-  register:              all_migrations_result
+- name: Creating Connections databases (except ICEC)
+  include_tasks: ../../../third_party/ibm/db2-install/tasks/run_db_command.yml
+  register: all_migrations_result
   vars:
-    db_command:          "{{ __db2_migration_cmd }} {{ __installation_folder }}/{{ item }}"
+    db_command: "{{ __db2_migration_cmd }} {{ __installation_folder }}/{{ item }}"
   with_items:
-   - "connections.sql/activities/db2/createDb.sql"
-   - "connections.sql/activities/db2/appGrants.sql"
-   - "connections.sql/blogs/db2/createDb.sql"
-   - "connections.sql/blogs/db2/appGrants.sql"
-   - "connections.sql/dogear/db2/createDb.sql"
-   - "connections.sql/dogear/db2/appGrants.sql"
-   - "connections.sql/communities/db2/createDb.sql"
-   - "connections.sql/communities/db2/appGrants.sql"
-   - "connections.sql/communities/db2/calendar-createDb.sql"
-   - "connections.sql/communities/db2/calendar-appGrants.sql"
-   - "connections.sql/files/db2/createDb.sql"
-   - "connections.sql/files/db2/appGrants.sql"
-   - "connections.sql/forum/db2/createDb.sql"
-   - "connections.sql/forum/db2/appGrants.sql"
-   - "connections.sql/homepage/db2/createDb.sql"
-   - "connections.sql/homepage/db2/appGrants.sql"
-   - "connections.sql/homepage/db2/initData.sql"
-   - "connections.sql/homepage/db2/reorg.sql"
-   - "connections.sql/homepage/db2/updateStats.sql"
-   - "connections.sql/metrics/db2/createDb.sql"
-   - "connections.sql/metrics/db2/appGrants.sql"
-   - "connections.sql/mobile/db2/createDb.sql"
-   - "connections.sql/mobile/db2/appGrants.sql"
-   - "connections.sql/profiles/db2/createDb.sql"
-   - "connections.sql/profiles/db2/appGrants.sql"
-   - "connections.sql/pushnotification/db2/createDb.sql"
-   - "connections.sql/pushnotification/db2/appGrants.sql"
-   - "connections.sql/wikis/db2/createDb.sql"
-   - "connections.sql/wikis/db2/appGrants.sql"
+    - "connections.sql/activities/db2/createDb.sql"
+    - "connections.sql/activities/db2/appGrants.sql"
+    - "connections.sql/blogs/db2/createDb.sql"
+    - "connections.sql/blogs/db2/appGrants.sql"
+    - "connections.sql/dogear/db2/createDb.sql"
+    - "connections.sql/dogear/db2/appGrants.sql"
+    - "connections.sql/communities/db2/createDb.sql"
+    - "connections.sql/communities/db2/appGrants.sql"
+    - "connections.sql/communities/db2/calendar-createDb.sql"
+    - "connections.sql/communities/db2/calendar-appGrants.sql"
+    - "connections.sql/files/db2/createDb.sql"
+    - "connections.sql/files/db2/appGrants.sql"
+    - "connections.sql/forum/db2/createDb.sql"
+    - "connections.sql/forum/db2/appGrants.sql"
+    - "connections.sql/homepage/db2/createDb.sql"
+    - "connections.sql/homepage/db2/appGrants.sql"
+    - "connections.sql/homepage/db2/initData.sql"
+    - "connections.sql/homepage/db2/reorg.sql"
+    - "connections.sql/homepage/db2/updateStats.sql"
+    - "connections.sql/metrics/db2/createDb.sql"
+    - "connections.sql/metrics/db2/appGrants.sql"
+    - "connections.sql/mobile/db2/createDb.sql"
+    - "connections.sql/mobile/db2/appGrants.sql"
+    - "connections.sql/profiles/db2/createDb.sql"
+    - "connections.sql/profiles/db2/appGrants.sql"
+    - "connections.sql/pushnotification/db2/createDb.sql"
+    - "connections.sql/pushnotification/db2/appGrants.sql"
+    - "connections.sql/wikis/db2/createDb.sql"
+    - "connections.sql/wikis/db2/appGrants.sql"
   when:
     - not migrations_already_done.stat.exists
 
@@ -178,95 +176,95 @@
 #     - __db_version == '7.0'
 #     - __db_enable_upgrades |bool
 #
-- name:                  Run Profiles migration for Connections 8
-  include_tasks:         ../../../third_party/ibm/db2-install/tasks/run_db_command.yml
+- name: Run Profiles migration for Connections 8
+  include_tasks: ../../../third_party/ibm/db2-install/tasks/run_db_command.yml
   vars:
-    db_command:          "{{ __db2_migration_cmd }} {{ __installation_folder }}/{{ item }}"
+    db_command: "{{ __db2_migration_cmd }} {{ __installation_folder }}/{{ item }}"
   with_items:
-   - "connections.sql/profiles/db2/upgrade-60-80.sql"
+    - "connections.sql/profiles/db2/upgrade-60-80.sql"
   when:
     - migrations_already_done.stat.exists
     - __db_version == '8.0'
     - __db_enable_upgrades |bool
 
-- name:                  "Verify if IC360 DB is already created"
+- name: "Verify if IC360 DB is already created"
   stat:
-    path:                "{{ __ic360_success_file }}"
-  register:              ic360_migrations_already_done
+    path: "{{ __ic360_success_file }}"
+  register: ic360_migrations_already_done
 
-- name:                  Creating Connections database for IC360
-  include_tasks:         ../../../third_party/ibm/db2-install/tasks/run_db_command.yml
-  register:              ic360_migration_result
+- name: Creating Connections database for IC360
+  include_tasks: ../../../third_party/ibm/db2-install/tasks/run_db_command.yml
+  register: ic360_migration_result
   vars:
-    db_command:          "{{ __db2_migration_cmd }} {{ __installation_folder }}/{{ item }}"
+    db_command: "{{ __db2_migration_cmd }} {{ __installation_folder }}/{{ item }}"
   with_items:
-   - "connections.sql/ic360/db2/createDb.sql"
-   - "connections.sql/ic360/db2/appGrants.sql"
+    - "connections.sql/ic360/db2/createDb.sql"
+    - "connections.sql/ic360/db2/appGrants.sql"
   when:
     - not ic360_migrations_already_done.stat.exists
     - __db_version is version('7.0', '>=')
 
-- name:                  Creating Connections database for ICEC
-  include_tasks:         ../../../third_party/ibm/db2-install/tasks/run_db_command.yml
+- name: Creating Connections database for ICEC
+  include_tasks: ../../../third_party/ibm/db2-install/tasks/run_db_command.yml
   vars:
-    db_command:          "{{ __db2_icec_migration_cmd }} {{ __installation_folder }}/{{ item }}"
+    db_command: "{{ __db2_icec_migration_cmd }} {{ __installation_folder }}/{{ item }}"
   with_items:
-   - "connections.sql/icec/db2/createDb.sql"
-   - "connections.sql/icec/db2/appGrants.sql"
+    - "connections.sql/icec/db2/createDb.sql"
+    - "connections.sql/icec/db2/appGrants.sql"
   when:
     - not migrations_already_done.stat.exists
 
-- name:                  Run runstats.sql and reorg.sql everywhere
-  include_tasks:         ../../../third_party/ibm/db2-install/tasks/run_db_command.yml
+- name: Run runstats.sql and reorg.sql everywhere
+  include_tasks: ../../../third_party/ibm/db2-install/tasks/run_db_command.yml
   vars:
-    db_command:          "{{ __db2_migration_cmd }} {{ __installation_folder }}/{{ item }}"
+    db_command: "{{ __db2_migration_cmd }} {{ __installation_folder }}/{{ item }}"
   with_items:
-   - "connections.sql/activities/db2/runstats.sql"
-   - "connections.sql/blogs/db2/runstats.sql"
-   - "connections.sql/dogear/db2/runstats.sql"
-   - "connections.sql/communities/db2/runstats.sql"
-   - "connections.sql/forum/db2/runstats.sql"
-   - "connections.sql/mobile/db2/runstats.sql"
-   - "connections.sql/profiles/db2/runstats.sql"
-   - "connections.sql/activities/db2/reorg.sql"
-   - "connections.sql/blogs/db2/reorg.sql"
-   - "connections.sql/dogear/db2/reorg.sql"
-   - "connections.sql/communities/db2/reorg.sql"
-   - "connections.sql/files/db2/reorg.sql"
-   - "connections.sql/forum/db2/reorg.sql"
-   - "connections.sql/homepage/db2/reorg.sql"
-   - "connections.sql/metrics/db2/reorg.sql"
-   - "connections.sql/mobile/db2/reorg.sql"
-   - "connections.sql/profiles/db2/reorg.sql"
-   - "connections.sql/pushnotification/db2/reorg.sql"
-   - "connections.sql/wikis/db2/reorg.sql"
-   - "connections.sql/activities/db2/clearScheduler.sql"
-   - "connections.sql/communities/db2/clearScheduler.sql"
-   - "connections.sql/forum/db2/clearScheduler.sql"
-   - "connections.sql/files/db2/clearScheduler.sql"
-   - "connections.sql/profiles/db2/clearScheduler.sql"
-   - "connections.sql/homepage/db2/clearScheduler.sql"
-   - "connections.sql/metrics/db2/clearScheduler.sql"
-   - "connections.sql/wikis/db2/clearScheduler.sql"
-   - "connections.sql/pushnotification/db2/clearScheduler.sql"
+    - "connections.sql/activities/db2/runstats.sql"
+    - "connections.sql/blogs/db2/runstats.sql"
+    - "connections.sql/dogear/db2/runstats.sql"
+    - "connections.sql/communities/db2/runstats.sql"
+    - "connections.sql/forum/db2/runstats.sql"
+    - "connections.sql/mobile/db2/runstats.sql"
+    - "connections.sql/profiles/db2/runstats.sql"
+    - "connections.sql/activities/db2/reorg.sql"
+    - "connections.sql/blogs/db2/reorg.sql"
+    - "connections.sql/dogear/db2/reorg.sql"
+    - "connections.sql/communities/db2/reorg.sql"
+    - "connections.sql/files/db2/reorg.sql"
+    - "connections.sql/forum/db2/reorg.sql"
+    - "connections.sql/homepage/db2/reorg.sql"
+    - "connections.sql/metrics/db2/reorg.sql"
+    - "connections.sql/mobile/db2/reorg.sql"
+    - "connections.sql/profiles/db2/reorg.sql"
+    - "connections.sql/pushnotification/db2/reorg.sql"
+    - "connections.sql/wikis/db2/reorg.sql"
+    - "connections.sql/activities/db2/clearScheduler.sql"
+    - "connections.sql/communities/db2/clearScheduler.sql"
+    - "connections.sql/forum/db2/clearScheduler.sql"
+    - "connections.sql/files/db2/clearScheduler.sql"
+    - "connections.sql/profiles/db2/clearScheduler.sql"
+    - "connections.sql/homepage/db2/clearScheduler.sql"
+    - "connections.sql/metrics/db2/clearScheduler.sql"
+    - "connections.sql/wikis/db2/clearScheduler.sql"
+    - "connections.sql/pushnotification/db2/clearScheduler.sql"
   when:
     - migrations_already_done.stat.exists |bool
 
-- name:                  "Create {{ __success_file }} file"
+- name: "Create {{ __success_file }} file"
   file:
-    path:                "{{ __success_file }}"
-    state:               touch
+    path: "{{ __success_file }}"
+    state: touch
   when:
-   - all_migrations_result is not skipped
-   - not migrations_already_done.stat.exists
+    - all_migrations_result is not skipped
+    - not migrations_already_done.stat.exists
 
-- name:                  "Create {{ __ic360_success_file }} file"
+- name: "Create {{ __ic360_success_file }} file"
   file:
-    path:                "{{ __ic360_success_file }}"
-    state:               touch
+    path: "{{ __ic360_success_file }}"
+    state: touch
   when:
-   - ic360_migration_result is not skipped
-   - not ic360_migrations_already_done.stat.exists
+    - ic360_migration_result is not skipped
+    - not ic360_migrations_already_done.stat.exists
 
 # - name:                  "Create {{ __sharepoint_success_file }} file"
 #   file:
@@ -276,10 +274,9 @@
 #    - sharepoint_migration_result is not skipped
 #    - not sharepoint_migrations_already_done.stat.exists
 
-- name:                  Clean up installation folder(s)
+- name: Clean up installation folder(s)
   file:
-    path:                "{{ __db_extraction_folder }}"
-    state:               absent
+    path: "{{ __db_extraction_folder }}"
+    state: absent
   when:
-    -  not __keep_db_extraction_folder
-
+    - not __keep_db_extraction_folder

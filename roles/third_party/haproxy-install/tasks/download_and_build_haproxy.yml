@@ -1,51 +1,51 @@
-- name:                   Download Haproxy
+- name: Download Haproxy
   unarchive:
-    src:                  "{{ __haproxy_url }}"
-    dest:                 "/tmp"
-    copy:                 no
-  tags:                   download_haproxy
+    src: "{{ __haproxy_url }}"
+    dest: "/tmp"
+    copy: no
+  tags: download_haproxy
   register: download_and_unpack_haproxy
   until: download_and_unpack_haproxy is succeeded
   retries: 3
   when:
     - ansible_facts['distribution'] not in ['RedHat', 'AlmaLinux', 'SLES']
 
-- name:                   Build Haproxy target with params
+- name: Build Haproxy target with params
   make:
-    chdir:                "{{ __haproxy_download_dir }}"
-    target:               all
+    chdir: "{{ __haproxy_download_dir }}"
+    target: all
     params:
-      TARGET:             linux_glibc
-      USE_PCRE:           1
-      USE_OPENSSL:        1
-      ARCH:               x86_64
-      PCRE_LIB:           /usr/lib64
-      SSL_LIB:            /usr/lib64
+      TARGET: linux_glibc
+      USE_PCRE: 1
+      USE_OPENSSL: 1
+      ARCH: x86_64
+      PCRE_LIB: /usr/lib64
+      SSL_LIB: /usr/lib64
   when:
     - ansible_facts['distribution'] not in ['RedHat', 'AlmaLinux', 'SLES']
 
-- name:                   Install Haproxy
+- name: Install Haproxy
   make:
-    chdir:                "{{ __haproxy_download_dir }}"
-    target:               install
+    chdir: "{{ __haproxy_download_dir }}"
+    target: install
   when:
     - ansible_facts['distribution'] not in ['RedHat', 'AlmaLinux', 'SLES']
 
-- name:                   Update all packages
+- name: Update all packages
   yum:
-    name:                 '*'
-    state:                latest
+    name: "*"
+    state: latest
   when:
     - ansible_facts['distribution']== "RedHat" or ansible_facts['distribution']== "AlmaLinux"
 
-- name:                   List existing HAProxy repository
-  command:                "zypper lr -u"
+- name: List existing HAProxy repository
+  command: "zypper lr -u"
   register: zypper_repos_output
-  changed_when:           false
+  changed_when: false
   when:
     - ansible_facts['distribution']== "SLES"
 
-- name:                   Check if HAProxy repository already exists
+- name: Check if HAProxy repository already exists
   set_fact:
     haproxy_repo_exists: "{{ zypper_repos_output.stdout_lines | select('search', repo_url) | list | length > 0 }}"
   vars:
@@ -53,26 +53,26 @@
   when:
     - ansible_facts['distribution']== "SLES" and zypper_repos_output.stdout_lines is defined
 
-- name:                   Add HAProxy repository for SUSE
-  command:                "zypper addrepo {{ repo_url }}"
+- name: Add HAProxy repository for SUSE
+  command: "zypper addrepo {{ repo_url }}"
   vars:
     repo_url: "https://download.opensuse.org/repositories/server:http/{{ ansible_facts['distribution_version'] }}/server:http.repo"
   when:
     - ansible_facts['distribution']== "SLES" and not haproxy_repo_exists
 
-- name:                   Refresh all zypper repositories on SUSE
-  command:                zypper --non-interactive --gpg-auto-import-keys refresh
+- name: Refresh all zypper repositories on SUSE
+  command: zypper --non-interactive --gpg-auto-import-keys refresh
   when:
     - ansible_facts['distribution']== "SLES"
 
-- name:                   Install HAProxy package for SUSE
-  command:                zypper install -y haproxy
+- name: Install HAProxy package for SUSE
+  command: zypper install -y haproxy
   when:
     - ansible_facts['distribution']== "SLES"
 
-- name:                   Install HAProxy package
+- name: Install HAProxy package
   yum:
-    name:                 haproxy
-    state:                present
+    name: haproxy
+    state: present
   when:
     - ansible_facts['distribution']== "RedHat" or ansible_facts['distribution']== "AlmaLinux"

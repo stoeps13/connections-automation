@@ -1,118 +1,118 @@
-- name:                     Check if Nginx is installed
-  shell:                    "nginx -V"
-  register:                 nginx_check
-  ignore_errors:            true
+- name: Check if Nginx is installed
+  shell: "nginx -V"
+  register: nginx_check
+  ignore_errors: true
 
-- name:                     Check if more_clear_headers module is installed
-  shell:                    "nginx -V 2>&1 | grep headers-more"
-  register:                 nginx_headers_more_module_check
-  when:                     nginx_check.rc == 0
-  ignore_errors:            true
+- name: Check if more_clear_headers module is installed
+  shell: "nginx -V 2>&1 | grep headers-more"
+  register: nginx_headers_more_module_check
+  when: nginx_check.rc == 0
+  ignore_errors: true
 
-- name:                     Override __build_nginx if Nginx is installed but no more_clear_headers module
+- name: Override __build_nginx if Nginx is installed but no more_clear_headers module
   set_fact:
-    __build_nginx:          false
-  when:                     nginx_check.rc == 0 and nginx_headers_more_module_check.rc != 0
+    __build_nginx: false
+  when: nginx_check.rc == 0 and nginx_headers_more_module_check.rc != 0
 
-- name:                     Show me __build_nginx
-  debug:                    var=__build_nginx
+- name: Show me __build_nginx
+  debug: var=__build_nginx
 
-- name:                     Apply repository for CentOS
+- name: Apply repository for CentOS
   template:
-    src:                    "{{ __nginx_repo_template }}"
-    dest:                   "{{ __nginx_repo_location }}"
+    src: "{{ __nginx_repo_template }}"
+    dest: "{{ __nginx_repo_location }}"
   vars:
-    dist:                   "centos"
-    version:                "{{ ansible_facts['distribution_major_version'] }}"
+    dist: "centos"
+    version: "{{ ansible_facts['distribution_major_version'] }}"
   when:
-   - ansible_facts['distribution'] == "CentOS" and not __build_nginx|bool
+    - ansible_facts['distribution'] == "CentOS" and not __build_nginx|bool
 
-- name:                     Apply repository for RHEL
+- name: Apply repository for RHEL
   template:
-    src:                    "{{ __nginx_repo_template }}"
-    dest:                   "{{ __nginx_repo_location }}"
+    src: "{{ __nginx_repo_template }}"
+    dest: "{{ __nginx_repo_location }}"
   vars:
-    dist:                   "rhel"
-    version:                "{{ ansible_facts['distribution_major_version'] }}"
+    dist: "rhel"
+    version: "{{ ansible_facts['distribution_major_version'] }}"
   when:
-   - ansible_facts['distribution'] in ['RedHat', 'AlmaLinux', 'Rocky'] and not __build_nginx|bool
+    - ansible_facts['distribution'] in ['RedHat', 'AlmaLinux', 'Rocky'] and not __build_nginx|bool
 
-- name:                     Apply repository for SUSE
+- name: Apply repository for SUSE
   template:
-    src:                    "{{ __nginx_repo_template }}"
-    dest:                   "{{ __nginx_repo_location_suse }}"
+    src: "{{ __nginx_repo_template }}"
+    dest: "{{ __nginx_repo_location_suse }}"
   vars:
-    dist:                   "sles"
-    version:                "{{ ansible_facts['distribution_major_version'] }}"
+    dist: "sles"
+    version: "{{ ansible_facts['distribution_major_version'] }}"
   when:
-   - ansible_facts['distribution']== "SLES" and not __build_nginx|bool
+    - ansible_facts['distribution']== "SLES" and not __build_nginx|bool
 
-- name:                     Install prerequisites if building NGINX
+- name: Install prerequisites if building NGINX
   package:
-    name:                   ['gcc', "pcre-devel", "openssl-devel", "zlib-devel"]
-    state:                  present
+    name: ["gcc", "pcre-devel", "openssl-devel", "zlib-devel"]
+    state: present
   when:
     - __build_nginx|bool
 
-- name:                     Install prerequisites for semanage
+- name: Install prerequisites for semanage
   package:
-    name:                   "{{ item }}"
-    state:                  present
+    name: "{{ item }}"
+    state: present
   with_items:
     - libselinux-python
     - libsemanage-python
   when:
-   - ansible_facts['os_family'] == "RedHat"
-   - ansible_facts['distribution_major_version'] == "7"
-   - ansible_facts['distribution']!= "SLES"
+    - ansible_facts['os_family'] == "RedHat"
+    - ansible_facts['distribution_major_version'] == "7"
+    - ansible_facts['distribution']!= "SLES"
 
-- name:                     Install prerequisites for semanage on SUSE
+- name: Install prerequisites for semanage on SUSE
   package:
-    name:                   "{{ item }}"
-    state:                  present
+    name: "{{ item }}"
+    state: present
   with_items:
     - selinux-tools
   when:
-   - ansible_facts['distribution']== "SLES"
+    - ansible_facts['distribution']== "SLES"
 
-- name:                     Disable SELinux
+- name: Disable SELinux
   selinux:
-    state:                  disabled
-  ignore_errors:            true
-  notify:                   reboot
+    state: disabled
+  ignore_errors: true
+  notify: reboot
 
-- name:                     Disable AppArmor
+- name: Disable AppArmor
   shell:
-    cmd:                    systemctl stop apparmor && systemctl disable apparmor
-  become:                   true
-  ignore_errors:            true
-  notify:                   reboot
+    cmd: systemctl stop apparmor && systemctl disable apparmor
+  become: true
+  ignore_errors: true
+  notify: reboot
   when:
-   - ansible_facts['distribution']== "SLES"
+    - ansible_facts['distribution']== "SLES"
 
-- name:                     Set httpd_can_network_connect flag on and keep it persistent across reboots
+- name: Set httpd_can_network_connect flag on and keep it persistent across reboots
   seboolean:
-    name:                   httpd_can_network_connect
-    state:                  yes
-    persistent:             yes
-  ignore_errors:            true
+    name: httpd_can_network_connect
+    state: yes
+    persistent: yes
+  ignore_errors: true
 
-- name:                     "Configure nofile soft = {{ __param_nofile_soft }}"
+- name: "Configure nofile soft = {{ __param_nofile_soft }}"
   pam_limits:
-    domain:                 '*'
-    limit_type:             soft
-    limit_item:             nofile
-    value:                  "{{ __param_nofile_soft }}"
+    domain: "*"
+    limit_type: soft
+    limit_item: nofile
+    value: "{{ __param_nofile_soft }}"
 
-- name:                     "Configure nofile hard = {{ __param_nofile_hard }}"
+- name: "Configure nofile hard = {{ __param_nofile_hard }}"
   pam_limits:
-    domain:                 '*'
-    limit_type:             hard
-    limit_item:             nofile
-    value:                  "{{ __param_nofile_hard }}"
+    domain: "*"
+    limit_type: hard
+    limit_item: nofile
+    value: "{{ __param_nofile_hard }}"
 
-- name:                     Truncate Nginx access.log to retain the last 500MB
+- name: Truncate Nginx access.log to retain the last 500MB
   shell:
-    cmd:                    tail -c 500M /var/log/nginx/access.log > /var/log/nginx/access.log.tmp && mv /var/log/nginx/access.log.tmp /var/log/nginx/access.log
-  become:                   true
-  ignore_errors:            true
+    cmd: tail -c 500M /var/log/nginx/access.log > /var/log/nginx/access.log.tmp && mv /var/log/nginx/access.log.tmp /var/log/nginx/access.log
+  become: true
+  ignore_errors: true

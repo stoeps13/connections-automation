@@ -1,166 +1,175 @@
 ---
-- name:                     Install pre-requisites symas
+- name: Install pre-requisites symas
   yum:
-    name:                   ['wget']
-    state:                  present
+    name: ["wget"]
+    state: present
   when:
     - ansible_facts['distribution']!= "SLES"
 
-- name:                     Install pre-requisites symas on SUSE
+- name: Install pre-requisites symas on SUSE
   zypper:
-    name:                   ['wget']
-    state:                  present
+    name: ["wget"]
+    state: present
   when:
     - ansible_facts['distribution']== "SLES"
 
-- name:                     Stop slapd service
+- name: Stop slapd service
   service:
-    name:                   slapd
-    state:                  stopped
-    daemon_reload:          yes
-  ignore_errors:            true
+    name: slapd
+    state: stopped
+    daemon_reload: yes
+  ignore_errors: true
 
-- name:                     Remove openldap-clients if already installed
+- name: Remove openldap-clients if already installed
   yum:
-    name:                   symas-openldap-clients
-    state:                  absent
-  ignore_errors:            true
+    name: symas-openldap-clients
+    state: absent
+  ignore_errors: true
   when:
     - ansible_facts['distribution']!= "SLES"
 
-- name:                     Remove openldap-servers if already installed
+- name: Remove openldap-servers if already installed
   yum:
-    name:                   symas-openldap-servers
-    state:                  absent
-  ignore_errors:            true
+    name: symas-openldap-servers
+    state: absent
+  ignore_errors: true
   when:
     - ansible_facts['distribution']!= "SLES"
 
-- name:                     Remove openldap-clients if already installed on SUSE
+- name: Remove openldap-clients if already installed on SUSE
   zypper:
-    name:                   symas-openldap-clients
-    state:                  absent
-  ignore_errors:            true
+    name: symas-openldap-clients
+    state: absent
+  ignore_errors: true
   when:
     - ansible_facts['distribution']== "SLES"
 
-- name:                     Remove openldap-servers if already installed on SUSE
+- name: Remove openldap-servers if already installed on SUSE
   zypper:
-    name:                   symas-openldap-servers
-    state:                  absent
-  ignore_errors:            true
+    name: symas-openldap-servers
+    state: absent
+  ignore_errors: true
   when:
     - ansible_facts['distribution']== "SLES"
 
-- name:                     Download Symas OpenLDAP for Linux on RHEL{{ ansible_facts['distribution_major_version'] }}
+- name: Download Symas OpenLDAP for Linux on RHEL{{ ansible_facts['distribution_major_version'] }}
   get_url:
-    url:                    https://repo.symas.com/configs/SOLDAP/rhel{{ ansible_facts['distribution_major_version'] }}/release26.repo
-    dest:                   /etc/yum.repos.d/soldap-release26.repo
+    url: https://repo.symas.com/configs/SOLDAP/rhel{{ ansible_facts['distribution_major_version'] }}/release26.repo
+    dest: /etc/yum.repos.d/soldap-release26.repo
   when:
     - ansible_facts['distribution']!= "SLES"
 
-- name:                     Download Symas OpenLDAP for SUSE
+- name: Download Symas OpenLDAP for SUSE
   get_url:
-    url:                    https://repo.symas.com/configs/SOLDAP/sles153/release25.repo
-    dest:                   /etc/zypp/repos.d/soldap-release25.repo
+    url: https://repo.symas.com/configs/SOLDAP/sles153/release25.repo
+    dest: /etc/zypp/repos.d/soldap-release25.repo
   when:
     - ansible_facts['distribution']== "SLES"
 
-- name:                     Upgrade all packages
+- name: Upgrade all packages
   yum:
-    name:                   '*'
-    state:                  latest
+    name: "*"
+    state: latest
   when:
     - ansible_facts['distribution']!= "SLES"
 
-- name:                     Install symas OpenLDAP and dependencies on RHEL{{ ansible_facts['distribution_major_version'] }}
+- name: Install symas OpenLDAP and dependencies on RHEL{{ ansible_facts['distribution_major_version'] }}
   yum:
-    name:                   ['symas-openldap-libs', 'symas-openssl-libs', 'symas-libargon2-libs', 'symas-heimdal-libs', 'symas-openldap-clients', 'symas-openldap-servers','symas-cyrus-sasl-libs']
-    state:                   present
+    name:
+      [
+        "symas-openldap-libs",
+        "symas-openssl-libs",
+        "symas-libargon2-libs",
+        "symas-heimdal-libs",
+        "symas-openldap-clients",
+        "symas-openldap-servers",
+        "symas-cyrus-sasl-libs",
+      ]
+    state: present
   when:
     - ansible_facts['distribution']!= "SLES"
 
-- name:                     Update all packages using zypper on SUSE
-  become:                   yes
-  command:                  zypper --non-interactive --gpg-auto-import-keys update
+- name: Update all packages using zypper on SUSE
+  become: yes
+  command: zypper --non-interactive --gpg-auto-import-keys update
   when:
     - ansible_facts['distribution']== "SLES"
 
-- name:                     Install Symas OpenLDAP and dependencies on SUSE-clients
-  become:                   yes
-  command:                  zypper install -y symas-openldap-clients
+- name: Install Symas OpenLDAP and dependencies on SUSE-clients
+  become: yes
+  command: zypper install -y symas-openldap-clients
   when:
     - ansible_facts['distribution']== "SLES"
 
-- name:                     Install Symas OpenLDAP and dependencies on SUSE-servers
-  become:                   yes
-  command:                  zypper install -y symas-openldap-servers
+- name: Install Symas OpenLDAP and dependencies on SUSE-servers
+  become: yes
+  command: zypper install -y symas-openldap-servers
   when:
     - ansible_facts['distribution']== "SLES"
 
-- name:                     Install policycoreutils on SUSE
-  become:                   yes
+- name: Install policycoreutils on SUSE
+  become: yes
   zypper:
-    name:                   policycoreutils
-    state:                  present
+    name: policycoreutils
+    state: present
   when:
     - ansible_facts['distribution']== "SLES"
 
-- name:                     Create {{ __slapd_folder_location }} directory
+- name: Create {{ __slapd_folder_location }} directory
   file:
-    path:                   "{{ __slapd_folder_location }}"
-    state:                  directory
-    mode:                   '0740'
+    path: "{{ __slapd_folder_location }}"
+    state: directory
+    mode: "0740"
 
-- name:                     Run restorecon command
-  command:                  "restorecon -RvF {{ __slapd_folder_location }}"
+- name: Run restorecon command
+  command: "restorecon -RvF {{ __slapd_folder_location }}"
 
-- name:                     Copy slapd.ldif file from files to {{ __dest_slapd_config_file }}
+- name: Copy slapd.ldif file from files to {{ __dest_slapd_config_file }}
   copy:
-    src:                    "{{ __src_slapd_config_file }}"
-    dest:                   "{{ __dest_slapd_config_file }}"
+    src: "{{ __src_slapd_config_file }}"
+    dest: "{{ __dest_slapd_config_file }}"
 
-- name:                     Run slapadd command
-  command:                  "{{ __symas_sbin_path }}slapadd -n 0 -F {{ __slapd_folder_location }} -l {{ __dest_slapd_config_file }}"
+- name: Run slapadd command
+  command: "{{ __symas_sbin_path }}slapadd -n 0 -F {{ __slapd_folder_location }} -l {{ __dest_slapd_config_file }}"
 
-- name:                     "Copy template {{ __symas_openldap_template }} to {{ __symas_openldap_location }}"
+- name: "Copy template {{ __symas_openldap_template }} to {{ __symas_openldap_location }}"
   template:
-    src:                    "{{ __symas_openldap_template }}"
-    dest:                   "{{ __symas_openldap_location }}"
+    src: "{{ __symas_openldap_template }}"
+    dest: "{{ __symas_openldap_location }}"
 
-- name:                     "Verify if {{ __openldap_servers_folder_location }} is already created"
+- name: "Verify if {{ __openldap_servers_folder_location }} is already created"
   stat:
-    path:                   "{{ __openldap_servers_folder_location }}"
-  register:                 openldap_servers_folder_already_created
+    path: "{{ __openldap_servers_folder_location }}"
+  register: openldap_servers_folder_already_created
 
-- name:                     "Create {{ __openldap_servers_folder_location }} directory"
+- name: "Create {{ __openldap_servers_folder_location }} directory"
   file:
-    path:                   "{{ __openldap_servers_folder_location }}"
-    state:                  directory
-    mode:                   '0740'
+    path: "{{ __openldap_servers_folder_location }}"
+    state: directory
+    mode: "0740"
   when:
     - not openldap_servers_folder_already_created.stat.exists
 
-- name:                     "Verify if {{ __ldap_folder_location }} is already created"
+- name: "Verify if {{ __ldap_folder_location }} is already created"
   stat:
-    path:                   "{{ __ldap_folder_location }}"
-  register:                 ldap_folder_already_created
+    path: "{{ __ldap_folder_location }}"
+  register: ldap_folder_already_created
 
-- name:                     Create {{ __ldap_folder_location }} directory
+- name: Create {{ __ldap_folder_location }} directory
   file:
-    path:                   "{{ __ldap_folder_location }}"
-    state:                  directory
-    mode:                   '0740'
+    path: "{{ __ldap_folder_location }}"
+    state: directory
+    mode: "0740"
   when:
     - not ldap_folder_already_created.stat.exists
 
-- name:                     Create ldap group
+- name: Create ldap group
   group:
-    name:                   ldap
-    state:                  present
+    name: ldap
+    state: present
 
-- name:                     Create ldap user
+- name: Create ldap user
   user:
-    name:                   ldap
-    group:                  ldap
-    state:                  present
+    name: ldap
+    group: ldap
+    state: present

@@ -1,13 +1,13 @@
-- name:                                             Install nfs-server
+- name: Install nfs-server
   yum:
-    name:                                           ['nfs-utils', 'cifs-utils']
-    state:                                          present
+    name: ["nfs-utils", "cifs-utils"]
+    state: present
   when:
     - ansible_facts['distribution']!= "SLES"
 
-- name:                                             Install nfs-server for SUSE
+- name: Install nfs-server for SUSE
   zypper:
-    name:                                           ['nfs-kernel-server', 'cifs-utils']
-    state:                                          present
+    name: ["nfs-kernel-server", "cifs-utils"]
+    state: present
   when:
     - ansible_facts['distribution']== "SLES"

@@ -1,7 +1,7 @@
-- name:              Install libnsl on CentOS8/RHEL8
+- name: Install libnsl on CentOS8/RHEL8
   yum:
-    name:            libnsl
-    state:           present
+    name: libnsl
+    state: present
   when:
     - ansible_facts['os_family'] == "RedHat"
     - ansible_facts['distribution_major_version'] == "8"

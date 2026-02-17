@@ -1,40 +1,40 @@
-- name:                    "Render {{ __db2_server_rsp_location }}"
+- name: "Render {{ __db2_server_rsp_location }}"
   template:
-    src:                   "{{ __db2_server_rsp_template }}"
-    dest:                  "{{ __db2_server_rsp_location }}"
+    src: "{{ __db2_server_rsp_template }}"
+    dest: "{{ __db2_server_rsp_location }}"
 
-- name:                    Create db2group group
+- name: Create db2group group
   group:
-    name:                  "db2group"
-    state:                 present
+    name: "db2group"
+    state: present
 
-- name:                    Generate password for users
-  command:                 "openssl passwd -salt sha512 -1 {{ __db2_users_password }}"
-  register:                db2_generated_password
+- name: Generate password for users
+  command: "openssl passwd -salt sha512 -1 {{ __db2_users_password }}"
+  register: db2_generated_password
 
-- name:                    Create users with passwords
+- name: Create users with passwords
   user:
-    name:                  "{{ item }}"
-    group:                 "db2group"
-    password:              "{{ db2_generated_password.stdout }}"
+    name: "{{ item }}"
+    group: "db2group"
+    password: "{{ db2_generated_password.stdout }}"
   with_items:
-   - "{{ __db2_users }}"
+    - "{{ __db2_users }}"
 
-- name:                    Create 'bin' user with uid 1 for SUSE
+- name: Create 'bin' user with uid 1 for SUSE
   user:
-    name:                  bin
-    uid:                   1
-    system:                yes
+    name: bin
+    uid: 1
+    system: yes
   when:
     - ansible_facts['distribution']== "SLES"
 
-- name:                   Create symbolic links for AWS SDK libraries
+- name: Create symbolic links for AWS SDK libraries
   file:
-    src:                  "{{ __db2_installation_folder }}/lib64/awssdk/RHEL/9.2/{{ item }}"
-    dest:                 "/usr/lib64/{{ item }}"
-    state:                link
-    force:                yes
-    follow:               no
+    src: "{{ __db2_installation_folder }}/lib64/awssdk/RHEL/9.2/{{ item }}"
+    dest: "/usr/lib64/{{ item }}"
+    state: link
+    force: yes
+    follow: no
   with_items:
     - libaws-cpp-sdk-core.so
     - libaws-cpp-sdk-kinesis.so
@@ -43,27 +43,27 @@
   when:
     - ansible_facts['distribution']== "AlmaLinux"
 
-- name:                   Update LD_LIBRARY_PATH for {{ __db2_user }} user
+- name: Update LD_LIBRARY_PATH for {{ __db2_user }} user
   lineinfile:
-    path:                 /home/{{ __db2_user }}/.bashrc
-    line:                 'export LD_LIBRARY_PATH={{ __db2_installation_folder }}/lib64:/usr/local/lib:$LD_LIBRARY_PATH'
-    create:               yes
+    path: /home/{{ __db2_user }}/.bashrc
+    line: "export LD_LIBRARY_PATH={{ __db2_installation_folder }}/lib64:/usr/local/lib:$LD_LIBRARY_PATH"
+    create: yes
   when:
     - ansible_facts['distribution']== "AlmaLinux"
 
-- name:                   Source the updated .bashrc
-  shell:                  source /home/{{ __db2_user }}/.bashrc
-  become:                 yes
-  become_user:            "{{ __db2_user }}"
+- name: Source the updated .bashrc
+  shell: source /home/{{ __db2_user }}/.bashrc
+  become: yes
+  become_user: "{{ __db2_user }}"
   when:
     - ansible_facts['distribution']== "AlmaLinux"
 
-- name:                    "Install DB2"
-  command:                 "{{ __installation_folder }}/db2setup -r {{ __db2_server_rsp_location }}"
+- name: "Install DB2"
+  command: "{{ __installation_folder }}/db2setup -r {{ __db2_server_rsp_location }}"
   when:
     - ansible_facts['distribution']!= "SLES"
 
-- name:                    "Install DB2 for SUSE"
-  command:                 "{{ __installation_folder }}/db2setup -r {{ __db2_server_rsp_location }} -f sysreq"
+- name: "Install DB2 for SUSE"
+  command: "{{ __installation_folder }}/db2setup -r {{ __db2_server_rsp_location }} -f sysreq"
   when:
     - ansible_facts['distribution']== "SLES"

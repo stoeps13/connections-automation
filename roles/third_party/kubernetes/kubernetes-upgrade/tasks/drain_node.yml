@@ -1,32 +1,32 @@
-- name:                  Show me where I'm going to run
+- name: Show me where I'm going to run
   debug:
-    msg:                 "{{ inventory_hostname }}"
+    msg: "{{ inventory_hostname }}"
 
-- name:                  Get Kubernetes version
-  command:               "kubectl version --output=json"
-  register:              kubectl_version_output
-  ignore_errors:         true
-  become:                false
+- name: Get Kubernetes version
+  command: "kubectl version --output=json"
+  register: kubectl_version_output
+  ignore_errors: true
+  become: false
 
-- name:                  Extract Kubernetes version
+- name: Extract Kubernetes version
   set_fact:
-    kubectl_version:     "{{ kubectl_version_output.stdout | from_json | json_query('serverVersion.gitVersion') | replace('v', '') }}"
-  when:                  kubectl_version_output.rc == 0 and kubectl_version_output.stdout is defined
+    kubectl_version: "{{ kubectl_version_output.stdout | from_json | json_query('serverVersion.gitVersion') | replace('v', '') }}"
+  when: kubectl_version_output.rc == 0 and kubectl_version_output.stdout is defined
 
-- name:                  Drain the node
+- name: Drain the node
   vars:
-    node_name:           "{{ inventory_hostname.split('.')[0] if ansible_facts['distribution']== 'SLES' else inventory_hostname }}"
-  command:               "{{ item }}"
+    node_name: "{{ inventory_hostname.split('.')[0] if ansible_facts['distribution']== 'SLES' else inventory_hostname }}"
+  command: "{{ item }}"
   with_items:
-   - "kubectl drain {{ node_name }} --delete-emptydir-data --ignore-daemonsets"
-  become:                false
-  when:                  kubectl_version is version('1.20', '>=')
+    - "kubectl drain {{ node_name }} --delete-emptydir-data --ignore-daemonsets"
+  become: false
+  when: kubectl_version is version('1.20', '>=')
 
-- name:                  Drain the node (< v1.20)
+- name: Drain the node (< v1.20)
   vars:
-    node_name:           "{{ inventory_hostname.split('.')[0] if ansible_facts['distribution']== 'SLES' else inventory_hostname }}"
-  command:               "{{ item }}"
+    node_name: "{{ inventory_hostname.split('.')[0] if ansible_facts['distribution']== 'SLES' else inventory_hostname }}"
+  command: "{{ item }}"
   with_items:
-   - "kubectl drain {{ node_name }} --delete-local-data --ignore-daemonsets"
-  become:                false
-  when:                  kubectl_version is version('1.20', '<')
+    - "kubectl drain {{ node_name }} --delete-local-data --ignore-daemonsets"
+  become: false
+  when: kubectl_version is version('1.20', '<')

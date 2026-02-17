@@ -1,121 +1,128 @@
-
-- name:                     Provide absolute path for ldap modify cmd
+- name: Provide absolute path for ldap modify cmd
   set_fact:
-    __ldap_modify_cmd:      "{{ __symas_bin_path }}{{ __ldap_modify_cmd }}"
+    __ldap_modify_cmd: "{{ __symas_bin_path }}{{ __ldap_modify_cmd }}"
   when:
     - ansible_facts['distribution']== "RedHat" or ansible_facts['distribution']== "SLES"
 
-- name:                     Install OpenLDAP and dependencies on CentOS
+- name: Install OpenLDAP and dependencies on CentOS
   yum:
-    name:                   ['openldap', 'compat-openldap', 'openldap-clients', 'openldap-servers', 'openldap-servers-sql', 'openldap-devel']
-    state:                   present
+    name:
+      [
+        "openldap",
+        "compat-openldap",
+        "openldap-clients",
+        "openldap-servers",
+        "openldap-servers-sql",
+        "openldap-devel",
+      ]
+    state: present
   when:
     - ansible_facts['distribution']== "CentOS"
 
-- name:                     Install EPEL Release on Almalinux
+- name: Install EPEL Release on Almalinux
   yum:
-    name:                   epel-release
-    state:                  present
+    name: epel-release
+    state: present
   when:
     - ansible_facts['distribution']==  "AlmaLinux"
 
-- name:                     Install OpenLDAP and dependencies on Almalinux
+- name: Install OpenLDAP and dependencies on Almalinux
   yum:
-    name:                   ['openldap', 'openldap-clients', 'openldap-servers', 'openldap-devel']
-    state:                   present
+    name: ["openldap", "openldap-clients", "openldap-servers", "openldap-devel"]
+    state: present
   when:
     - ansible_facts['distribution']== "AlmaLinux"
 
-- name:                     Install OpenLDAP and dependencies on SUSE
+- name: Install OpenLDAP and dependencies on SUSE
   zypper:
-    name:                   ['openldap2-client']
-    state:                   present
+    name: ["openldap2-client"]
+    state: present
   when:
     - ansible_facts['distribution']== "SLES"
 
-- name:                     "Verify if database is already created"
+- name: "Verify if database is already created"
   stat:
-    path:                   "{{ __db_ldif_success_file }}"
-  register:                 ldap_database_already_created
+    path: "{{ __db_ldif_success_file }}"
+  register: ldap_database_already_created
 
-- name:                     Install OpenLDAP and dependencies on RHEL
-  include_tasks:            install_symas_openldap.yml
+- name: Install OpenLDAP and dependencies on RHEL
+  include_tasks: install_symas_openldap.yml
   when:
     - ansible_facts['distribution']== "RedHat" or ansible_facts['distribution']== "SLES" and not ldap_database_already_created.stat.exists
 
-- name:                     Start slapd service
+- name: Start slapd service
   service:
-    name:                   slapd
-    state:                  started
-    enabled:                yes
-    daemon_reload:          yes
+    name: slapd
+    state: started
+    enabled: yes
+    daemon_reload: yes
 
-- name:                     Enable the slapd service to be started at boot time
-  command:                  "chkconfig slapd on"
+- name: Enable the slapd service to be started at boot time
+  command: "chkconfig slapd on"
   when:
     - ansible_facts['distribution']== "RedHat" or ansible_facts['distribution']== "SLES"
 
-- name:                     Create get slappasswd command for Non-RedHat distribution
+- name: Create get slappasswd command for Non-RedHat distribution
   set_fact:
-    slappasswd_command:     "/sbin/slappasswd -h {SSHA} -s {{ __ldap_slappasswd }}"
+    slappasswd_command: "/sbin/slappasswd -h {SSHA} -s {{ __ldap_slappasswd }}"
   when:
     - ansible_facts['distribution'] not in ['RedHat', 'SLES'] and not ldap_database_already_created.stat.exists
 
-- name:                     Create get slappasswd command for RedHat distribution
+- name: Create get slappasswd command for RedHat distribution
   set_fact:
-    slappasswd_command:     "{{ __symas_sbin_path }}slappasswd -h {SSHA} -s {{ __ldap_slappasswd }}"
+    slappasswd_command: "{{ __symas_sbin_path }}slappasswd -h {SSHA} -s {{ __ldap_slappasswd }}"
   when:
     - ansible_facts['distribution']== "RedHat" or ansible_facts['distribution']== "SLES" and not ldap_database_already_created.stat.exists
 
-- name:                     Run get slappasswd command
-  command:                  "{{ slappasswd_command }}"
-  register:                 slappasswd_output
+- name: Run get slappasswd command
+  command: "{{ slappasswd_command }}"
+  register: slappasswd_output
   when:
     - not ldap_database_already_created.stat.exists
 
 - name:
   debug:
-    msg:                    "{{ slappasswd_output['stdout'] }}"
+    msg: "{{ slappasswd_output['stdout'] }}"
   when:
     - not ldap_database_already_created.stat.exists
 
-- name:                     "Render {{ __db_ldif_location }}"
+- name: "Render {{ __db_ldif_location }}"
   template:
-    src:                    "{{ __db_ldif_template }}"
-    dest:                   "{{ __db_ldif_location }}"
+    src: "{{ __db_ldif_template }}"
+    dest: "{{ __db_ldif_location }}"
   when:
     - not ldap_database_already_created.stat.exists
 
-- name:                     "Render {{ __db_ldif_location }} for RHEL/CentOS >= v8 "
+- name: "Render {{ __db_ldif_location }} for RHEL/CentOS >= v8 "
   template:
-    src:                    "{{ __db_mdb_ldif_template }}"
-    dest:                   "{{ __db_ldif_location }}"
+    src: "{{ __db_mdb_ldif_template }}"
+    dest: "{{ __db_ldif_location }}"
   when:
     - not ldap_database_already_created.stat.exists
     - ansible_facts['distribution']== "RedHat" or ansible_facts['distribution']== "CentOS" or ansible_facts['distribution']== "AlmaLinux"
     - ansible_facts['distribution_major_version'] >= "8"
 
-- name:                     "Render {{ __db_ldif_location }} for SUSE"
+- name: "Render {{ __db_ldif_location }} for SUSE"
   template:
-    src:                    "{{ __db_mdb_ldif_template }}"
-    dest:                   "{{ __db_ldif_location }}"
+    src: "{{ __db_mdb_ldif_template }}"
+    dest: "{{ __db_ldif_location }}"
   when:
     - not ldap_database_already_created.stat.exists
     - ansible_facts['distribution']== "SLES"
-    
-- name:                     Create LDAP database
-  command:                  "{{ __ldap_modify_cmd }} {{ __db_ldif_location }}"
-  register:                 cout
-  failed_when:              ( cout.rc not in [0] )
+
+- name: Create LDAP database
+  command: "{{ __ldap_modify_cmd }} {{ __db_ldif_location }}"
+  register: cout
+  failed_when: ( cout.rc not in [0] )
   when:
     - not ldap_database_already_created.stat.exists
 
-- name:                     "Cleanup {{ __db_ldif_location }}"
+- name: "Cleanup {{ __db_ldif_location }}"
   file:
-    path:                   "{{ __db_ldif_location }}"
-    state:                  absent
+    path: "{{ __db_ldif_location }}"
+    state: absent
 
-- name:                     "Create {{ __db_ldif_success_file }} file"
+- name: "Create {{ __db_ldif_success_file }} file"
   file:
-    path:                   "{{ __db_ldif_success_file }}"
-    state:                  touch
+    path: "{{ __db_ldif_success_file }}"
+    state: touch

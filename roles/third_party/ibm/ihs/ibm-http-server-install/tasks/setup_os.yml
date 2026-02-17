@@ -1,38 +1,38 @@
 ---
-- name:          Disable SELinux on RHEL8/RHEL9
+- name: Disable SELinux on RHEL8/RHEL9
   selinux:
-    state:       disabled
+    state: disabled
   when:
     - ansible_facts['distribution']== "RedHat" or ansible_facts['distribution']== "AlmaLinux"
     - ansible_facts['distribution_major_version'] == "8" or ansible_facts['distribution_major_version'] == "9"
   ignore_errors: true
-  notify:        reboot
+  notify: reboot
 
-- name:          Install pre-requisites Zypper
+- name: Install pre-requisites Zypper
   zypper:
-    name: ['glibc-32bit','libgcc_s1-32bit', 'libapr-util1', 'libnsl1']
+    name: ["glibc-32bit", "libgcc_s1-32bit", "libapr-util1", "libnsl1"]
     state: present
   when: ansible_facts['os_family'] == "Suse"
 
 # java 32 bits for Toolbox/WCT 8.5
-- name:          Install pre-requisites Yum
+- name: Install pre-requisites Yum
   yum:
-    name: ['glibc.i686', 'libgcc.i686']
+    name: ["glibc.i686", "libgcc.i686"]
     state: present
   when:
     - ansible_facts['distribution']== "RedHat" or ansible_facts['distribution']== "AlmaLinux"
 
-- name:          Install pre-requisites Yum on RHEL8/RHEL9
+- name: Install pre-requisites Yum on RHEL8/RHEL9
   yum:
-    name:        ['gtk2', 'libXtst', 'xorg-x11-fonts-Type1', 'psmisc', 'libnsl']
-    state:       present
+    name: ["gtk2", "libXtst", "xorg-x11-fonts-Type1", "psmisc", "libnsl"]
+    state: present
   when:
     - ansible_facts['distribution']== "RedHat" or ansible_facts['distribution']== "AlmaLinux"
     - ansible_facts['distribution_major_version'] == "8" or ansible_facts['distribution_major_version'] == "9"
 
-- name:          Install libxcrypt-compat package
+- name: Install libxcrypt-compat package
   dnf:
-    name:        libxcrypt-compat
-    state:       present
+    name: libxcrypt-compat
+    state: present
   when:
     - ansible_facts['distribution']== "AlmaLinux"
