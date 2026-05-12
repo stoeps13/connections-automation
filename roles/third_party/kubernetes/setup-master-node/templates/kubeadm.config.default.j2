@@ -13,16 +13,16 @@ controlPlaneEndpoint: "{{ __load_balancer_dns }}:6443"
 etcd:
   local:
     extraArgs:
-      listen-client-urls: "https://127.0.0.1:2379,https://{{ ansible_facts['default']['ipv4']['address']  }}:2379"
+      listen-client-urls: "https://127.0.0.1:2379,https://{{ ansible_facts['default']['ipv4']['address'] }}:2379"
       advertise-client-urls: "https://{{ ansible_facts['default']['ipv4']['address'] }}:2379"
       listen-peer-urls: "https://{{ ansible_facts['default']['ipv4']['address'] }}:2380"
       initial-advertise-peer-urls: "https://{{ ansible_facts['default']['ipv4']['address'] }}:2380"
-{% if inventory_hostname  == hostvars[groups['k8s_masters'][0]]['inventory_hostname'] %}
-      initial-cluster: "{{ hostvars[groups['k8s_masters'][0]]['inventory_hostname'] }}=https://{{ hostvars[groups['k8s_masters'][0]]['ansible_facts['default']['ipv4']['address'] }}:2380"
+{% if inventory_hostname == hostvars[groups['k8s_masters'][0]]['inventory_hostname'] %}
+      initial-cluster: "{{ hostvars[groups['k8s_masters'][0]]['inventory_hostname'] }}=https://{{ hostvars[groups['k8s_masters'][0]]['ansible_facts']['default']['ipv4']['address'] }}:2380"
 {% elif inventory_hostname == hostvars[groups['k8s_masters'][1]]['inventory_hostname'] %}
-      initial-cluster: "{{ hostvars[groups['k8s_masters'][0]]['inventory_hostname'] }}=https://{{ hostvars[groups['k8s_masters'][0]]['ansible_facts['default']['ipv4']['address'] }}:2380,{{ hostvars[groups['k8s_masters'][1]]['inventory_hostname'] }}=https://{{ hostvars[groups['k8s_masters'][1]]['ansible_facts['default']['ipv4']['address'] }}:2380"
+      initial-cluster: "{{ hostvars[groups['k8s_masters'][0]]['inventory_hostname'] }}=https://{{ hostvars[groups['k8s_masters'][0]]['ansible_facts']['default']['ipv4']['address'] }}:2380,{{ hostvars[groups['k8s_masters'][1]]['inventory_hostname'] }}=https://{{ hostvars[groups['k8s_masters'][1]]['ansible_facts']['default']['ipv4']['address'] }}:2380"
 {% elif inventory_hostname == hostvars[groups['k8s_masters'][2]]['inventory_hostname'] %}
-      initial-cluster: "{{ hostvars[groups['k8s_masters'][0]]['inventory_hostname'] }}=https://{{ hostvars[groups['k8s_masters'][0]]['ansible_facts['default']['ipv4']['address'] }}:2380,{{ hostvars[groups['k8s_masters'][1]]['inventory_hostname'] }}=https://{{ hostvars[groups['k8s_masters'][1]]['ansible_facts['default']['ipv4']['address'] }}:2380,{{ hostvars[groups['k8s_masters'][2]]['inventory_hostname'] }}=https://{{ hostvars[groups['k8s_masters'][2]]['ansible_facts['default']['ipv4']['address'] }}:2380"
+      initial-cluster: "{{ hostvars[groups['k8s_masters'][0]]['inventory_hostname'] }}=https://{{ hostvars[groups['k8s_masters'][0]]['ansible_facts']['default']['ipv4']['address'] }}:2380,{{ hostvars[groups['k8s_masters'][1]]['inventory_hostname'] }}=https://{{ hostvars[groups['k8s_masters'][1]]['ansible_facts']['default']['ipv4']['address'] }}:2380,{{ hostvars[groups['k8s_masters'][2]]['inventory_hostname'] }}=https://{{ hostvars[groups['k8s_masters'][2]]['ansible_facts']['default']['ipv4']['address'] }}:2380"
 {% endif %}
 {% if inventory_hostname != hostvars[groups['k8s_masters'][0]]['inventory_hostname'] %}
       initial-cluster-state: existing
@@ -48,22 +48,22 @@ kind: InitConfiguration
 kubernetesVersion: v{{ __kubernetes_version }}
 apiServer:
 {% if ((groups.k8s_workers | difference(groups.k8s_masters) | list)== []  and (groups.k8s_masters|length) == 1 and (groups.k8s_workers|length) == 1 ) != true %}
-  certSANS:
+  certSANs:
     - "{{ __load_balancer_dns }}"
 controlPlaneEndpoint: "{{ __load_balancer_dns }}:6443"
 etcd:
   local:
     extraArgs:
-      listen-client-urls: "https://127.0.0.1:2379,https://{{ ansible_facts['default']['ipv4']['address']  }}:2379"
+      listen-client-urls: "https://127.0.0.1:2379,https://{{ ansible_facts['default']['ipv4']['address'] }}:2379"
       advertise-client-urls: "https://{{ ansible_facts['default']['ipv4']['address'] }}:2379"
       listen-peer-urls: "https://{{ ansible_facts['default']['ipv4']['address'] }}:2380"
       initial-advertise-peer-urls: "https://{{ ansible_facts['default']['ipv4']['address'] }}:2380"
-{% if inventory_hostname  == hostvars[groups['k8s_masters'][0]]['inventory_hostname'] %}
-      initial-cluster: "{{ hostvars[groups['k8s_masters'][0]]['inventory_hostname'] }}=https://{{ hostvars[groups['k8s_masters'][0]]['ansible_facts['default']['ipv4']['address'] }}:2380"
+{% if inventory_hostname == hostvars[groups['k8s_masters'][0]]['inventory_hostname'] %}
+      initial-cluster: "{{ hostvars[groups['k8s_masters'][0]]['inventory_hostname'] }}=https://{{ hostvars[groups['k8s_masters'][0]]['ansible_facts']['default']['ipv4']['address'] }}:2380"
 {% elif inventory_hostname == hostvars[groups['k8s_masters'][1]]['inventory_hostname'] %}
-      initial-cluster: "{{ hostvars[groups['k8s_masters'][0]]['inventory_hostname'] }}=https://{{ hostvars[groups['k8s_masters'][0]]['ansible_facts['default']['ipv4']['address'] }}:2380,{{ hostvars[groups['k8s_masters'][1]]['inventory_hostname'] }}=https://{{ hostvars[groups['k8s_masters'][1]]['ansible_facts['default']['ipv4']['address'] }}:2380"
+      initial-cluster: "{{ hostvars[groups['k8s_masters'][0]]['inventory_hostname'] }}=https://{{ hostvars[groups['k8s_masters'][0]]['ansible_facts']['default']['ipv4']['address'] }}:2380,{{ hostvars[groups['k8s_masters'][1]]['inventory_hostname'] }}=https://{{ hostvars[groups['k8s_masters'][1]]['ansible_facts']['default']['ipv4']['address'] }}:2380"
 {% elif inventory_hostname == hostvars[groups['k8s_masters'][2]]['inventory_hostname'] %}
-      initial-cluster: "{{ hostvars[groups['k8s_masters'][0]]['inventory_hostname'] }}=https://{{ hostvars[groups['k8s_masters'][0]]['ansible_facts['default']['ipv4']['address'] }}:2380,{{ hostvars[groups['k8s_masters'][1]]['inventory_hostname'] }}=https://{{ hostvars[groups['k8s_masters'][1]]['ansible_facts['default']['ipv4']['address'] }}:2380,{{ hostvars[groups['k8s_masters'][2]]['inventory_hostname'] }}=https://{{ hostvars[groups['k8s_masters'][2]]['ansible_facts['default']['ipv4']['address'] }}:2380"
+      initial-cluster: "{{ hostvars[groups['k8s_masters'][0]]['inventory_hostname'] }}=https://{{ hostvars[groups['k8s_masters'][0]]['ansible_facts']['default']['ipv4']['address'] }}:2380,{{ hostvars[groups['k8s_masters'][1]]['inventory_hostname'] }}=https://{{ hostvars[groups['k8s_masters'][1]]['ansible_facts']['default']['ipv4']['address'] }}:2380,{{ hostvars[groups['k8s_masters'][2]]['inventory_hostname'] }}=https://{{ hostvars[groups['k8s_masters'][2]]['ansible_facts']['default']['ipv4']['address'] }}:2380"
 {% endif %}
 {% if inventory_hostname != hostvars[groups['k8s_masters'][0]]['inventory_hostname'] %}
       initial-cluster-state: existing

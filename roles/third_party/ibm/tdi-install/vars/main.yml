@@ -1,9 +1,9 @@
 ---
 __tdi_upgrade: "{{ tdi_upgrade_enable | default(true) }}"
-__upgrade_tdi_jre: "{{ upgrade_tdi_jre | default(false) |lower }}"
+__upgrade_tdi_jre: "{{ upgrade_tdi_jre | default(false) |bool}}"
 
 __cnx_major_version: "{{ cnx_major_version | default('8') }}"
-__cnx_updates_enabled: "{{ cnx_updates_enabled | default(false) |lower }}"
+__cnx_updates_enabled: "{{ cnx_updates_enabled | default(false) |bool}}"
 
 __download_location: "{{ tdi_download_location | default('http://c7lb1.cnx.cwp.pnp-hcl.com:8001/TDI') }}"
 __oracle_download_location: "{{ oracle_download_location | default('http://c7lb1.cnx.cwp.pnp-hcl.com:8001/Oracle') }}"

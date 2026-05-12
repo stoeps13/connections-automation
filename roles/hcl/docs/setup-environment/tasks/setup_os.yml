@@ -107,18 +107,9 @@
     limit_item: nofile
     value: "64000"
 
-<<<<<<< HEAD
 - name: Install  pexpect
   pip:
     name: pexpect
     state: latest
   when:
     - ansible_facts['distribution']== "RedHat" or ansible_facts['distribution']== "AlmaLinux"
-=======
-- name:          Install  pexpect
-  pip:
-    name:        pexpect
-    state:       latest
-  when:
-    - ansible_distribution == "RedHat" or ansible_distribution == "AlmaLinux"
->>>>>>> upstream/main

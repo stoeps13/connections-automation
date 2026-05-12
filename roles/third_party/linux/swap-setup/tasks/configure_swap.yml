@@ -54,7 +54,7 @@
     - swap_file_formatted.rc > 0 or swap_file_created.changed
 
 - name: Add swap entry to fstab
-  mount:
+  ansible.posix.mount:
     name: none
     src: "{{ __swapfile_location }}"
     fstype: swap

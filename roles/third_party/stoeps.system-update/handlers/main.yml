@@ -4,4 +4,4 @@
 - name: reboot if kernel updated
   ansible.builtin.reboot:
     reboot_timeout: 300
-  when: dnf_result.results | selectattr('name', 'match', '^kernel') | list | length > 0
+  when: dnf_result.results | select('mapping') | selectattr('name', 'match', '^kernel') | list | length > 0

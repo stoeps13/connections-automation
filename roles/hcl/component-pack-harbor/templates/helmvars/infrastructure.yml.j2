@@ -17,6 +17,10 @@ redis-sentinel:
   namespace: {{ __default_namespace }}
   replicaCount: {{ __replica_count }}
   enabled: false
+valkey:
+  namespace: {{ __default_namespace }}
+  replicaCount: {{ __replica_count }}
+  enabled: true
 mongo5:
   clusterDomain: {{ __default_clusterDomain }}
   namespace: {{ __default_namespace }}

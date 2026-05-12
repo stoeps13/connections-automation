@@ -64,12 +64,19 @@ case $2 in
     ansible-playbook ${CMD_OPT} playbooks/ansible_facts.yml
     ;;
 
+  nginx-ingress | ingress) 
+    ansible-playbook ${CMD_OPT} playbooks/setup-ingress.yaml
+    ;;
+
   cnxstart)
     ansible-playbook ${CMD_OPT} playbooks/third_party/was-nd-start.yml
     ;;
 
   cnxstop)
     ansible-playbook ${CMD_OPT} playbooks/third_party/was-nd-stop.yml
+    ;;
+  ingress)
+    ansible-playbook ${CMD_OPT} playbooks/setup-ingress.yaml
     ;;
   mail)
     ansible-playbook ${CMD_OPT} playbooks/stoeps/setup-mail.yaml
@@ -88,6 +95,7 @@ case $2 in
     printf "\tmail          \tInstall Postfix and Dovecot\n"
     printf "\tcnxstart      \tStart Application Cluster\n"
     printf "\tcnxstop       \tStop Application Cluster\n"
+    printf "\tingress       \tDeploy Kubernetes Ingress\n"
     printf "\n"
     printf "\tUse the name as second commandline option\n"
     printf "\tExample:\n"
