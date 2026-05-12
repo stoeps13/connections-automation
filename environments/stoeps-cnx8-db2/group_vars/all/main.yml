@@ -13,7 +13,8 @@ ldap_bind_user: cn=admin,dc=stoeps,dc=home
 ldap_realm: dc=stoeps,dc=home
 ldap_user_mail_domain: stoeps.home
 ldap_login_properties: uid
-custom_ldap_users_location: /var/home/stoeps/devel/automation/connections-automation/environments/stoeps-cnx8-db2/stoeps.ldif.j2
+custom_ldap_users_location: /home/stoeps/Projects/work/automation/connections-automation/environments/stoeps-cnx8-db2/stoeps.ldif
+ldap_custom_cert_sans: "*.stoeps.home"
 
 ihs_username: ihsadmin
 ihs_major_version: 8
@@ -105,12 +106,13 @@ setup_teams: false
 setup_kudosboards: false
 # setup_huddoboards: true
 huddoboards_registry_username: christoph.stoettner@stoeps.de
-huddoboards_image_tag: "2025-02-06"
-# huddoboards_credentials_name: christoph-stoettner-pull-secret
+huddoboards_image_tag: "2026-04-24"
+huddoboards_credentials_name: christoph-stoettner-pull-secret
 setup_outlook_addin: false
 # enable_es_metrics: false
 # enable_gk_flags: false
 #setup_ms_teams_extensions: true
+setup_ms_teams_extensions: false
 # skip_configure_redis: true
 integrations_msteams_tenant_id: 5c86aeb0-0caf-48fc-844f-a6fc1dad13ce
 integrations_msteams_client_id: fa0ddaef-cc1a-4d33-b37b-88f5d7879b09
@@ -153,7 +155,6 @@ docs_shared_storage_type: nfs
 viewer_shared_storage_type: nfs
 cnx_shared_storage_type: nfs
 docs_url: "{{ cnx_application_ingress }}"
-setup_db2_jdbc: true
 docker_registry_url: hclcr.io/cnx
 db_server: "{{ db_hostname }}"
 db_server_user: "{{ db_username }}"
@@ -164,5 +165,8 @@ nfsMasterAddress: 10.0.22.93
 # upgrade_version: "{{ kubernetes_version }}"
 setup_nfs_server: false
 setup_nfs_clients: false
-nginx_version: 1.29.1
-containerd_version: 1.7.29-3.1
+nginx_version: 1.29.6
+containerd_version: 1.7.26-3.1
+mongo_image_tag: latest
+ingress_nginx_tls_enable: true
+create_ingress_nginx_secret: true

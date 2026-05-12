@@ -1,0 +1,8 @@
+# Setup Nginx
+---
+- name: Setup Community Ingress
+  hosts: k8s_masters
+  #  serial:                  2
+  become: true
+  roles:
+    - roles/hcl/component-pack-harbor/tasks/setup_community_ingress.yml
