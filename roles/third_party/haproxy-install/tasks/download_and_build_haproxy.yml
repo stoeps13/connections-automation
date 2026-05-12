@@ -8,7 +8,7 @@
   until: download_and_unpack_haproxy is succeeded
   retries: 3
   when:
-    - ansible_facts['distribution'] not in ['RedHat', 'AlmaLinux', 'SLES']
+  - ansible_facts['distribution'] not in ['RedHat', 'AlmaLinux', 'SLES']
 
 - name: Build Haproxy target with params
   make:
@@ -22,28 +22,28 @@
       PCRE_LIB: /usr/lib64
       SSL_LIB: /usr/lib64
   when:
-    - ansible_facts['distribution'] not in ['RedHat', 'AlmaLinux', 'SLES']
+  - ansible_facts['distribution'] not in ['RedHat', 'AlmaLinux', 'SLES']
 
 - name: Install Haproxy
   make:
     chdir: "{{ __haproxy_download_dir }}"
     target: install
   when:
-    - ansible_facts['distribution'] not in ['RedHat', 'AlmaLinux', 'SLES']
+  - ansible_facts['distribution'] not in ['RedHat', 'AlmaLinux', 'SLES']
 
 - name: Update all packages
   yum:
     name: "*"
     state: latest
   when:
-    - ansible_facts['distribution']== "RedHat" or ansible_facts['distribution']== "AlmaLinux"
+  - ansible_facts['distribution']== "RedHat" or ansible_facts['distribution']== "AlmaLinux"
 
 - name: List existing HAProxy repository
   command: "zypper lr -u"
   register: zypper_repos_output
   changed_when: false
   when:
-    - ansible_facts['distribution']== "SLES"
+  - ansible_facts['distribution']== "SLES"
 
 - name: Check if HAProxy repository already exists
   set_fact:
@@ -51,28 +51,28 @@
   vars:
     repo_url: "https://download.opensuse.org/repositories/server:/http/{{ ansible_facts['distribution_version'] }}/"
   when:
-    - ansible_facts['distribution']== "SLES" and zypper_repos_output.stdout_lines is defined
+  - ansible_facts['distribution']== "SLES" and zypper_repos_output.stdout_lines is defined
 
 - name: Add HAProxy repository for SUSE
   command: "zypper addrepo {{ repo_url }}"
   vars:
     repo_url: "https://download.opensuse.org/repositories/server:http/{{ ansible_facts['distribution_version'] }}/server:http.repo"
   when:
-    - ansible_facts['distribution']== "SLES" and not haproxy_repo_exists
+  - ansible_facts['distribution']== "SLES" and not haproxy_repo_exists
 
 - name: Refresh all zypper repositories on SUSE
   command: zypper --non-interactive --gpg-auto-import-keys refresh
   when:
-    - ansible_facts['distribution']== "SLES"
+  - ansible_facts['distribution']== "SLES"
 
 - name: Install HAProxy package for SUSE
   command: zypper install -y haproxy
   when:
-    - ansible_facts['distribution']== "SLES"
+  - ansible_facts['distribution']== "SLES"
 
 - name: Install HAProxy package
   yum:
     name: haproxy
     state: present
   when:
-    - ansible_facts['distribution']== "RedHat" or ansible_facts['distribution']== "AlmaLinux"
+  - ansible_facts['distribution']== "RedHat" or ansible_facts['distribution']== "AlmaLinux"

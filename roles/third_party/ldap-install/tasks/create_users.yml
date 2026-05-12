@@ -3,45 +3,56 @@
   set_fact:
     __ldap_add_users: "{{ __symas_bin_path }}{{ __ldap_add_users }}"
   when:
-    - ansible_facts['distribution']== "RedHat" or ansible_facts['distribution']== "SLES"
+  - ansible_facts['distribution']== "RedHat" or ansible_facts['distribution']== "SLES"
 
 - name: "Verify if users are already created"
   stat:
     path: "{{ __users_ldif_success_file }}"
   register: ldap_users_already_created
   when:
-    - __setup_fake_ldap_users |bool
+  - __setup_fake_ldap_users |bool
 
 - name: "Render {{ __users_ldif_location }}"
   template:
     src: "{{ __users_ldif_template }}"
     dest: "{{ __users_ldif_location }}"
   when:
-    - __setup_fake_ldap_users |bool
-    - not ldap_users_already_created.stat.exists
+  - __setup_fake_ldap_users |bool
+  - not ldap_users_already_created.stat.exists
 
 - name: "Create users from {{ __users_ldif_location }}"
   command: "{{ __ldap_add_users }} {{ __users_ldif_location }}"
   register: users
   failed_when: ( users.rc not in [0] )
   when:
-    - __setup_fake_ldap_users |bool
-    - not ldap_users_already_created.stat.exists
+  - __setup_fake_ldap_users |bool
+  - not ldap_users_already_created.stat.exists
+  - ansible_distribution != 'SLES'
+
+- name: Create users on 389 Directory Server
+  command: >
+    ldapadd -x -D "cn=Directory Manager" -w "{{ __ldap_slappasswd }}" -H "ldap://{{ inventory_hostname }}:389" -f "{{ __users_ldif_location }}"
+  register: users_389
+  failed_when: (users_389.rc not in [0])
+  when:
+  - __setup_fake_ldap_users | bool
+  - not ldap_users_already_created.stat.exists
+  - ansible_distribution == 'SLES'
 
 - name: "Cleanup {{ __users_ldif_location }}"
   file:
     path: "{{ __users_ldif_location }}"
     state: absent
   when:
-    - __setup_fake_ldap_users |bool
-    - not ldap_users_already_created.stat.exists
+  - __setup_fake_ldap_users |bool
+  - not ldap_users_already_created.stat.exists
 
 - name: "Create {{ __users_ldif_success_file }} file"
   file:
     path: "{{ __users_ldif_success_file }}"
     state: touch
   when:
-    - __setup_fake_ldap_users |bool
+  - __setup_fake_ldap_users |bool
 
 - name: "Verify if custom users are already created"
   stat:
@@ -53,25 +64,25 @@
     src: "{{ custom_ldap_users_location }}"
     dest: "/tmp/custom_ldap_user.ldif"
   when:
-    - custom_ldap_users_location is defined and not custom_ldap_users_already_created.stat.exists
+  - custom_ldap_users_location is defined and not custom_ldap_users_already_created.stat.exists
 
 - name: "Create additional users if provided"
   command: "{{ __ldap_add_users }} /tmp/custom_ldap_user.ldif"
   register: extra_users
   failed_when: ( extra_users.rc not in [0] )
   when:
-    - custom_ldap_users_location is defined and not custom_ldap_users_already_created.stat.exists
+  - custom_ldap_users_location is defined and not custom_ldap_users_already_created.stat.exists
 
 - name: "Cleanup /tmp/custom_ldap_user.ldif"
   file:
     path: "/tmp/custom_ldap_user.ldif"
     state: absent
   when:
-    - custom_ldap_users_location is defined and not custom_ldap_users_already_created.stat.exists
+  - custom_ldap_users_location is defined and not custom_ldap_users_already_created.stat.exists
 
 - name: "Create {{ __custom_users_ldif_success_file }} file"
   file:
     path: "{{ __custom_users_ldif_success_file }}"
     state: touch
   when:
-    - custom_ldap_users_location is defined and not custom_ldap_users_already_created.stat.exists
+  - custom_ldap_users_location is defined and not custom_ldap_users_already_created.stat.exists

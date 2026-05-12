@@ -7,17 +7,24 @@
   stat: path="{{ __tdi_user_install_dir }}/jvm/jre"
   register: jre_stat
   when:
-    - tdi_already_installed.stat.exists
+  - tdi_already_installed.stat.exists
 
 - name: Checking existing version for jre
   shell: '{{ __tdi_user_install_dir }}/jvm/jre/bin/java -version 2>&1 | awk -F''"'' ''NR==1{ print $2 }'''
   register: jre_version_stat
   when:
-    - tdi_already_installed.stat.exists
-    - jre_stat.stat.exists
+  - tdi_already_installed.stat.exists
+  - jre_stat.stat.exists
 
 - debug:
     msg: "Installed JRE version: {{ jre_version_stat.stdout }}"
+  when:
+  - jre_version_stat.stdout is defined
+
+- debug:
+    msg: "Expected JRE version: {{ __jre_package_build }}"
+  when:
+  - __jre_package_build is defined
 
 - name: Determine if JRE upgrade is needed
   set_fact:
@@ -27,8 +34,8 @@
         (jre_version_stat.stdout != __jre_package_build)
       }}
   when:
-    - jre_version_stat.stdout is defined
-    - __jre_package_build is defined
+  - jre_version_stat.stdout is defined
+  - __jre_package_build is defined
 
 - debug:
     msg: "Upgrade needed? {{ upgrade_jre_needed | default(false) }}"
@@ -38,47 +45,55 @@
     path: "{{ __tmp_extraction_folder }}"
     state: directory
   when:
-    - jre_stat.stat.exists
-    - tdi_already_installed.stat.exists
-    - upgrade_jre_needed | default(false)
+  - jre_stat.stat.exists
+  - tdi_already_installed.stat.exists
+  - upgrade_jre_needed | default(false)
 
 - name: Download and unzip installation {{ __jre_package_name }} to the {{ __tmp_extraction_folder }}
   unarchive:
     src: "{{ __download_location }}/{{ __jre_package_name }}"
     dest: "{{ __tmp_extraction_folder }}"
-    remote_src: yes
-    mode: 0755
+    remote_src: true
+    mode: 755
     validate_certs: false
   when:
-    - jre_stat.stat.exists
-    - tdi_already_installed.stat.exists
-    - upgrade_jre_needed | default(false)
+  - jre_stat.stat.exists
+  - tdi_already_installed.stat.exists
+  - upgrade_jre_needed | default(false)
+
+- name: Remove old jre backup if it exists
+  shell: "rm -rf {{ __tdi_user_install_dir }}/jvm/jre_*"
+  when:
+  - jre_stat.stat.exists
+  - tdi_already_installed.stat.exists
+  - upgrade_jre_needed | default(false)
+  ignore_errors: true
 
 - name: Backing up old jre dir
-  command: mv "{{ __tdi_user_install_dir }}/jvm/jre" "{{ __tdi_user_install_dir }}/jvm/jre_{{ ansible_facts['date_time']['iso8601'] }}"
+  command: mv "{{ __tdi_user_install_dir }}/jvm/jre" "{{ __tdi_user_install_dir }}/jvm/jre_{{ ansible_date_time.iso8601 }}"
   when:
-    - jre_stat.stat.exists
-    - tdi_already_installed.stat.exists
-    - upgrade_jre_needed | default(false)
+  - jre_stat.stat.exists
+  - tdi_already_installed.stat.exists
+  - upgrade_jre_needed | default(false)
 
 - name: Copy new jre dir to jvm dir
   copy:
     src: "{{ __tmp_extraction_folder }}/{{ __jre_package_version }}/jre"
     dest: "{{ __tdi_user_install_dir }}/jvm"
     remote_src: yes
-    mode: 0755
+    mode: 755
   become: true
   when:
-    - jre_stat.stat.exists
-    - tdi_already_installed.stat.exists
-    - upgrade_jre_needed | default(false)
+  - jre_stat.stat.exists
+  - tdi_already_installed.stat.exists
+  - upgrade_jre_needed | default(false)
 
 - name: Checking updated version for jre
   shell: '{{ __tdi_user_install_dir }}/jvm/jre/bin/java -version 2>&1 | awk -F''"'' ''NR==1{ print $2 }'''
   register: updated_jre_version_stat
   when:
-    - tdi_already_installed.stat.exists
-    - jre_stat.stat.exists
+  - tdi_already_installed.stat.exists
+  - jre_stat.stat.exists
 
 - debug:
     msg: "Updated JRE version: {{ updated_jre_version_stat.stdout }}"
@@ -94,9 +109,9 @@
               permission java.security.AllPermission;
       };
   when:
-    - jre_stat.stat.exists
-    - tdi_already_installed.stat.exists
-    - "'1.8' in updated_jre_version_stat.stdout"
+  - jre_stat.stat.exists
+  - tdi_already_installed.stat.exists
+  - "'1.8' in updated_jre_version_stat.stdout"
 
 - name: Grant permission to derby port to listen
   become: true
@@ -104,13 +119,13 @@
     path: "{{ __java_policy_file_path }}"
     marker: "        // {mark} Grant permission to derby port to listen"
     insertafter: "grant {"
-    block: |1
-             // Allows anyone to listen on un-privileged ports
-             permission java.net.SocketPermission "localhost:{{ __tdi_cs_port }}", "listen, resolve";
+    block: |2
+              // Allows anyone to listen on un-privileged ports
+              permission java.net.SocketPermission "localhost:{{ __tdi_cs_port }}", "listen, resolve";
   when:
-    - jre_stat.stat.exists
-    - tdi_already_installed.stat.exists
-    - "'1.8' in updated_jre_version_stat.stdout"
+  - jre_stat.stat.exists
+  - tdi_already_installed.stat.exists
+  - "'1.8' in updated_jre_version_stat.stdout"
 
 - name: Remove the previous version of Spring Jars in SDI to support Java 8
   become: true
@@ -118,9 +133,9 @@
     path: "{{ __tdi_user_install_dir }}/jars/3rdparty/others/ActiveMQ/{{ item }}"
     state: absent
   with_items:
-    - spring-beans.jar
-    - spring-context.jar
-    - spring-core.jar
+  - spring-beans.jar
+  - spring-context.jar
+  - spring-core.jar
 
 - name: Remove the previous version of Spring Jars in SDI to support Java 8
   become: true
@@ -128,6 +143,6 @@
     path: "{{ __tdi_user_install_dir }}/lwi/runtime/messaging/eclipse/plugins/org.apache.activemq_5.2.0/lib/{{ item }}"
     state: absent
   with_items:
-    - spring-beans-2.5.6.jar
-    - spring-core-2.5.6.jar
-    - spring-context-2.5.6.jar
+  - spring-beans-2.5.6.jar
+  - spring-core-2.5.6.jar
+  - spring-context-2.5.6.jar

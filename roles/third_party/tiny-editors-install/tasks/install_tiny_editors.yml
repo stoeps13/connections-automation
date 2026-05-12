@@ -10,8 +10,8 @@
     recurse: true
     owner: "{{ __tinyeditors_username }}"
   with_items:
-    - "{{ __tinyeditors_customization_path }}"
-    - "{{ __tinyeditors_provision_path }}"
+  - "{{ __tinyeditors_customization_path }}"
+  - "{{ __tinyeditors_provision_path }}"
 
 - name: "Install Tiny Editors with user: {{ __tinyeditors_username }} on node: {{ inventory_hostname_short }}"
   ansible.builtin.expect:
@@ -26,7 +26,7 @@
   poll: 5
   no_log: true
   when:
-    - __install_tinyeditors |bool == true
+  - __install_tinyeditors |bool == true
 
 - name: "Uninstall Tiny Editors"
   ansible.builtin.expect:
@@ -41,23 +41,23 @@
   poll: 5
   no_log: true
   when:
-    - __uninstall_tinyeditors
+  - __uninstall_tinyeditors
 
 - name: Check tinyeditors_install_performed stdout for success message
   ansible.builtin.debug:
     var: tinyeditors_install_performed.stdout_lines
   when:
-    - tinyeditors_install_performed is defined
-    - __install_tinyeditors
+  - tinyeditors_install_performed is defined
+  - __install_tinyeditors
   failed_when: "'Install complete' not in tinyeditors_install_performed.stdout"
 
 - name: Check tinyeditors_uninstall_performed stdout for success message
   ansible.builtin.debug:
     var: tinyeditors_uninstall_performed.stdout_lines
   when:
-    - tinyeditors_uninstall_performed is defined
-    - __uninstall_tinyeditors
-    - "'No integration code detected in web resources' not in tinyeditors_uninstall_performed.stdout"
+  - tinyeditors_uninstall_performed is defined
+  - __uninstall_tinyeditors
+  - "'No integration code detected in web resources' not in tinyeditors_uninstall_performed.stdout"
   failed_when: "'Uninstall complete' not in tinyeditors_uninstall_performed.stdout"
 
 - name: Change back Tiny Editors directories ownership to the root user
@@ -69,8 +69,8 @@
     group: root
   become: true
   with_items:
-    - "{{ __tinyeditors_customization_path }}"
-    - "{{ __tinyeditors_provision_path }}"
+  - "{{ __tinyeditors_customization_path }}"
+  - "{{ __tinyeditors_provision_path }}"
 
 - name: Performing the required post-customization steps. Create Tiny Editors configuration directory if it does not exist
   ansible.builtin.file:
@@ -80,14 +80,14 @@
     group: "{{ user_group.stdout }}"
   become: true
   when:
-    - __install_tinyeditors |bool == true
+  - __install_tinyeditors |bool == true
 
 - name: "Render {{ __tinyeditors_conf_destination }}"
   ansible.builtin.template:
     src: "{{ __tinyeditors_conf_template }}"
     dest: "{{ __tinyeditors_conf_destination }}"
   when:
-    - __install_tinyeditors
+  - __install_tinyeditors
 
 - name: Remove Tiny Editors configuration directory if it exists
   ansible.builtin.file:
@@ -95,4 +95,4 @@
     state: absent
   become: true
   when:
-    - __uninstall_tinyeditors
+  - __uninstall_tinyeditors

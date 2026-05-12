@@ -1,23 +1,32 @@
-- name: Install pre requisites
+- name: Install pre requisites (RHEL < 10)
   yum:
-    name: ["gcc", "pcre-devel", "openssl-devel"]
+    name: [ "gcc", "pcre-devel", "openssl-devel" ]
     state: present
   when:
-    - ansible_facts['distribution']== "RedHat" or ansible_facts['distribution']== "AlmaLinux"
+  - ansible_distribution == "RedHat" or ansible_distribution == "AlmaLinux"
+  - ansible_distribution_major_version | int < 10
+
+- name: Install pre requisites (RHEL 10+)
+  yum:
+    name: [ 'gcc', 'pcre2-devel', 'openssl-devel' ]
+    state: present
+  when:
+  - ansible_distribution == "RedHat" or ansible_distribution == "AlmaLinux"
+  - ansible_distribution_major_version | int >= 10
 
 - name: Install pre requisites for SUSE
   zypper:
-    name: ["gcc", "pcre-devel", "libopenssl-devel"]
+    name: [ "gcc", "pcre-devel", "libopenssl-devel" ]
     state: present
   when:
-    - ansible_facts['distribution']== "SLES"
+  - ansible_facts['distribution']== "SLES"
 
 - name: Install Development Tools group
   yum:
     name: "@Development tools"
     state: present
   when:
-    - ansible_facts['distribution']!= "SLES"
+  - ansible_facts['distribution']!= "SLES"
 
 - name: Install Development Tools group for SUSE
   zypper:

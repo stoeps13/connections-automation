@@ -1,3 +1,4 @@
+
 ---
 - name: Install pre-requisites Zypper
   zypper:
@@ -36,7 +37,11 @@
     - ansible_facts['os_family'] == "RedHat"
     - ansible_facts['distribution_major_version'] == "7"
 
+<<<<<<< HEAD
 - name: Install pre-requisites Yum RHEL8/RHEL9
+=======
+- name:          Install pre-requisites Yum RHEL8/9
+>>>>>>> upstream/main
   yum:
     name:
       [
@@ -56,8 +61,21 @@
       ]
     state: present
   when:
+<<<<<<< HEAD
     - ansible_facts['os_family'] == "RedHat"
     - ansible_facts['distribution_major_version'] == "8" or ansible_facts['distribution_major_version'] == "9"
+=======
+    - ansible_os_family == "RedHat"
+    - ansible_distribution_major_version | int in [8, 9]
+
+- name:          Install pre-requisites Yum RHEL10+
+  yum:
+    name: ['nfs-utils', 'libXtst', 'xorg-x11-fonts-Type1', 'psmisc', 'python3-lxml.x86_64', 'xorg-x11-fonts-75dpi', 'xorg-x11-fonts-Type1', 'dejavu-sans-fonts', 'libxcrypt-compat']
+    state: present
+  when:
+    - ansible_os_family == "RedHat"
+    - ansible_distribution_major_version | int >= 10    
+>>>>>>> upstream/main
 
 - name: Install pre-requisites Yum on app servers RHEL 7
   yum:
@@ -84,7 +102,11 @@
   delegate_to: "{{ item }}"
   with_items: "{{ groups['was_servers'] }}"
 
+<<<<<<< HEAD
 - name: Install pre-requisites Yum on app servers RHEL8/RHEL9
+=======
+- name:          Install pre-requisites Yum on app servers RHEL8/9
+>>>>>>> upstream/main
   yum:
     name:
       [
@@ -105,10 +127,17 @@
       ]
     state: present
   when:
+<<<<<<< HEAD
     - ansible_facts['os_family'] == "RedHat" or "AlmaLinux"
     - ansible_facts['distribution_major_version'] == "8" or ansible_facts['distribution_major_version'] == "9"
   delegate_to: "{{ item }}"
   with_items: "{{ groups['was_servers'] }}"
+=======
+    - ansible_os_family in ["RedHat", "AlmaLinux"]
+    - ansible_distribution_major_version | int in [8, 9]
+  delegate_to:   "{{ item }}"
+  with_items:    "{{ groups['was_servers'] }}"
+>>>>>>> upstream/main
 
 - name: Install wkhtmltox-0.12.6-1.opensuse.leap15.x86_64.rpm from RPM
   zypper:
@@ -174,8 +203,13 @@
     state: present
     disable_gpg_check: yes
   when:
+<<<<<<< HEAD
     - ansible_facts['os_family'] == "RedHat" or "AlmaLinux"
     - ansible_facts['distribution_major_version'] == "9"
+=======
+    - ansible_os_family in ["RedHat", "AlmaLinux"]
+    - ansible_distribution_major_version | int >= 9
+>>>>>>> upstream/main
 
 - name: Install wkhtmltox-0.12.6.1-2.almalinux9.x86_64.rpm from RPM on WAS servers
   yum:
@@ -183,10 +217,17 @@
     state: present
     disable_gpg_check: yes
   when:
+<<<<<<< HEAD
     - ansible_facts['os_family'] == "RedHat" or "AlmaLinux"
     - ansible_facts['distribution_major_version'] == "9"
   delegate_to: "{{ item }}"
   with_items: "{{ groups['was_servers'] }}"
+=======
+    - ansible_os_family in ["RedHat", "AlmaLinux"]
+    - ansible_distribution_major_version | int >= 9
+  delegate_to:         "{{ item }}"
+  with_items:          "{{ groups['was_servers'] }}"
+>>>>>>> upstream/main
 
 - name: Set file descriptors limits
   pam_limits:

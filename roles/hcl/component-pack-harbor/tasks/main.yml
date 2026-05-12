@@ -29,6 +29,10 @@
   include_tasks: setup_connenv.yml
   when: __setup_connections_env |bool
 
+- name: Setup Community Ingress Controller
+  include_tasks: setup_community_ingress.yml
+  when: __setup_community_ingress |bool  
+
 - name: Setup infrastructure
   include_tasks: setup_infrastructure.yml
   when: __setup_infrastructure |bool
@@ -56,13 +60,9 @@
     __setup_opensearch: true
   when: opensearch_pod_running.stdout != ""
 
-- name: Setup Community Ingress Controller
-  include_tasks: setup_community_ingress.yml
-  when: __setup_community_ingress |bool
-
-# - name:                      Setup Teams
-#   include_tasks:             setup_teams.yml
-#   when:                      __setup_teams |bool
+- name: Setup Teams
+  include_tasks: setup_teams.yml
+  when: __setup_teams |bool
 
 - name: Setup Tailored Experience
   include_tasks: setup_tailored_exp.yml

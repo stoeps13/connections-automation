@@ -12,17 +12,17 @@
 - name: "[Single Node] Allow pods to run on master for kubernetes < v1.24"
   command: kubectl taint nodes --all node-role.kubernetes.io/master- --overwrite
   when:
-    - ((groups.k8s_workers | difference(groups.k8s_masters) | list)== [] and (groups.k8s_masters|length) == 1 and (groups.k8s_workers|length) == 1 ) == true
-    - inventory_hostname == groups['k8s_masters'][0]
+  - ((groups.k8s_workers | difference(groups.k8s_masters) | list)== [] and (groups.k8s_masters|length) == 1 and (groups.k8s_workers|length) == 1 ) == true
+  - inventory_hostname == groups['k8s_masters'][0]
   become_user: "{{ __kubectl_user }}"
   ignore_errors: true
 
 - name: "[Single Node] Allow pods to run on master for kubernetes v1.24 and above"
   command: kubectl taint nodes --all node-role.kubernetes.io/control-plane:NoSchedule- --overwrite
   when:
-    - ((groups.k8s_workers | difference(groups.k8s_masters) | list)== [] and (groups.k8s_masters|length) == 1 and (groups.k8s_workers|length) == 1 ) == true
-    - inventory_hostname == groups['k8s_masters'][0]
-    - kubectl_version is version('1.24.0', '>=')
+  - ((groups.k8s_workers | difference(groups.k8s_masters) | list)== [] and (groups.k8s_masters|length) == 1 and (groups.k8s_workers|length) == 1 ) == true
+  - inventory_hostname == groups['k8s_masters'][0]
+  - kubectl_version is version('1.24.0', '>=')
   become_user: "{{ __kubectl_user }}"
   ignore_errors: true
 
@@ -31,5 +31,5 @@
     node_name: "{{ inventory_hostname.split('.')[0]|lower if ansible_facts['distribution']== 'SLES' else inventory_hostname|lower }}"
   command: "kubectl label nodes {{ node_name }} type=infrastructure --overwrite"
   when:
-    - ((groups.k8s_workers | difference(groups.k8s_masters) | list)== []  and (groups.k8s_masters|length) == 1 and (groups.k8s_workers|length) == 1 ) == true
+  - ((groups.k8s_workers | difference(groups.k8s_masters) | list)== []  and (groups.k8s_masters|length) == 1 and (groups.k8s_workers|length) == 1 ) == true
   become_user: "{{ __kubectl_user }}"

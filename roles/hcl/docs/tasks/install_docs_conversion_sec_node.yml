@@ -19,8 +19,8 @@
     name: "{{ item }}"
   become: true
   loop:
-    - xorg-x11-server-Xvfb
-    - libSM.i686
+  - xorg-x11-server-Xvfb
+  - "{{ 'libSM6-32bit' if ansible_distribution == 'SLES' else 'libSM.i686' }}"
 
 - name: Replace install_sym.py
   ansible.builtin.copy:
@@ -41,53 +41,20 @@
     regexp: "^(#?){{ item.prop_name }} ?=(.*)$"
     replace: "{{ item.prop_name }}={{ item.prop_value }}"
   with_items:
-    - {
-        prop_name: "conversion_install_root",
-        prop_value: "{{ __conversion_install_root_r }}",
-      }
-    - {
-        prop_name: "docs_shared_storage_type",
-        prop_value: "{{ __docs_shared_storage_type_r }}",
-      }
-    - {
-        prop_name: "viewer_shared_storage_type",
-        prop_value: "{{ __viewer_shared_storage_type_r }}",
-      }
-    - {
-        prop_name: "docs_shared_storage_local_path",
-        prop_value: "{{ __docs_shared_storage_local_path_r }}",
-      }
-    - {
-        prop_name: "docs_shared_storage_remote_server",
-        prop_value: "{{ __docs_shared_storage_remote_server_r }}",
-      }
-    - {
-        prop_name: "docs_shared_storage_remote_path",
-        prop_value: "{{ __docs_shared_storage_remote_path_r }}",
-      }
-    - {
-        prop_name: "viewer_shared_storage_local_path",
-        prop_value: "{{ __viewer_shared_storage_local_path_r }}",
-      }
-    - {
-        prop_name: "viewer_shared_storage_remote_server",
-        prop_value: "{{ __viewer_shared_storage_remote_server_r }}",
-      }
-    - {
-        prop_name: "viewer_shared_storage_remote_path",
-        prop_value: "{{ __viewer_shared_storage_remote_path_r }}",
-      }
-    - { prop_name: "scope", prop_value: "{{ __scope_r  }}" }
-    - { prop_name: "scope_name", prop_value: "{{ __scope_name_r  }}" }
-    - {
-        prop_name: "was_install_root",
-        prop_value: "{{ __was_install_root_r }}",
-      }
-    - {
-        prop_name: "non_job_mgr_mode",
-        prop_value: "{{ __non_job_mgr_mode_r }}",
-      }
-    - { prop_name: "viewer_url", prop_value: "{{ __viewer_url_r }}" }
+  - { prop_name: "conversion_install_root", prop_value: "{{ __conversion_install_root_r }}" }
+  - { prop_name: "docs_shared_storage_type", prop_value: "{{ __docs_shared_storage_type_r }}" }
+  - { prop_name: "viewer_shared_storage_type", prop_value: "{{ __viewer_shared_storage_type_r }}" }
+  - { prop_name: "docs_shared_storage_local_path", prop_value: "{{ __docs_shared_storage_local_path_r }}" }
+  - { prop_name: "docs_shared_storage_remote_server", prop_value: "{{ __docs_shared_storage_remote_server_r }}" }
+  - { prop_name: "docs_shared_storage_remote_path", prop_value: "{{ __docs_shared_storage_remote_path_r }}" }
+  - { prop_name: "viewer_shared_storage_local_path", prop_value: "{{ __viewer_shared_storage_local_path_r }}" }
+  - { prop_name: "viewer_shared_storage_remote_server", prop_value: "{{ __viewer_shared_storage_remote_server_r }}" }
+  - { prop_name: "viewer_shared_storage_remote_path", prop_value: "{{ __viewer_shared_storage_remote_path_r }}" }
+  - { prop_name: "scope", prop_value: "{{ __scope_r  }}" }
+  - { prop_name: "scope_name", prop_value: "{{ __scope_name_r  }}" }
+  - { prop_name: "was_install_root", prop_value: "{{ __was_install_root_r }}" }
+  - { prop_name: "non_job_mgr_mode", prop_value: "{{ __non_job_mgr_mode_r }}" }
+  - { prop_name: "viewer_url", prop_value: "{{ __viewer_url_r }}" }
   when: not conversion_already_installed|bool or conversion_upgrade|bool
 
 - name: Run the Docs Conversion installer for the second node (fresh)
@@ -96,8 +63,8 @@
     cmd: "./install_node.sh -wasadminID {{ was_username }} -wasadminPW {{ was_password }} -configFile cfg.node.properties -acceptLicense -silentlyInstall"
   become: true
   when:
-    - not conversion_already_installed|bool
-    - conversion_first_already_installed.stat.exists |bool
+  - not conversion_already_installed|bool
+  - conversion_first_already_installed.stat.exists |bool
   register: sec_install_performed
 
 - name: Run the Docs Conversion installer for the second node (upgrade)
@@ -106,19 +73,19 @@
     cmd: "./upgrade_node.sh -wasadminID {{ was_username }} -wasadminPW {{ was_password }} -acceptLicense -silentlyInstall -installRoot {{ __docs_conversion_install_location }}"
   become: true
   when:
-    - conversion_upgrade|bool
-    - conversion_first_already_installed.stat.exists |bool
+  - conversion_upgrade|bool
+  - conversion_first_already_installed.stat.exists |bool
   register: sec_upgrade_performed
 
 - name: Search for success message in install log (fresh)
-  become: yes
+  become: true
   shell: "grep -i '{{ __install_success_message_node }}' {{ __docs_conversion_install_location }}/logs/conversion_install_node.log"
   register: conversion_install_success_message_found
   failed_when: conversion_install_success_message_found.stdout|length == 0
   when: sec_install_performed is not skipped
 
 - name: Search for success message in install log (upgrade)
-  become: yes
+  become: true
   shell: "grep -i '{{ __upgrade_success_message }}' {{ __docs_conversion_install_location }}/logs/conversion_upgrade_node.log"
   register: conversion_upgrade_success_message_found
   failed_when: conversion_upgrade_success_message_found.stdout|length == 0
@@ -128,6 +95,4 @@
   file:
     path: "{{ __conversion_install_success_file }}"
     state: touch
-  when:
-    sec_install_performed is not skipped and conversion_install_success_message_found.stdout|length > 0 or
-    sec_upgrade_performed is not skipped and conversion_upgrade_success_message_found.stdout|length > 0
+  when: sec_install_performed is not skipped and conversion_install_success_message_found.stdout|length > 0 or sec_upgrade_performed is not skipped and conversion_upgrade_success_message_found.stdout|length > 0

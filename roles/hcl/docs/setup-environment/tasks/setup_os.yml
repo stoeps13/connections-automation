@@ -1,26 +1,10 @@
 - name: Install pre-requisites Yum
   yum:
-    name:
-      [
-        "python3-passlib",
-        nfs-utils',
-        "gtk2",
-        "libXtst",
-        "xorg-x11-fonts-Type1",
-        "psmisc",
-        "glibc.i686",
-        "gtk2.i686",
-        "libXtst.i686",
-        "libXft.i686",
-        "unzip",
-        "vim",
-        "python3-pip",
-        "python-passlib.noarch",
-      ]
+    name: [ "python3-passlib", nfs-utils', "gtk2", "libXtst", "xorg-x11-fonts-Type1", "psmisc", "glibc.i686", "gtk2.i686", "libXtst.i686", "libXft.i686", "unzip", "vim", "python3-pip", "python-passlib.noarch" ]
     state: present
   when:
-    - ansible_facts['os_family'] == "RedHat"
-    - ansible_facts['distribution_major_version'] == "7"
+  - ansible_facts['os_family'] == "RedHat"
+  - ansible_facts['distribution_major_version'] == "7"
 
 - name: Install epel-release on RHEL
   yum:
@@ -28,77 +12,47 @@
     state: present
     disable_gpg_check: true
   when:
-    - ansible_facts['os_family'] == "RedHat"
-    - ansible_facts['distribution_major_version'] == "8" or ansible_facts['distribution_major_version'] == "9"
+  - ansible_facts['os_family'] == "RedHat"
+  - ansible_facts['distribution_major_version'] == "8" or ansible_facts['distribution_major_version'] == "9"
 
 - name: Install pre-requisites Yum on RHEL
   yum:
-    name:
-      [
-        "nfs-utils",
-        "gtk2",
-        "libXtst",
-        "xorg-x11-fonts-Type1",
-        "psmisc",
-        "glibc.i686",
-        "gtk2.i686",
-        "libXtst.i686",
-        "libXft.i686",
-        "unzip",
-        "vim",
-        "python3-pip",
-        "python3-passlib.noarch",
-      ]
+    name: [ "nfs-utils", "gtk2", "libXtst", "xorg-x11-fonts-Type1", "psmisc", "glibc.i686", "gtk2.i686", "libXtst.i686", "libXft.i686", "unzip", "vim", "python3-pip", "python3-passlib.noarch" ]
     state: present
   when:
-    - ansible_facts['os_family'] == "RedHat"
-    - ansible_facts['distribution_major_version'] == "8" or ansible_facts['distribution_major_version'] == "9"
+  - ansible_facts['os_family'] == "RedHat"
+  - ansible_facts['distribution_major_version'] == "8" or ansible_facts['distribution_major_version'] == "9"
 
 - name: Install pre-requisites Yum on AlmaLinux
   yum:
-    name: ["python3-pip"]
+    name: [ "python3-pip" ]
     state: present
   when:
-    - ansible_facts['distribution']== "AlmaLinux"
-    - ansible_facts['distribution_major_version'] == "9"
+  - ansible_facts['distribution']== "AlmaLinux"
+  - ansible_facts['distribution_major_version'] == "9"
 
 - name: Install pre-requisites Yum for Conversion service
   yum:
-    name: ["ImageMagick", "libSM.i686"]
+    name: [ "ImageMagick", "libSM.i686" ]
     state: present
   when:
-    - ansible_facts['os_family'] == "RedHat"
-    - inventory_hostname in groups["conversion_servers"]
+  - ansible_facts['os_family'] == "RedHat"
+  - inventory_hostname in groups["conversion_servers"]
 
 - name: Install pre-requisites Zypper for SUSE
   zypper:
-    name:
-      [
-        "nfs-client",
-        "gtk2",
-        "libXtst",
-        "xorg-x11-fonts",
-        "psmisc",
-        "glibc-32bit",
-        "gtk2-32bit",
-        "libXtst-32bit",
-        "libXft-32bit",
-        "unzip",
-        "vim",
-        "python3-pip",
-        "python-passlib",
-      ]
+    name: [ "nfs-client", "gtk2", "libXtst", "xorg-x11-fonts", "psmisc", "glibc-32bit", "gtk2-32bit", "libXtst-32bit", "libXft-32bit", "unzip", "vim", "python3-pip", "python-passlib" ]
     state: present
   when:
-    - ansible_facts['distribution']== "SLES"
+  - ansible_facts['distribution']== "SLES"
 
 - name: Install pre-requisites Zypper for Conversion service
   zypper:
-    name: ["ImageMagick", "libSM7"]
+    name: [ "ImageMagick", "libSM7" ]
     state: present
   when:
-    - ansible_facts['distribution']== "SLES"
-    - inventory_hostname in groups["conversion_servers"]
+  - ansible_facts['distribution']== "SLES"
+  - inventory_hostname in groups["conversion_servers"]
 
 - name: Set file descriptors limits
   pam_limits:
@@ -112,4 +66,4 @@
     name: pexpect
     state: latest
   when:
-    - ansible_facts['distribution']== "RedHat" or ansible_facts['distribution']== "AlmaLinux"
+  - ansible_facts['distribution']== "RedHat" or ansible_facts['distribution']== "AlmaLinux"

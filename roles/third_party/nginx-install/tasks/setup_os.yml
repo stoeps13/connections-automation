@@ -25,7 +25,7 @@
     dist: "centos"
     version: "{{ ansible_facts['distribution_major_version'] }}"
   when:
-    - ansible_facts['distribution'] == "CentOS" and not __build_nginx|bool
+  - ansible_facts['distribution'] == "CentOS" and not __build_nginx|bool
 
 - name: Apply repository for RHEL
   template:
@@ -35,7 +35,7 @@
     dist: "rhel"
     version: "{{ ansible_facts['distribution_major_version'] }}"
   when:
-    - ansible_facts['distribution'] in ['RedHat', 'AlmaLinux', 'Rocky'] and not __build_nginx|bool
+  - ansible_facts['distribution'] in ['RedHat', 'AlmaLinux', 'Rocky'] and not __build_nginx|bool
 
 - name: Apply repository for SUSE
   template:
@@ -45,35 +45,45 @@
     dist: "sles"
     version: "{{ ansible_facts['distribution_major_version'] }}"
   when:
-    - ansible_facts['distribution']== "SLES" and not __build_nginx|bool
+  - ansible_facts['distribution']== "SLES" and not __build_nginx|bool
 
 - name: Install prerequisites if building NGINX
   package:
-    name: ["gcc", "pcre-devel", "openssl-devel", "zlib-devel"]
+    name: [ "gcc", "pcre-devel", "openssl-devel", "zlib-devel" ]
     state: present
   when:
-    - __build_nginx|bool
+  - __build_nginx|bool
+  - (ansible_os_family == "RedHat" and ansible_distribution_major_version | int < 10) or ansible_distribution == "SLES"
+
+- name: Install prerequisites if building NGINX (RHEL 10+)
+  package:
+    name: [ 'gcc', "pcre2-devel", "openssl-devel", "zlib-devel" ]
+    state: present
+  when:
+  - __build_nginx|bool
+  - ansible_os_family == "RedHat"
+  - ansible_distribution_major_version | int >= 10
 
 - name: Install prerequisites for semanage
   package:
     name: "{{ item }}"
     state: present
   with_items:
-    - libselinux-python
-    - libsemanage-python
+  - libselinux-python
+  - libsemanage-python
   when:
-    - ansible_facts['os_family'] == "RedHat"
-    - ansible_facts['distribution_major_version'] == "7"
-    - ansible_facts['distribution']!= "SLES"
+  - ansible_facts['os_family'] == "RedHat"
+  - ansible_facts['distribution_major_version'] == "7"
+  - ansible_facts['distribution']!= "SLES"
 
 - name: Install prerequisites for semanage on SUSE
   package:
     name: "{{ item }}"
     state: present
   with_items:
-    - selinux-tools
+  - selinux-tools
   when:
-    - ansible_facts['distribution']== "SLES"
+  - ansible_facts['distribution']== "SLES"
 
 - name: Disable SELinux
   selinux:
@@ -88,7 +98,7 @@
   ignore_errors: true
   notify: reboot
   when:
-    - ansible_facts['distribution']== "SLES"
+  - ansible_facts['distribution']== "SLES"
 
 - name: Set httpd_can_network_connect flag on and keep it persistent across reboots
   seboolean:
@@ -116,3 +126,19 @@
     cmd: tail -c 500M /var/log/nginx/access.log > /var/log/nginx/access.log.tmp && mv /var/log/nginx/access.log.tmp /var/log/nginx/access.log
   become: true
   ignore_errors: true
+  when: not __nginx_log_rotate|bool
+
+- name: Install logrotate package
+  package:
+    name: logrotate
+    state: present
+  when: __nginx_log_rotate|bool
+
+- name: Configure Nginx log rotation
+  template:
+    src: "{{ __nginx_logrotate_conf_template }}"
+    dest: "{{ __nginx_logrotate_conf_location }}"
+    owner: root
+    group: root
+    mode: '0644'
+  when: __nginx_log_rotate|bool
