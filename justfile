@@ -61,6 +61,7 @@ facts env: banner
 # Start Connections
 cnxstart env: banner
   ansible-playbook -i environments/{{ env }}/inventory.ini {{ CMD_VAULT }} playbooks/third_party/was-nd-start.yml
+  ssh root@cnx8-db2-was.stoeps.home start-ihs9.sh
 
 # Stop Connections
 cnxstop env: banner
