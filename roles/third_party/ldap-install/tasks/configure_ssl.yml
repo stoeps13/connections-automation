@@ -20,13 +20,14 @@
     ldap_default_san_list: "{{ ldap_hostnames_raw.stdout.split() | unique }}"
 
 - name: Convert ldap_custom_cert_sans to a list if provided
-  set_fact:
-    ldap_custom_cert_sans: "{{ ldap_custom_cert_sans | split(',') }}"
+  ansible.builtin.set_fact:
+    ldap_custom_cert_sans_list: >-
+      {{ ldap_custom_cert_sans.split(',') if ldap_custom_cert_sans is string else ldap_custom_cert_sans }}
   when: ldap_custom_cert_sans is defined
 
 - name: Set final LDAP SAN list
-  set_fact:
-    __ldap_cert_san_list: "{{ ldap_custom_cert_sans | default(ldap_default_san_list) | unique }}"
+  ansible.builtin.set_fact:
+    __ldap_cert_san_list: "{{ ldap_custom_cert_sans_list | default(ldap_default_san_list) | unique }}"
 
 - name: Show me the SAN list
   debug:
