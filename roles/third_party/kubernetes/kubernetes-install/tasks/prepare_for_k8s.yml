@@ -68,35 +68,4 @@
     name: ["iproute2"]
     state: present
   when:
-    - ansible_facts['distribution']== "SLES"
-
-- name: "Load br_netfilter as per https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/#letting-iptables-see-bridged-traffic"
-  modprobe:
-    name: br_netfilter
-    state: present
-
-- name: Avoid issues with traffic routing as per documentation
-  sysctl:
-    name: "{{ item }}"
-    value: "1"
-    sysctl_set: yes
-    reload: yes
-  with_items:
-    - "net.ipv4.conf.all.forwarding"
-    - "net.bridge.bridge-nf-call-ip6tables"
-    - "net.bridge.bridge-nf-call-iptables"
-
-- name: Disable SELinux to support Kubelet as per documentation
-  selinux:
-    state: disabled
-  ignore_errors: true
-  notify: reboot
-
-- name: Set httpd_can_network_connect flag on and keep it persistent across reboots
-  seboolean:
-    name: httpd_can_network_connect
-    state: yes
-    persistent: yes
-  ignore_errors: true
-  when:
-    - ansible_facts['os_family'] == "RedHat" or "AlmaLinux"
+    - ansible_os_family in ["RedHat", "AlmaLinux"]

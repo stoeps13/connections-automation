@@ -10,12 +10,12 @@
     - inventory_hostname == groups['k8s_masters'][0]
   become_user: "{{ __kubectl_user }}"
 
-- name: Check if calico is already deployed
-  shell: "kubectl get deployment --all-namespaces | grep calico-kube-controllers"
-  changed_when: true
-  register: calico_already_provisioned
-  become_user: "{{ __kubectl_user }}"
-  ignore_errors: true
+- name:               Check if calico is already deployed
+  shell:              "kubectl get deployment --all-namespaces | grep calico-kube-controllers"
+  changed_when:       true
+  register:           calico_already_provisioned
+  become_user:        "{{ __kubectl_user }}"
+  failed_when:        false
 
 - name: Uninstall old version of calico
   command: kubectl delete -f /tmp/calico.yaml --ignore-not-found=true

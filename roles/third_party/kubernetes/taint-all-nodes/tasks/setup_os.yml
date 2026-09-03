@@ -5,7 +5,14 @@
   when:
   - ansible_facts['os_family'] ==  "RedHat"
 
-- name: Install JMESPath Python library
+- name:                     Install pre-requisites Zypper for SUSE
+  zypper:
+    name:                   ['python3-pip']
+    state:                  present
+  when:
+    - ansible_distribution == "SLES"
+
+- name:                     Install JMESPath Python library
   pip:
     name: jmespath
     state: present

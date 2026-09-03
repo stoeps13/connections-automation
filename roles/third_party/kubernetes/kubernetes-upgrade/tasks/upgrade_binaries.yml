@@ -24,10 +24,11 @@
     state: present
   when: ansible_facts['distribution']== "SLES"
 
-- name: Find kubectl
-  shell: "whereis kubectl | awk '{ print $2 }'"
-  register: kubectl_loc
-  ignore_errors: true
+- name:                    Find kubectl
+  shell:                   "whereis kubectl | awk '{ print $2 }'"
+  register:                kubectl_loc
+  failed_when:             false
+  changed_when:            false
 
 - name: Remove kubectl so the desire version will be installed {{ kubectl_loc.stdout }}
   file:

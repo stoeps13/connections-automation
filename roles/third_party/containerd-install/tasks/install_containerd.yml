@@ -1,148 +1,194 @@
 ---
-- name: Show me Linux distribution
-  debug:
-    msg: "{{ ansible_facts['distribution']}}"
+- name:                     Show me Linux distribution
+  ansible.builtin.debug:
+    msg:                    "{{ ansible_distribution }}"
 
-- name: Show me Linux distribution major version
-  debug:
-    msg: "{{ ansible_facts['distribution_major_version'] }}"
+- name:                     Show me Linux distribution major version
+  ansible.builtin.debug:
+    msg:                    "{{ ansible_distribution_major_version }}"
 
-- name: Show me Linux distribution version
-  debug:
-    msg: "{{ ansible_facts['distribution_version'] }}"
+- name:                     Show me Linux distribution version
+  ansible.builtin.debug:
+    msg:                    "{{ ansible_distribution_version }}"
 
-- name: Add Docker repo (RHEL)
-  get_url:
-    url: https://download.docker.com/linux/rhel/docker-ce.repo
-    dest: /etc/yum.repos.d/docker-ce.repo
-    validate_certs: false
+- name:                     Add Docker repo (RHEL)
+  ansible.builtin.get_url:
+    url:                    https://download.docker.com/linux/rhel/docker-ce.repo
+    dest:                   /etc/yum.repos.d/docker-ce.repo
+    validate_certs:         false
   when:
   - ansible_facts['distribution']== "RedHat"
 
-- name: Add Docker repo (AlmaLinux)
-  get_url:
-    url: https://download.docker.com/linux/centos/docker-ce.repo
-    dest: /etc/yum.repos.d/docker-ce.repo
-    validate_certs: false
+- name:                     Add Docker repo (AlmaLinux)
+  ansible.builtin.get_url:
+    url:                    https://download.docker.com/linux/centos/docker-ce.repo
+    dest:                   /etc/yum.repos.d/docker-ce.repo
+    validate_certs:         false
   when:
   - ansible_facts['distribution']== "AlmaLinux"
 
-- name: Add Docker repo on SUSE
-  get_url:
-    url: https://download.docker.com/linux/sles/docker-ce.repo
-    dest: /etc/zypp/repos.d/docker-ce.repo
+- name:                     Remove stale Docker CE zypper repo file on SLES
+  ansible.builtin.file:
+    path:                   /etc/zypp/repos.d/docker-ce.repo
+    state:                  absent
   when:
-  - ansible_facts['distribution']== "SLES"
+    - ansible_distribution == "SLES"
 
-- name: Replace baseurl on SUSE {{ ansible_facts['distribution_major_version'] }}
-  replace:
-    path: /etc/zypp/repos.d/docker-ce.repo
-    regexp: "^baseurl.*$"
-    replace: "baseurl=https://download.docker.com/linux/sles/{{ ansible_facts['distribution_major_version'] }}/s390x/stable"
+- name:                     Remove stale docker-ce-stable zypper repo on SLES
+  ansible.builtin.file:
+    path:                   /etc/zypp/repos.d/docker-ce-stable.repo
+    state:                  absent
   when:
-  - ansible_facts['distribution']== "SLES"
+    - ansible_distribution == "SLES"
 
-- name: Enable Docker stable repo
-  ini_file:
-    dest: /etc/yum.repos.d/docker-ce.repo
-    section: "docker-ce-stable"
-    option: enabled
-    value: 1
+- name:                     Remove outdated Virtualization-containers repo on SLES
+  community.general.zypper_repository:
+    name:                   'Virtualization-containers'
+    state:                  absent
   when:
-  - ansible_facts['distribution']!= "SLES"
+    - ansible_distribution == "SLES"
 
-- name: Enable Docker stable repo on SUSE
-  ini_file:
-    dest: /etc/zypp/repos.d/docker-ce.repo
-    section: "docker-ce-stable"
-    option: enabled
-    value: 1
-  when:
-  - ansible_facts['distribution']== "SLES"
-
-- name: Disable Docker Edge repo
-  ini_file:
-    dest: /etc/yum.repos.d/docker-ce.repo
-    section: "docker-ce-edge"
-    option: enabled
-    value: 0
+- name:                     Enable Docker stable repo
+  community.general.ini_file:
+    dest:                   /etc/yum.repos.d/docker-ce.repo
+    section:                'docker-ce-stable'
+    option:                 enabled
+    value:                  1
   when:
   - ansible_facts['distribution']!= "SLES"
 
-- name: Disable Docker Edge repo on SUSE
-  ini_file:
-    dest: /etc/zypp/repos.d/docker-ce.repo
-    section: "docker-ce-edge"
-    option: enabled
-    value: 0
-  when:
-  - ansible_facts['distribution']== "SLES"
-
-- name: Disable Docker Test repo
-  ini_file:
-    dest: /etc/yum.repos.d/docker-ce.repo
-    section: "docker-ce-test"
-    option: enabled
-    value: 0
+- name:                     Disable Docker Edge repo
+  community.general.ini_file:
+    dest:                   /etc/yum.repos.d/docker-ce.repo
+    section:                'docker-ce-edge'
+    option:                 enabled
+    value:                  0
   when:
   - ansible_facts['distribution']!= "SLES"
 
-- name: Disable Docker Test repo on SUSE
-  ini_file:
-    dest: /etc/zypp/repos.d/docker-ce.repo
-    section: "docker-ce-test"
-    option: enabled
-    value: 0
+- name:                     Disable Docker Test repo
+  community.general.ini_file:
+    dest:                   /etc/yum.repos.d/docker-ce.repo
+    section:                'docker-ce-test'
+    option:                 enabled
+    value:                  0
   when:
-  - ansible_facts['distribution']== "SLES"
+    - ansible_distribution != "SLES"    
+    
+- name:                     Check if containerd config already exists (before install, to detect upgrade vs fresh)
+  ansible.builtin.stat:
+    path:                   /etc/containerd/config.toml
+  register:                 containerd_config_before_install
 
-- name: Check if containerd config already exists (before install, to detect upgrade vs fresh)
-  stat:
-    path: /etc/containerd/config.toml
-  register: containerd_config_before_install
-
-- name: Install containerd.io {{ __containerd_version }}
-  package:
-    name: containerd.io-{{ __containerd_version }}
-    state: present
-    allow_downgrade: yes
+- name:                     Install containerd.io {{ __containerd_version }} (RHEL/Alma)
+  ansible.builtin.package:
+    name:                   containerd.io-{{ __containerd_version }}
+    state:                  present
+    allow_downgrade:        yes
   when:
   - ansible_facts['distribution']== "RedHat" or ansible_facts['distribution']== "AlmaLinux"
 
-- name: Create containerd folders
-  file:
-    path: "/etc/containerd"
-    state: directory
+- name:                     Check if containerd.io is already installed on SLES
+  ansible.builtin.command:
+    cmd:                    rpm -q containerd.io-{{ __containerd_install_version }}.el9
+  register:                 containerd_installed_check
+  changed_when:             false
+  failed_when:              false
+  when:
+    - ansible_distribution == "SLES"
 
-- name: Remove auto-created config.toml on fresh install (contains disabled_plugins cri)
-  file:
-    path: /etc/containerd/config.toml
-    state: absent
-  when: not containerd_config_before_install.stat.exists
+- name:                     Download containerd.io RPM for SLES
+  ansible.builtin.get_url:
+    url:                    "https://download.docker.com/linux/centos/9/x86_64/stable/Packages/containerd.io-{{ __containerd_install_version }}.el9.x86_64.rpm"
+    dest:                   "/tmp/containerd.io-{{ __containerd_install_version }}.el9.x86_64.rpm"
+    mode:                   '0644'
+    validate_certs:         no
+  when:
+    - ansible_distribution == "SLES"
+    - containerd_installed_check.rc is not defined or containerd_installed_check.rc != 0
 
-- name: Create config.toml with defaults on fresh install
-  shell: containerd config default > /etc/containerd/config.toml
-  when: not containerd_config_before_install.stat.exists
+- name:                     Install containerd.io on SLES {{ ansible_distribution_version }} ({{ __containerd_install_version }}.el9)
+  ansible.builtin.command:
+    cmd:                    rpm -Uvh --nodeps /tmp/containerd.io-{{ __containerd_install_version }}.el9.x86_64.rpm
+  register:                 rpm_containerd_install
+  changed_when:             rpm_containerd_install.rc == 0
+  when:
+    - ansible_distribution == "SLES"
+    - containerd_installed_check.rc is not defined or containerd_installed_check.rc != 0
 
-- name: Backup existing containerd config
-  copy:
-    src: /etc/containerd/config.toml
-    dest: /etc/containerd/config.toml.bak
-    remote_src: yes
-    mode: '0644'
-  when: containerd_config_before_install.stat.exists
+- name:                     Verify containerd installation on SLES
+  ansible.builtin.command:
+    cmd:                    rpm -q containerd.io
+  register:                 containerd_rpm_check
+  changed_when:             false
+  failed_when:              containerd_rpm_check.rc != 0
+  when:
+    - ansible_distribution == "SLES"
 
-- name: Migrate existing containerd config to current version
-  shell: containerd config migrate /etc/containerd/config.toml > /tmp/containerd-config-migrated.toml && mv /tmp/containerd-config-migrated.toml /etc/containerd/config.toml
-  when: containerd_config_before_install.stat.exists
+- name:                     Create containerd folders
+  ansible.builtin.file:
+    path:                   "/etc/containerd"
+    state:                  directory
 
-- name: Create registry host directory to configure docker.io mirror
-  file: path=/etc/containerd/certs.d/docker.io state=directory mode=0644
-  when: containerd_docker_mirror is defined
+- name:                     Remove auto-created config.toml on fresh install (contains disabled_plugins cri)
+  ansible.builtin.file:
+    path:                   /etc/containerd/config.toml
+    state:                  absent
+  when:                     not containerd_config_before_install.stat.exists
 
-- name: "Add {{ containerd_docker_mirror }} as docker mirror to hosts.toml"
-  copy:
-    dest: /etc/containerd/certs.d/docker.io/hosts.toml
+- name:                     Create config.toml with defaults on fresh install
+  ansible.builtin.shell:    containerd config default > /etc/containerd/config.toml
+  changed_when:             true
+  when:                     not containerd_config_before_install.stat.exists
+
+- name:                     Backup existing containerd config
+  ansible.builtin.copy:
+    src:                    /etc/containerd/config.toml
+    dest:                   /etc/containerd/config.toml.bak
+    remote_src:             yes
+    mode:                   '0644'
+  changed_when:             false
+  when:                     containerd_config_before_install.stat.exists
+
+- name:                     Migrate existing containerd config to current version
+  ansible.builtin.shell:    containerd config migrate /etc/containerd/config.toml > /tmp/containerd-config-migrated.toml && mv /tmp/containerd-config-migrated.toml /etc/containerd/config.toml
+  register:                 migration_result
+  changed_when:             migration_result.rc == 0
+  when:                     containerd_config_before_install.stat.exists
+
+- name:                     Enable CRI plugin (remove from disabled_plugins array)
+  ansible.builtin.replace:
+    path:                   /etc/containerd/config.toml
+    regexp:                 '^\s*disabled_plugins\s*=.*$'
+    replace:                'disabled_plugins = []'
+
+- name:                     Disable AppArmor for containerd CRI on SLES
+  ansible.builtin.replace:
+    path:                   /etc/containerd/config.toml
+    regexp:                 '^\s*disable_apparmor\s*=\s*false\s*$'
+    replace:                'disable_apparmor = true'
+  when:
+    - ansible_distribution == "SLES"
+
+- name:                     Ensure disable_apparmor exists under the CRI plugin section on SLES
+  ansible.builtin.lineinfile:
+    path:                   /etc/containerd/config.toml
+    line:                   '  disable_apparmor = true'
+    insertafter:            '^\[plugins\."io\.containerd\.grpc\.v1\.cri"\]$'
+    state:                  present
+  when:
+    - ansible_distribution == "SLES"
+
+- name:                     Create registry host directory to configure docker.io mirror
+  ansible.builtin.file:
+    path:                   /etc/containerd/certs.d/docker.io
+    state:                  directory
+    mode:                   '0644'
+  when:                     containerd_docker_mirror is defined
+
+- name:                     "Add {{ containerd_docker_mirror | default('N/A') }} as docker mirror to hosts.toml"
+  ansible.builtin.copy:
+    dest:                   /etc/containerd/certs.d/docker.io/hosts.toml
     content: |
       server = "https://docker.io"
 
@@ -150,35 +196,51 @@
         capabilities = ["pull", "resolve"]
   when: containerd_docker_mirror is defined
 
-- name: Configure mirror file in config.toml
-  replace:
-    path: "/etc/containerd/config.toml"
-    regexp: '\[plugins\."io\.containerd\.grpc\.v1\.cri"\.registry\][^\n]*\n\s*config_path = ""'
+- name:                     Configure mirror file in config.toml
+  ansible.builtin.replace:
+    path:                   "/etc/containerd/config.toml"
+    regexp:                 '\[plugins\."io\.containerd\.grpc\.v1\.cri"\.registry\][^\n]*\n\s*config_path = ""'
     replace: |
       [plugins."io.containerd.grpc.v1.cri".registry]
         config_path = "/etc/containerd/certs.d"
     backup: yes
   when: containerd_docker_mirror is defined
 
-- name: Configure containerd to set SystemdCgroup true
-  replace:
-    path: "/etc/containerd/config.toml"
-    regexp: ".*SystemdCgroup\\ \\=\\ false"
+- name:                     Configure containerd to set SystemdCgroup true
+  ansible.builtin.replace:
+    path:                   "/etc/containerd/config.toml"
+    regexp:                 ".*SystemdCgroup\\ \\=\\ false"
     replace: |2
                       SystemdCgroup = true
 
-- name: Use systemd as cgroup driver
-  replace:
-    path: /etc/containerd/config.toml
-    regexp: "systemd_cgroup.=.*$"
-    replace: "systemd_cgroup = true"
+- name:                     Use systemd as cgroup driver
+  ansible.builtin.replace:
+    path:                   /etc/containerd/config.toml
+    regexp:                 'systemd_cgroup.=.*$'
+    replace:                'systemd_cgroup = true'
   when:
   - ansible_facts['distribution'] in ['RedHat', 'AlmaLinux', 'Rocky']
   - ansible_facts['distribution_major_version'] == "7"
 
-- name: Restart containerd
-  service:
-    name: containerd
-    state: started
-    enabled: yes
-    daemon_reload: yes
+- name:                     Create systemd drop-in directory for containerd
+  ansible.builtin.file:
+    path:                   /etc/systemd/system/containerd.service.d
+    state:                  directory
+    mode:                   '0755'
+
+- name:                     Configure containerd systemd service limits for CEC v2
+  ansible.builtin.template:
+    src:                    containerd-limits.conf.j2
+    dest:                   /etc/systemd/system/containerd.service.d/limits.conf
+    mode:                   '0644'
+
+- name:                     Reload systemd daemon
+  ansible.builtin.systemd:
+    daemon_reload:          yes
+
+- name:                     Restart containerd
+  ansible.builtin.service:
+    name:                   containerd
+    state:                  restarted
+    enabled:                yes
+    daemon_reload:          yes

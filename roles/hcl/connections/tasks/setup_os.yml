@@ -1,7 +1,7 @@
 ---
 - name: Install pre-requisites Zypper
   zypper:
-    name: [ "glibc-32bit", "libgtk-2_0-0-32bit", "xorg-x11-fonts", "xorg-x11-fonts-converted", "xorg-x11-fonts-core", "xorg-x11-fonts-legacy" ]
+    name: ['glibc-32bit','libgtk-2_0-0-32bit', 'xorg-x11-fonts', 'xorg-x11-fonts-converted', 'xorg-x11-fonts-core', 'xorg-x11-fonts-legacy','python311-lxml']
     state: present
   when: ansible_facts['os_family'] == "Suse"
 
@@ -55,9 +55,9 @@
     state: present
     disable_gpg_check: yes
   when:
-  - ansible_facts['os_family'] == "Suse"
-  delegate_to: "{{ item }}"
-  with_items: "{{ groups['was_servers'] }}"
+    - hostvars[item].ansible_os_family | default('') == "Suse"
+  delegate_to:         "{{ item }}"
+  with_items:          "{{ groups['was_servers'] }}"
 
 - name: Install wkhtmltox-0.12.6-1.centos7.x86_64.rpm from RPM
   yum:

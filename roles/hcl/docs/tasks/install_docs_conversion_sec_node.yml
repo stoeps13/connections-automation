@@ -11,10 +11,10 @@
 - name: Is Docs Conversion already installed on this subsequent node?
   debug: var=conversion_already_installed
 
-- name: Is this a Docs Conversion upgrade?
-  debug: var=conversion_upgrade
-
-- name: Install needed packages
+- name:               Is this a Docs Conversion upgrade?
+  debug:              var=conversion_upgrade
+  
+- name:               Install needed packages
   package:
     name: "{{ item }}"
   become: true

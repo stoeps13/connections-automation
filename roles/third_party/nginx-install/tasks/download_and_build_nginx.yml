@@ -1,9 +1,10 @@
 ---
-- name: Check if NGINX is installed and get version
-  shell:
-    cmd: "nginx -v 2>&1 | awk -F '/' '{print $2}'"
-  register: nginx_version_output
-  ignore_errors: true
+  - name:                   Check if NGINX is installed and get version
+    shell:
+      cmd:                  "nginx -v 2>&1 | awk -F '/' '{print $2}'"
+    register:               nginx_version_output
+    failed_when:            false
+    changed_when:           false
 
 - name: Set default NGINX version
   set_fact:

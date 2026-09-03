@@ -86,10 +86,11 @@
     - ansible_facts['distribution_major_version'] == "8"
     - python_installed.failed
 
-- name: Get default python version on RHEL 8 (for v2.0.1)
-  command: python --version
-  register: python_default_version
-  ignore_errors: true
+- name:                  Get default python version on RHEL 8 (for v2.0.1)
+  command:               python --version
+  register:              python_default_version
+  failed_when:           false
+  changed_when:          false
   when:
     - __docs_install_version is version('2.0.2', '<')
     - ansible_facts['os_family'] == "RedHat"
