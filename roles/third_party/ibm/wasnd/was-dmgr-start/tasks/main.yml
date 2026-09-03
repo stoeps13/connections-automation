@@ -22,7 +22,11 @@
   changed_when:  false
   when:          (dmgr_start.rc is defined) and (dmgr_start.rc == 0)
 
-- name:          Wait 60 seconds for DMGR to activate
-  pause:
-    seconds:     60
+- name:          Wait for DMGR SOAP endpoint to become available
+  ansible.builtin.wait_for:
+    host:         127.0.0.1
+    port:         "{{ __dmgr_soap_port }}"
+    state:        started
+    delay:        5
+    timeout:      300
   when:          (dmgr_start.rc is defined) and (dmgr_start.rc == 0)

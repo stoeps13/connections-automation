@@ -8,3 +8,7 @@
 - name:          Install IBM HTTP Server V9 - Fixes
   include_tasks: install_ihs_9_fixes.yml
   when:          version_already_installed.rc != 0
+
+- name:          Install applicable IBM interim fixes
+  include_tasks: install_ibm_ifixes.yml
+  when:          __ibm_ifix_files | length > 0

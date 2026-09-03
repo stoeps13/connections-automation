@@ -11,6 +11,17 @@ ensure-file-server:
     fi
     pgrep -f '[S]impleHTTPServer.py' >/dev/null || { echo "Failed to start $server" >&2; exit 1; }
 
+# Stop the local software repository server
+stop-file-server:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    if pgrep -f '[S]impleHTTPServer.py' >/dev/null; then
+        pkill -f '[S]impleHTTPServer.py'
+        echo "Stopped local software repository server"
+    else
+        echo "Local software repository server is not running"
+    fi
+
 # Default recipe
 default:
     @just banner

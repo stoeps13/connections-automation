@@ -1,0 +1,52 @@
+---
+- name: Create IBM interim-fix directory
+  ansible.builtin.file:
+    path: "{{ __ibm_ifix_tmp_dir }}"
+    state: directory
+    mode: "0755"
+
+- name: Create individual IBM interim-fix directories
+  ansible.builtin.file:
+    path: "{{ __ibm_ifix_tmp_dir }}/{{ item.file_name | basename | splitext | first }}"
+    state: directory
+    mode: "0755"
+  loop: "{{ __ibm_ifix_files }}"
+
+- name: Extract IBM interim-fix repositories
+  ansible.builtin.unarchive:
+    src: "{{ was_fixes_repository_url }}/{{ item.file_name }}"
+    dest: "{{ __ibm_ifix_tmp_dir }}/{{ item.file_name | basename | splitext | first }}"
+    remote_src: true
+    validate_certs: false
+  loop: "{{ __ibm_ifix_files }}"
+
+- name: Stop WebSphere application servers
+  ansible.builtin.include_role:
+    name: roles/third_party/ibm/wasnd/was-dmgr-stop-cluster
+
+- name: Stop WebSphere deployment manager
+  ansible.builtin.include_role:
+    name: roles/third_party/ibm/wasnd/was-dmgr-stop
+
+- name: Stop WebSphere node agents
+  ansible.builtin.include_role:
+    name: roles/third_party/ibm/wasnd/was-nodeagent-stop
+
+- name: Apply applicable IBM interim fixes
+  ansible.builtin.command:
+    cmd: >-
+      {{ __iim_install_location }}/eclipse/tools/imcl updateAll
+      -repositories {{ __ibm_ifix_files | map(attribute='file_name')
+      | map('basename') | map('splitext') | map('first')
+      | map('regex_replace', '^', __ibm_ifix_tmp_dir ~ '/')
+      | map('regex_replace', '$', '/repository.config') | join(',') }}
+      -installFixes all -acceptLicense
+      -log {{ __log_file }}
+  register: ibm_ifix_update
+  changed_when: ibm_ifix_update.rc == 0
+
+- name: Remove IBM interim-fix archives
+  ansible.builtin.file:
+    path: "{{ __ibm_ifix_tmp_dir }}"
+    state: absent
+  when: not (iim_keep_fetched_files | default(false) | bool)

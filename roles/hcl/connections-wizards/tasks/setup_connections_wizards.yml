@@ -246,9 +246,7 @@
     - "connections.sql/homepage/db2/clearScheduler.sql"
     - "connections.sql/metrics/db2/clearScheduler.sql"
     - "connections.sql/wikis/db2/clearScheduler.sql"
-    - "connections.sql/pushnotification/db2/clearScheduler.sql"
-  when:
-    - migrations_already_done.stat.exists |bool
+  when: __db_maintenance
 
 - name: "Create {{ __success_file }} file"
   file:

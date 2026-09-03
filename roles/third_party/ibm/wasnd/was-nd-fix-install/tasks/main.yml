@@ -10,3 +10,7 @@
 - name:          Install WebSphere Application Server - Fixes
   include_tasks: install_was_fixes.yml
   when:          __was_major_version is version('8', '=') and version_already_installed.rc != 0
+
+- name:          Install applicable IBM interim fixes
+  include_tasks: install_ibm_ifixes.yml
+  when:          __was_major_version is version('8', '=') and __ibm_ifix_files | length > 0

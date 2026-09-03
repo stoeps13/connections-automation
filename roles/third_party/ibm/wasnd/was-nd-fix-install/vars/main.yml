@@ -1,6 +1,8 @@
 ---
 __was_major_version:       "{{ was_major_version | default('8') }}"  
 __tmp_dir:                 "{{ tmp_dir | default('/opt/IBM/Binaries') }}/was_fixes"
+__ibm_ifix_tmp_dir:        "{{ tmp_dir | default('/opt/IBM/Binaries') }}/ibm_ifixes"
+__ibm_ifix_files:          "{{ ibm_ifix_files | default([]) }}"
 __logs_dir:                "{{ tmp_dir | default('/opt/IBM/Binaries') }}/logs"
 __iim_install_location:    "{{ iim_install_location  | default('/opt/IBM/InstallationManager') }}"
 __was_install_location:    "{{ was_install_location  | default('/opt/IBM/WebSphere/AppServer') }}"

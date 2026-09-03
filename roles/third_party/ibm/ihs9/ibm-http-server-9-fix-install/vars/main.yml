@@ -1,6 +1,8 @@
 ---
 __was_major_version:       "{{ was_major_version | default('8') }}"  
 __tmp_dir:                "{{ tmp_dir | default('/opt/IBM/Binaries') }}/wasihs_fixes"
+__ibm_ifix_tmp_dir:       "{{ tmp_dir | default('/opt/IBM/Binaries') }}/ibm_ifixes"
+__ibm_ifix_files:         "{{ ibm_ifix_files | default([]) }}"
 __logs_dir:               "{{ tmp_dir | default('/opt/IBM/Binaries') }}/logs"
 __iim_install_location:   "{{ iim_install_location  | default('/opt/IBM/InstallationManager') }}"
 __ihs_install_location:   "{{ ihs_install_location  | default('/opt/IBM/HTTPServer') }}"
@@ -12,8 +14,11 @@ __rsp_file:               "{{ __logs_dir }}/ihs_9_plg_wct_fixes.rsp"
 __log_file:               "{{ __logs_dir }}/ihs_9_fixes_install.{{ __now }}.log"
 __tpl_file:               "ihs_9_plg_wct_fixes.rsp.j2"
 
-__was_fp_sdk_version_latest:   "{{ was_fp_sdk_version_latest | default( __was_fp_sdk_version_fp27 ) }}"
-__was_fp_sdk_files_latest:     "{{ was_fp_sdk_files_latest | default( __was_fp_sdk_files_fp27 ) }}"
+__was_fp_sdk_version_latest:   "{{ was_fp_sdk_version_latest | default( __was_fp_sdk_version_fp28 ) }}"
+__was_fp_sdk_files_latest:     "{{ was_fp_sdk_files_latest | default( __was_fp_sdk_files_fp28 ) }}"
+__was_fp_sdk_version_fp28:     "8.0.8051.20250901_0537"
+__was_fp_sdk_files_fp28:
+  - { file_name: ibm-java-sdk-8.0-8.51-linux-x64-installmgr.zip }
 __was_fp_sdk_version_fp27:     "8.0.8065.20260410_0653"
 __was_fp_sdk_files_fp27:
   - { file_name: ibm-java-sdk-8.0-8.65-linux-x64-installmgr.zip }
@@ -32,11 +37,15 @@ __was_fp_sdk_files_fp11:
   - { file_name: ibm-java-sdk-8.0-7.5-all-prt2-installmgr.zip }
   - { file_name: ibm-java-sdk-8.0-7.5-all-prt3-installmgr.zip }
 
-__ihs_fp_version_latest:  "{{ ihs_fp_version_latest | default( __ihs_fp_version_fp27 ) }}"
-__ihs_fp_files_latest:    "{{ ihs_fp_files_latest | default( __ihs_fp_files_fp27 ) }}"
+__ihs_fp_version_latest:  "{{ ihs_fp_version_latest | default( __ihs_fp_version_fp28 ) }}"
+__ihs_fp_files_latest:    "{{ ihs_fp_files_latest | default( __ihs_fp_files_fp28 ) }}"
 __ihs_fp_version_fp27:    "9.0.5027.20260306_2357"
 __ihs_fp_files_fp27:
   - { file_name: 9.0.5-WS-IHSPLG-FP027.zip }
+
+__ihs_fp_version_fp28:    "9.0.5028.20260604_1356"
+__ihs_fp_files_fp28:
+  - { file_name: 9.0.5-WS-IHSPLG-FP028.zip }
 
 __ihs_fp_version_fp25:    "9.0.5025.20250820_1643"
 __ihs_fp_files_fp25:
@@ -50,11 +59,15 @@ __ihs_fp_version_fp11:    "9.0.5011.20220222_1524"
 __ihs_fp_files_fp11:
   - { file_name: 9.0.5-WS-IHSPLG-FP011.zip }
 
-__wct_fp_version_latest:  "{{ wct_fp_version_latest | default( __wct_fp_version_fp27 ) }}"
-__wct_fp_files_latest:    "{{ wct_fp_files_latest | default( __wct_fp_files_fp27 ) }}"
+__wct_fp_version_latest:  "{{ wct_fp_version_latest | default( __wct_fp_version_fp28 ) }}"
+__wct_fp_files_latest:    "{{ wct_fp_files_latest | default( __wct_fp_files_fp28 ) }}"
 __wct_fp_version_fp27:    "9.0.5027.20260306_2357"
 __wct_fp_files_fp27:
   - { file_name: 9.0.5-WS-WCT-FP027.zip }
+
+__wct_fp_version_fp28:    "9.0.5028.20260604_1356"
+__wct_fp_files_fp28:
+  - { file_name: 9.0.5-WS-WCT-FP028.zip }
 
 __wct_fp_version_fp25:    "9.0.5025.20250820_1643"
 __wct_fp_files_fp25:

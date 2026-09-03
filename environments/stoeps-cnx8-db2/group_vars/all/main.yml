@@ -56,6 +56,8 @@ db_server: "{{ db_hostname }}"
 db_server_user: "{{ db_username }}"
 db_concord_username: docsuser
 db_enable_upgrades: true
+# Run DB2 runstats/reorg/clearScheduler maintenance during deployment.
+db_maintenance: false
 db_version: "8.0"
 
 setup_db2_jdbc: true
@@ -65,7 +67,6 @@ cnx_force_repopulation: false
 cnx_enable_moderation: false
 cnx_enable_invite: true
 cnx_enable_full_icec: true
-
 
 # -----------------------------------------------------------------------------
 # WebSphere and IHS
@@ -146,7 +147,6 @@ create_ingress_nginx_secret: true
 docker_registry_url: hclcr.io/cnx
 docker_registry_username: "stoeps@vegardit.com"
 
-
 # -----------------------------------------------------------------------------
 # Docs and Wizards
 # -----------------------------------------------------------------------------
@@ -190,7 +190,6 @@ integrations_msteams_client_id: fa0ddaef-cc1a-4d33-b37b-88f5d7879b09
 integrations_msteams_client_secret: 5c86aeb0-0caf-48fc-844f-a6fc1dad13ce
 integrations_msteams_auth_schema: 3
 
-
 # -----------------------------------------------------------------------------
 # Safety switches
 # -----------------------------------------------------------------------------
@@ -207,6 +206,43 @@ install_tinyeditors: true
 tinyeditors_username: tiny
 tinyeditors_download_location: http://{{ install_sources_ip }}:8081
 tinyeditors_package_name: TinyEditorsForConnections_8.0_v4.9.2.69.zip
+
+# -----------------------------------------------------------------------------
+# IBM WebSphere/IHS interim fixes
+# Installation Manager selects only fixes applicable to each host.
+# -----------------------------------------------------------------------------
+ibm_ifix_files:
+  - { file_name: "8.5.5.10-WS-WASProd-IFDT496118.zip" }
+  - { file_name: "8.5.5.11-WS-WASBundledSDK8-LinuxX64-IFDT496796.zip" }
+  - { file_name: "8.5.5.12-ws-was-ifph34690.zip" }
+  - { file_name: "8.5.5.13-WS-WAS-IFPH61504.zip" }
+  - { file_name: "8.5.5.21-WS-WASND-IFDT496677.zip" }
+  - { file_name: "8.5.5.24-WS-WAS-IFDT496500.zip" }
+  - { file_name: "8.5.5.24-WS-WASProd-IFPH71757.zip" }
+  - { file_name: "8.5.5.25-WS-WAS-IFPH72166.zip" }
+  - { file_name: "8.5.5.25-WS-WASPlugIn-IFPH71376.zip" }
+  - { file_name: "8.5.5.27-WS-WAS-IFPH71384.zip" }
+  - { file_name: "8.5.5.28-WS-WAS-IFDT496947.zip" }
+  - { file_name: "8.5.5.28-WS-WAS-IFPH68976.zip" }
+  - { file_name: "8.5.5.28-WS-WAS-IFPH71670.zip" }
+  - { file_name: "8.5.5.29-WS-WAS-IFDT495928.zip" }
+  - { file_name: "8.5.5.29-WS-WAS-IFPH70616.zip" }
+  - { file_name: "8.5.5.29-WS-WAS-IFPH72192.zip" }
+  - { file_name: "8.5.5.29-WS-WASIHS-IFPH71594.zip" }
+  - { file_name: "8.5.5.29-WS-WASProd-IFPH71893.zip" }
+  - { file_name: "8.5.5.0-WS-WAS-IFPH63540.zip" }
+  - { file_name: "8.5.5.11-WS-WASBundledSDK8-LinuxX64-IFPH66499.zip" }
+  - { file_name: "8.5.5.16-WS-WASProd-IFPH63541.zip" }
+  - { file_name: "8.5.5.19-WS-WAS-IFPH62937.zip" }
+  - { file_name: "8.5.5.20-WS-WAS-IFPH62753.zip" }
+  - { file_name: "8.5.5.20-WS-WAS-IFPH62952.zip" }
+  - { file_name: "8.5.5.23-WS-WAS-IFPH66674.zip" }
+  - { file_name: "8.5.5.24-WS-WAS-IFPH65941.zip" }
+  - { file_name: "8.5.5.24-WS-WAS-IFPH66028.zip" }
+  - { file_name: "8.5.5.24-WS-WASProd-IFPH63032.zip" }
+  - { file_name: "8.5.5.25-WS-WAS-IFPH58798.zip" }
+  - { file_name: "8.5.5.26-WS-WASIHS-IFPH62263.zip" }
+  - { file_name: "8.5.5.27-WS-WAS-IFPH67137.zip" }
 
 # -----------------------------------------------------------------------------
 # CEC v2
