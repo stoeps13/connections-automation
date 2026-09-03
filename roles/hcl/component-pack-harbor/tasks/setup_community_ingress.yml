@@ -173,12 +173,12 @@
     pause:
       seconds: 15
 
-    - name:                  Check if prom-operator is already deployed
-      shell:                 helm ls --all-namespaces | grep prom-operator | grep -i DEPLOYED
-      changed_when:          true
-      register:              prom_operator_already_provisioned
-      become_user:           "{{ __sudo_user }}"
-      failed_when:           false
+  - name:                  Check if prom-operator is already deployed
+    shell:                 helm ls --all-namespaces | grep prom-operator | grep -i DEPLOYED
+    changed_when:          true
+    register:              prom_operator_already_provisioned
+    become_user:           "{{ __sudo_user }}"
+    failed_when:           false
 
   - name: Render cnx_ingress_values.j2 from local host to remote host $HOME/cnx-ingress-values.yml (relative path, ./template/)
     template:
