@@ -1,11 +1,28 @@
 ---
-# Mandatory changes!
+# Environment-specific settings for stoeps CNX 8 DB2 deployment.
+# Secrets belong in vault.yml or runtime variables.
 
+# -----------------------------------------------------------------------------
+# Environment and hostnames
+# -----------------------------------------------------------------------------
 cnx_component_pack_ingress: cnx8-db2.stoeps.home
-cnx_application_ingress: cnx8-db2.stoeps.home
+cnx_application_ingress: "{{ cnx_component_pack_ingress }}"
 
+load_balancer_dns: "{{ hostvars[groups['k8s_load_balancers'][0]]['inventory_hostname'] }}"
+ic_internal: "{{ hostvars[groups['ihs_servers'][0]]['inventory_hostname'] }}"
+frontend_fqdn: "{{ cnx_application_ingress }}"
+frontend_domain: "{{ cnx_application_ingress.split('.')[1:] | join('.') }}"
+
+# -----------------------------------------------------------------------------
+# Docs and Wizards
+# Used by the Docs and Connections Wizards playbooks.
+# -----------------------------------------------------------------------------
+dmgr_hostname: "{{ hostvars[groups['dmgr'][0]]['inventory_hostname'] }}"
+
+# -----------------------------------------------------------------------------
+# Accounts and LDAP
+# -----------------------------------------------------------------------------
 was_username: wasadmin
-
 ldap_userid: jjones
 ldap_nr_of_users: 100
 setup_fake_ldap_users: true
@@ -16,24 +33,56 @@ ldap_login_properties: uid
 custom_ldap_users_location: /home/stoeps/Projects/work/automation/connections-automation/environments/stoeps-cnx8-db2/stoeps.ldif
 ldap_custom_cert_sans: "*.stoeps.home"
 
-ihs_username: ihsadmin
-ihs_major_version: 8
-
 connections_admin: jjones1
-
-db_concord_username: docsuser
-db_hostname: "{{ hostvars[groups['db_servers'][0]]['inventory_hostname'] }}"
-db_enable_upgrades: true
-db_version: 7.0
 
 docs_username: docsuser
 sudo_group: wheel
 
+# -----------------------------------------------------------------------------
+# Repository and package sources
+# Used by the Connections, DB2, TDI, WebSphere, IHS, and Component Pack roles.
+# -----------------------------------------------------------------------------
 # Non-mandatory changes
 
 # Type of HCL Connections deployment: small (default), medium and large.
-cnx_deploy_type: medium
 
+# -----------------------------------------------------------------------------
+# Database and Connections
+# -----------------------------------------------------------------------------
+db_type: DB2
+db_username: lcuser
+db_hostname: "{{ hostvars[groups['db_servers'][0]]['inventory_hostname'] }}"
+db_server: "{{ db_hostname }}"
+db_server_user: "{{ db_username }}"
+db_concord_username: docsuser
+db_enable_upgrades: true
+db_version: "8.0"
+
+setup_db2_jdbc: true
+
+cnx_force_repopulation: false
+
+cnx_enable_moderation: false
+cnx_enable_invite: true
+cnx_enable_full_icec: true
+
+
+# -----------------------------------------------------------------------------
+# WebSphere and IHS
+# -----------------------------------------------------------------------------
+ihs_username: ihsadmin
+ihs_major_version: 9
+
+smtp_hostname: localhost
+
+# -----------------------------------------------------------------------------
+# Database and Connections feature settings
+# Used by the Connections and DB2 roles.
+# -----------------------------------------------------------------------------
+
+# -----------------------------------------------------------------------------
+# Repositories and package versions
+# -----------------------------------------------------------------------------
 install_sources_ip: 10.0.22.1
 cnx_fixes_repository_url: http://{{ install_sources_ip }}:8081
 tdi_download_location: http://{{ install_sources_ip }}:8081
@@ -51,9 +100,9 @@ component_pack_download_location: http://{{ install_sources_ip }}:8081
 cnx_package: "HCL_Connections_8.0_lin.tar"
 connections_wizards_package_name: "HCL_Connections_8.0_wizards_lin_aix.tar"
 cnx_major_version: "8"
-cnx_fixes_version: "8.0.0.0_CR13"
+cnx_fixes_version: "8.0.0.0_CR15"
 cnx_fixes_files:
-  - { file_name: "HC8.0_CR13.zip" }
+  - { file_name: "HC8.0_CR15.zip" }
 cnx_updates_enabled: true
 
 tdi_upgrade_package_name: 7.2.0-ISS-SDI-FP0014.zip
@@ -64,69 +113,52 @@ jre_package_name: ibm-java-jre-8.0-8.45-linux-x86_64.tgz
 upgrade_tdi_jre: true
 tdi_upgrade_enable: true
 
-# tdi_sol_location: http://{{ groups['installer'][0] }}:8081/tdisol_70_java8.tar
+# -----------------------------------------------------------------------------
+# Kubernetes and Component Pack
+# -----------------------------------------------------------------------------
+cnx_deploy_type: medium
 
-dmgr_hostname: "{{ hostvars[groups['dmgr'][0]]['inventory_hostname'] }}"
-
-smtp_hostname: localhost
-
-db_type: DB2
-setup_db2_jdbc: true
-
-cnx_force_repopulation: false
-
-cnx_enable_moderation: false
-cnx_enable_invite: true
-cnx_enable_full_icec: true
-
-enable_prometheus_jmx_exporter: false
-
+calico_version: 3.32.1
+kubernetes_version: 1.36.2
+upgrade_version: "{{ kubernetes_version }}"
+containerd_version: 2.2.2-1
+nginx_version: 1.30.1
+mongo_image_tag: latest
+nfsMasterAddress: 10.0.22.93
+setup_nfs_server: false
+setup_nfs_clients: false
 enable_pod_auto_scaling: false
+
+# -----------------------------------------------------------------------------
+# Kubernetes and Component Pack settings
+# Used by the Kubernetes and Component Pack roles.
+# -----------------------------------------------------------------------------
 enable_pod_security: true
+enable_prometheus_jmx_exporter: false
+ingress_nginx_tls_enable: true
+create_ingress_nginx_secret: true
 
-# setup_installation: false
-# setup_images: false
-# setup_credentials: false
-# setup_psp: false
-# setup_connections_volumes: false
-# setup_bootstrap: false
-# setup_connections_env: false
-# setup_infrastructure: false
-# setup_customizer: false
-# setup_elasticsearch7: false
-# setup_community_ingress: false
-# setup_teams: true
-setup_teams: false
-# setup_tailored_exp: false
-# setup_orientme: false
-# setup_dashboards: false
-# setup_elasticstack: false
-# setup elasticstack7: false
-# setup_sanity: false
-setup_kudosboards: false
-# setup_huddoboards: true
-huddoboards_registry_username: christoph.stoettner@stoeps.de
-huddoboards_image_tag: "2026-04-24"
-huddoboards_credentials_name: christoph-stoettner-pull-secret
-setup_outlook_addin: false
-# enable_es_metrics: false
-# enable_gk_flags: false
-#setup_ms_teams_extensions: true
-setup_ms_teams_extensions: false
-# skip_configure_redis: true
-integrations_msteams_tenant_id: 5c86aeb0-0caf-48fc-844f-a6fc1dad13ce
-integrations_msteams_client_id: fa0ddaef-cc1a-4d33-b37b-88f5d7879b09
-integrations_msteams_client_secret: 5c86aeb0-0caf-48fc-844f-a6fc1dad13ce
-integrations_msteams_auth_schema: 3
+# -----------------------------------------------------------------------------
+# CEC v2
+# Used by playbooks/hcl/harbor/setup-cnx-cec.yml.
+# Registry, DB2, LDAP, and LTPA passwords belong in vault.yml or runtime vars.
+# -----------------------------------------------------------------------------
+docker_registry_url: hclcr.io/cnx
+docker_registry_username: "stoeps@vegardit.com"
 
-load_balancer_dns: "{{ hostvars[groups['k8s_load_balancers'][0]]['inventory_hostname'] }}"
-ic_internal: "{{ hostvars[groups['ihs_servers'][0]]['inventory_hostname'] }}"
-frontend_fqdn: "{{ cnx_application_ingress }}"
-frontend_domain: "{{ cnx_application_ingress.split('.')[1:] | join('.') }}"
 
+# -----------------------------------------------------------------------------
+# Docs and Wizards
+# -----------------------------------------------------------------------------
 setup_connections_docs: true
 cnx_docs_package_name: Docs_2.0.2-CF2.zip
+docs_shared_storage_type: nfs
+viewer_shared_storage_type: nfs
+cnx_shared_storage_type: nfs
+docs_url: "{{ cnx_application_ingress }}"
+
 # Default Cluster and member names are long and ugly
+docs_url: "{{ cnx_application_ingress }}"
 conversion_cluster_name: Conversion
 conversion_cluster_member_name: Conversion
 editor_cluster_name: Editor
@@ -138,39 +170,47 @@ docs_proxy_cluster_member_name: DocsProxy
 
 setup_connections_wizards: true
 
+# -----------------------------------------------------------------------------
+# Safety switches and Tiny Editors
+# Destructive actions remain disabled by default.
+# Used by cleanup and Tiny Editors roles.
+# -----------------------------------------------------------------------------
+
+# -----------------------------------------------------------------------------
+# Optional integrations
+# -----------------------------------------------------------------------------
+setup_teams: false
+setup_kudosboards: false
+huddoboards_registry_username: christoph.stoettner@stoeps.de
+huddoboards_image_tag: "2026-04-24"
+huddoboards_credentials_name: christoph-stoettner-pull-secret
+setup_outlook_addin: false
+setup_ms_teams_extensions: false
+integrations_msteams_tenant_id: 5c86aeb0-0caf-48fc-844f-a6fc1dad13ce
+integrations_msteams_client_id: fa0ddaef-cc1a-4d33-b37b-88f5d7879b09
+integrations_msteams_client_secret: 5c86aeb0-0caf-48fc-844f-a6fc1dad13ce
+integrations_msteams_auth_schema: 3
+
+
+# -----------------------------------------------------------------------------
+# Safety switches
+# -----------------------------------------------------------------------------
 force_destroy_db2: false
 force_destroy_oracle: false
 force_destroy_ihs: false
 force_destroy_websphere: false
 force_destroy_kubernetes: false
+
+# -----------------------------------------------------------------------------
+# Tiny Editors
+# -----------------------------------------------------------------------------
 install_tinyeditors: true
 tinyeditors_username: tiny
 tinyeditors_download_location: http://{{ install_sources_ip }}:8081
-tinyeditors_package_name: TinyEditorsForConnections_8.0_v4.9.2.52.zip
+tinyeditors_package_name: TinyEditorsForConnections_8.0_v4.9.2.69.zip
 
-docker_registry_username: "stoeps@vegardit.com"
-
-# Make no sense to have these defined in group_vars, should be default
-docs_shared_storage_type: nfs
-viewer_shared_storage_type: nfs
-cnx_shared_storage_type: nfs
-docs_url: "{{ cnx_application_ingress }}"
-docker_registry_url: hclcr.io/cnx
-db_server: "{{ db_hostname }}"
-db_server_user: "{{ db_username }}"
-db_username: lcuser
-calico_version: 3.31.3
-kubernetes_version: 1.34.3
-nfsMasterAddress: 10.0.22.93
-# upgrade_version: "{{ kubernetes_version }}"
-setup_nfs_server: false
-setup_nfs_clients: false
-nginx_version: 1.29.6
-containerd_version: 1.7.26-3.1
-mongo_image_tag: latest
-ingress_nginx_tls_enable: true
-create_ingress_nginx_secret: true
-
-# CEC V2
+# -----------------------------------------------------------------------------
+# CEC v2
+# -----------------------------------------------------------------------------
 cnx_cec_web_engine_ldap_type: other
 cnx_cec_web_engine_enable_sso: true

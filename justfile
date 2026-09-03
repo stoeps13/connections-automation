@@ -34,6 +34,14 @@ apisix env: banner
 componentpack env: banner
   ansible-playbook -i environments/{{ env }}/inventory.ini {{ CMD_VAULT }} playbooks/setup-component-pack-complete-harbor.yml
 
+# Deploy Collabora Online
+collabora env: banner
+  ansible-playbook -i environments/{{ env }}/inventory.ini {{ CMD_VAULT }} playbooks/hcl/harbor/setup-collabora.yml
+
+# Deploy CEC v2
+cec2 env: banner
+  ansible-playbook -i environments/{{ env }}/inventory.ini {{ CMD_VAULT }} playbooks/hcl/harbor/setup-cnx-cec.yml
+
 # Deploy Load Balancer
 haproxy env: banner
   ansible-playbook -i environments/{{ env }}/inventory.ini {{ CMD_VAULT }} playbooks/third_party/setup-haproxy.yml
