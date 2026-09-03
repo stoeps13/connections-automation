@@ -1,36 +1,39 @@
 ---
 - name: Create Tiny Editors user account and add it to the {{ sudo_group }} group
-  user:
+  ansible.builtin.user:
     name: "{{ __tinyeditors_username }}"
     password: "{{ tinyeditors_password | password_hash('sha512') }}"
     groups: "{{ sudo_group }}"
-    generate_ssh_key: yes
+    generate_ssh_key: true
     ssh_key_bits: 4096
     ssh_key_file: .ssh/id_rsa
     ssh_key_passphrase: "{{ tinyeditors_password }}"
     shell: /bin/bash
-    append: yes
+    append: true
     state: present
   register: create_tinyeditors_user
 
 - name: Convert ssh key for RHEL8
-  command: ssh-keygen -p -m PEM -f /home/{{ __tinyeditors_username }}/.ssh/id_rsa -P "{{ tinyeditors_password }}" -N "{{ tinyeditors_password }}"
+  ansible.builtin.command: ssh-keygen -p -m PEM -f /home/{{ __tinyeditors_username }}/.ssh/id_rsa -P "{{ tinyeditors_password }}" -N "{{ tinyeditors_password
+    }}"
+  changed_when: true
   when:
-  - ansible_facts['os_family'] == "RedHat"
-  - ansible_facts['distribution_major_version'] == "8"
+    - ansible_facts['os_family'] == "RedHat"
+    - ansible_facts['distribution_major_version'] == "8"
 
 - name: Get default group name for {{ __tinyeditors_username }}
-  command: id -gn "{{ __tinyeditors_username }}"
+  ansible.builtin.command: id -gn "{{ __tinyeditors_username }}"
   register: user_group
+  changed_when: false
   when: create_tinyeditors_user.changed
 
 - name: Default group of {{ __tinyeditors_username }}
-  debug:
+  ansible.builtin.debug:
     msg: "{{  user_group.stdout }}"
   when: create_tinyeditors_user.changed
 
 - name: "Create authorized_keys for the {{ __tinyeditors_username }} user"
-  copy:
+  ansible.builtin.copy:
     src: "/home/{{ __tinyeditors_username }}/.ssh/id_rsa.pub"
     dest: "/home/{{ __tinyeditors_username }}/.ssh/authorized_keys"
     owner: "{{ __tinyeditors_username }}"

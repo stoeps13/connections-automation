@@ -1,18 +1,19 @@
+---
 - name: Clean up Tiny Editors installation folder
-  file:
+  ansible.builtin.file:
     path: "{{ __extraction_folder }}"
     state: absent
 
 - name: Create installation folder
-  file:
+  ansible.builtin.file:
     path: "{{ __extraction_folder }}"
     state: directory
 
 - name: Download and unzip Tiny Editors installation {{ __download_location }}/{{ __package_name }} to the {{ __extraction_folder }}
-  unarchive:
+  ansible.builtin.unarchive:
     src: "{{ __download_location }}/{{ __package_name }}"
     dest: "{{ __extraction_folder }}"
-    remote_src: yes
+    remote_src: true
     validate_certs: false
   register: download_and_unpack_tinyeditors
   until: download_and_unpack_tinyeditors is succeeded
