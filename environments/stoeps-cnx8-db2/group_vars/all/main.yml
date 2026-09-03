@@ -158,7 +158,6 @@ cnx_shared_storage_type: nfs
 docs_url: "{{ cnx_application_ingress }}"
 
 # Default Cluster and member names are long and ugly
-docs_url: "{{ cnx_application_ingress }}"
 conversion_cluster_name: Conversion
 conversion_cluster_member_name: Conversion
 editor_cluster_name: Editor

@@ -7,3 +7,4 @@ roles/third_party/vagrant-install/
 playbooks/third_party/setup-vagrant.yml
 .vscode
 .vault-secret
+.envrc
