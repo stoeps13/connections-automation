@@ -76,7 +76,7 @@
     state:                                          directory
     owner:                                          "1001"
     group:                                          "{{ nogroup }}"
-    recurse:                                        true
+    recurse:                                        false
   with_sequence:                                    start=0 end={{ __mongo7_replicaset | int - 1 if __mongo7_replicaset | int != 0 else 0}}
   when:  __mongo7_replicaset | int != 0
   

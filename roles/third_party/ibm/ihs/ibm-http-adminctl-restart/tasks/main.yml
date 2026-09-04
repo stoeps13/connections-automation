@@ -11,9 +11,15 @@
   changed_when:  cout.rc == 0
   when:          ihs_is_running.rc == 0
 
-- name:          Wait 10 seconds to start ihs
-  pause:
-    seconds:     10
+- name:          Wait for AdminCtl process to stop
+  ansible.builtin.shell: >-
+    ps -p "$(cat '{{ __ihs_install_location }}/logs/admin.pid')" > /dev/null
+  register:      adminctl_stopped_check
+  failed_when:   false
+  changed_when:  false
+  retries:       5
+  delay:         2
+  until:         adminctl_stopped_check.rc != 0
 
 - name:          "Is AdminCtl Running?"
   shell:         ps -p `cat "{{ __ihs_install_location }}/logs/admin.pid"`
@@ -35,7 +41,11 @@
   changed_when:  false
   when:          (ihs_start.rc is defined) and (ihs_start.rc == 0)
 
-- name:          Wait 10 seconds for ihs to activate
-  pause:
-    seconds:     10
+- name:          Wait for AdminCtl port
+  ansible.builtin.wait_for:
+    host: 127.0.0.1
+    port: "{{ ihs_admin_port | default(8085) }}"
+    state: started
+    delay: 2
+    timeout: 120
   when:          (ihs_start.rc is defined) and (ihs_start.rc == 0)

@@ -1,0 +1,12 @@
+---
+mongodb7_repository_url: "https://github.com/HCL-TECH-SOFTWARE/connections-mongo7.git"
+mongodb7_repository_version: main
+mongodb7_source_directory: /opt/stoeps/connections-mongo7
+mongodb7_image_name: hclcr.io/cnx/middleware-mongodb7
+mongodb7_image_tag: latest
+mongodb7_image_archive: /opt/stoeps/connections-mongodb7.tar
+mongodb7_nerdctl_version: "2.1.4"
+mongodb7_nerdctl_path: /usr/local/bin/nerdctl
+mongodb7_containerd_namespace: k8s.io
+mongodb7_nodes_group: k8s_workers
+mongodb7_keep_archive: false

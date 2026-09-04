@@ -2,8 +2,9 @@
   ansible.builtin.file:
     path:                     "{{ __trust_store_cert_dir_location }}"
     state:                    directory
+    owner:                    "{{ __sudo_user }}"
+    group:                    "{{ __sudo_user }}"
     mode:                     '0755'
-  become_user:                "{{ __sudo_user }}"
   become:                     true
 
 - name:                       Delete {{ __trust_store_cert_file }} if exists

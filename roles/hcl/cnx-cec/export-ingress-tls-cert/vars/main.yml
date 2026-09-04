@@ -1,6 +1,6 @@
 ---
 __default_namespace:                         "{{ default_namespace | default('connections') }}"
-__sudo_user:                                 "{{ kubectl_user | default( ansible_env['SUDO_USER'] ) | default('lcuser') }}"
+__sudo_user:                                 "{{ kubectl_user | default('root') }}"
 __ingress_controller_cert_location:          "/tmp/certs/ingress-controller"
 __ingress_controller_pod_label:              "app.kubernetes.io/name=ingress-nginx,app.kubernetes.io/instance=cnx-ingress,app.kubernetes.io/component=controller"
 __ingress_controller_cert_pem:               "{{ ingress_controller_cert_pem | default('default-fake-certificate.pem') }}"

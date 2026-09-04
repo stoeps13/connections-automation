@@ -1,0 +1,8 @@
+---
+cnx_documentation_output_directory: "{{ playbook_dir }}/../../artifacts"
+cnx_documentation_environment: "{{ env_name | default('unknown') }}"
+cnx_documentation_was_host: "{{ groups['was_servers'][0] | default('') }}"
+cnx_documentation_ihs_host: "{{ groups['ihs_servers'][0] | default('') }}"
+cnx_documentation_was_install_location: "{{ was_install_location | default('/opt/IBM/WebSphere/AppServer') }}"
+cnx_documentation_ihs_install_location: "{{ ihs_install_location | default('/opt/IBM/HTTPServer') }}"
+cnx_documentation_iim_install_location: "{{ iim_install_location | default('/opt/IBM/InstallationManager') }}"

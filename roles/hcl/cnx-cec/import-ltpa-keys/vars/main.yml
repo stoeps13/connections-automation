@@ -1,4 +1,4 @@
-__sudo_user:                                "{{ kubectl_user | default( ansible_env['SUDO_USER'] ) | default('lcuser') }}"
+__sudo_user:                                "{{ kubectl_user | default('root') }}"
 __default_namespace:                        "{{ default_namespace | default('connections') }}"
 
 __ltpa_keys_file_name:                      "{{ ltpa_keys_file_name | default(hostvars['localhost'].ltpa_keys_file_name | default('cnx-ltpa-' ~ ansible_date_time.iso8601_basic_short ~ '.keys')) }}"

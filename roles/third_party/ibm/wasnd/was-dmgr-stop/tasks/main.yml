@@ -14,9 +14,15 @@
   delay: 30
   until: cout is not search("is already in progress")
 
-- name:          Wait 10 seconds to start DMGR
-  pause:
-    seconds:     10
+- name:          Wait for DMGR process to stop
+  ansible.builtin.shell: >-
+    ps -p "$(cat '{{ __was_install_location }}/profiles/{{ __profile_name }}/logs/dmgr/dmgr.pid')" > /dev/null
+  register:      dmgr_stopped_check
+  failed_when:   false
+  changed_when:  false
+  retries:       5
+  delay:         2
+  until:         dmgr_stopped_check.rc != 0
 
 - name:          "Is dmgr Running?"
   shell:         "ps -p `cat '{{ __was_install_location }}/profiles/{{ __profile_name }}/logs/dmgr/dmgr.pid'` > /dev/null"

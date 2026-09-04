@@ -28,6 +28,19 @@
   become: true
   ignore_errors: true
 
-- name: Install cilium
-  ansible.builtin.command: /usr/local/bin/cilium install
-  ignore_errors: true
+- name: Check whether the Cilium Helm release exists
+  ansible.builtin.command:
+    cmd: helm status cilium --namespace kube-system
+  register: cilium_release
+  changed_when: false
+  failed_when: false
+
+- name: Install Cilium
+  ansible.builtin.command:
+    cmd: /usr/local/bin/cilium install --version {{ __cilium_version }}
+  when: cilium_release.rc != 0
+
+- name: Upgrade Cilium
+  ansible.builtin.command:
+    cmd: /usr/local/bin/cilium upgrade --version {{ __cilium_version }}
+  when: cilium_release.rc == 0

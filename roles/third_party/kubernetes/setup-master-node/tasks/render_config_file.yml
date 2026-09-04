@@ -8,23 +8,24 @@
     msg: "Single node installation : {{ ((groups.k8s_workers | difference(groups.k8s_masters) | list) == []  and (groups.k8s_masters|length) == 1 and (groups.k8s_workers|length) == 1 ) }}"
   ignore_errors: true
 
+- name: Check whether the configured kubeadm template exists
+  ansible.builtin.stat:
+    path: "{{ role_path }}/templates/{{ __kubeadm_config_template }}"
+  register: kubeadm_config_template_file
+  delegate_to: localhost
+  become: false
+  when: inventory_hostname == groups['k8s_masters'][0]
+
+- name: Use default kubeadm config template when configured template is absent
+  ansible.builtin.set_fact:
+    __kubeadm_config_template: "kubeadm.config.default.j2"
+  when:
+    - inventory_hostname == groups['k8s_masters'][0]
+    - not kubeadm_config_template_file.stat.exists
+
 - name: Generate master config initialization file
   ansible.builtin.template:
     src: "{{ __kubeadm_config_template }}"
     dest: "{{ __kubeadm_config_location }}"
     mode: "0644"
-  register: kubeadm_config_template_exists
-  ignore_errors: true
   when: inventory_hostname == groups['k8s_masters'][0]
-
-- name: Use default kubeadm_config_template if specified kubernetes kubeadm_config_template does not exist
-  set_fact:
-    __kubeadm_config_template: "kubeadm.config.default.j2"
-  when: inventory_hostname == groups['k8s_masters'][0] and kubeadm_config_template_exists.failed
-
-- name: Use default master config initialization file
-  ansible.builtin.template:
-    src: "{{ __kubeadm_config_template }}"
-    dest: "{{ __kubeadm_config_location }}"
-    mode: "0644"
-  when: inventory_hostname == groups['k8s_masters'][0] and kubeadm_config_template_exists.failed

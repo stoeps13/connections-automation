@@ -265,49 +265,49 @@
     become_user: "{{ __sudo_user }}"
     when: __ingress_traefik_dashboard_enabled | bool
 
-    - name:                  Update Traefik CRDs - Vanilla Kubernetes
-      shell:                 >
-        helm show crds traefik/traefik --version {{ __ingress_traefik_chart_version }}
-        | kubectl apply --server-side --force-conflicts -f -
-      become_user:           "{{ __sudo_user }}"
-      when:
-       - ("api." not in cluster_flavor_check.stdout)
+  - name:                  Update Traefik CRDs - Vanilla Kubernetes
+    shell:                 >
+      helm show crds traefik/traefik --version {{ __ingress_traefik_chart_version }}
+      | kubectl apply --server-side --force-conflicts -f -
+    become_user:           "{{ __sudo_user }}"
+    when:
+     - ("api." not in cluster_flavor_check.stdout)
 
-    - name:                  Install Traefik - Vanilla Kubernetes
-      shell:                 >
-        helm upgrade cnx-ingress traefik/traefik
-        --install
-        --version {{ __ingress_traefik_chart_version }}
-        --namespace {{ __default_namespace }}
-        -f {{ __ansible_cache_charts }}/cnx-ingress-traefik-values.yml
-        --wait
-        --timeout 10m
-      when:
-       - ("api." not in cluster_flavor_check.stdout)
-      become_user:           "{{ __sudo_user }}"
+  - name:                  Install Traefik - Vanilla Kubernetes
+    shell:                 >
+      helm upgrade cnx-ingress traefik/traefik
+      --install
+      --version {{ __ingress_traefik_chart_version }}
+      --namespace {{ __default_namespace }}
+      -f {{ __ansible_cache_charts }}/cnx-ingress-traefik-values.yml
+      --wait
+      --timeout 10m
+    when:
+     - ("api." not in cluster_flavor_check.stdout)
+    become_user:           "{{ __sudo_user }}"
 
-    - name:                  Clean up old Traefik chart downloads - OpenShift
-      file:
-        path:                "{{ __ansible_cache_charts }}/traefik"
-        state:               absent
-      become_user:           "{{ __sudo_user }}"
-      when:
-       - ("api." in cluster_flavor_check.stdout)      
+  - name:                  Clean up old Traefik chart downloads - OpenShift
+    file:
+      path:                "{{ __ansible_cache_charts }}/traefik"
+      state:               absent
+    become_user:           "{{ __sudo_user }}"
+    when:
+     - ("api." in cluster_flavor_check.stdout)
 
-    - name:                  Download and Prepare the Traefik Helm Chart - OpenShift
-      shell:                 |
-        helm pull traefik/traefik --version {{ __ingress_traefik_chart_version }} --untar --destination {{ __ansible_cache_charts }}
-        rm -f {{ __ansible_cache_charts }}/traefik/crds/gateway-standard-install.yaml
-      become_user:           "{{ __sudo_user }}"
-      when:
-       - ("api." in cluster_flavor_check.stdout)
+  - name:                  Download and Prepare the Traefik Helm Chart - OpenShift
+    shell:                 |
+      helm pull traefik/traefik --version {{ __ingress_traefik_chart_version }} --untar --destination {{ __ansible_cache_charts }}
+      rm -f {{ __ansible_cache_charts }}/traefik/crds/gateway-standard-install.yaml
+    become_user:           "{{ __sudo_user }}"
+    when:
+     - ("api." in cluster_flavor_check.stdout)
 
-    - name:                  Install Traefik Custom Resource Definitions (CRDs) - OpenShift
-      shell:                 >
-        kubectl apply -f {{ __ansible_cache_charts }}/traefik/crds/ --server-side --force-conflicts
-      when:
-       - ("api." in cluster_flavor_check.stdout)
-      become_user:           "{{ __sudo_user }}"
+  - name:                  Install Traefik Custom Resource Definitions (CRDs) - OpenShift
+    shell:                 >
+      kubectl apply -f {{ __ansible_cache_charts }}/traefik/crds/ --server-side --force-conflicts
+    when:
+     - ("api." in cluster_flavor_check.stdout)
+    become_user:           "{{ __sudo_user }}"
 
   - name: Install Traefik - OpenShift
     shell: >

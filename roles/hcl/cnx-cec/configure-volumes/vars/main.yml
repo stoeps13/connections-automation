@@ -1,5 +1,5 @@
 # Common variables
-__sudo_user:                                      "{{ kubectl_user | default( ansible_env['SUDO_USER'] ) | default('lcuser') }}"
+__sudo_user:                                      "{{ kubectl_user | default('root') }}"
 __cnx_cec_temp_dir_location:                      "/home/{{ __sudo_user }}/generated_charts/cnx-cec"
 
 # NFS variables

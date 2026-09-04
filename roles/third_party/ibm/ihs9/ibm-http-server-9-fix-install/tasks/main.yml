@@ -7,7 +7,9 @@
 
 - name:          Install IBM HTTP Server V9 - Fixes
   include_tasks: install_ihs_9_fixes.yml
-  when:          version_already_installed.rc != 0
+  # Run every time so IHS, plug-in, WCT, and SDK offerings are all evaluated.
+  # Installation Manager leaves offerings unchanged when they are current.
+  when:          true
 
 - name:          Install applicable IBM interim fixes
   include_tasks: install_ibm_ifixes.yml

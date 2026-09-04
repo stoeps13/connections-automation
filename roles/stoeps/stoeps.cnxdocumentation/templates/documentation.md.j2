@@ -1,0 +1,23 @@
+# HCL Connections Deployment Documentation
+
+## Environment: {{ cnx_documentation_environment }}
+
+Generated: {{ lookup('pipe', 'date --iso-8601=seconds') }}
+
+## WebSphere maintenance packages
+
+```text
+{{ cnx_documentation_was_info.stdout | default(cnx_documentation_was_info.stderr | default('Not collected', true), true) }}
+```
+
+## IHS maintenance packages
+
+```text
+{{ cnx_documentation_ihs_info.stdout | default(cnx_documentation_ihs_info.stderr | default('Not collected', true), true) }}
+```
+
+## Installation Manager packages
+
+```text
+{{ cnx_documentation_iim_info.stdout | default(cnx_documentation_iim_info.stderr | default('Not collected', true), true) }}
+```

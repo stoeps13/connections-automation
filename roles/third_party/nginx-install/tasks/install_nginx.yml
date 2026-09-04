@@ -50,8 +50,16 @@
     owner: nginx
     group: nginx
 
+- name: Check NGINX certificate validity
+  ansible.builtin.command:
+    cmd: "openssl x509 -checkend {{ (certificate_regeneration_days | default(30) | int) * 86400 }} -noout -in {{ __nginx_crt_file }}"
+  register: nginx_certificate_valid
+  changed_when: false
+  failed_when: false
+
 - name: Create SSL certificates
   ansible.builtin.command: 'openssl req -x509 -nodes -days 1825 -newkey rsa:4096 -sha256 -config {{ __nginx_cnf_location }} -subj "{{ __ssl_root_ca }}"  -keyout {{ __nginx_key_file }}  -out {{ __nginx_crt_file }} -batch'
+  when: nginx_certificate_valid.rc != 0
 
 - name: Start Nginx service
   ansible.builtin.service:

@@ -1,4 +1,4 @@
-__sudo_user:                                 "{{ kubectl_user | default( ansible_env['SUDO_USER'] ) | default('lcuser') }}"
+__sudo_user:                                 "{{ kubectl_user | default('root') }}"
 __frontend_fqdn:                             "{{ groups['internal_lb'][0] if 'internal_lb' in groups else frontend_fqdn | default( inventory_hostname ) }}"
 __default_namespace:                         "{{ default_namespace | default('connections') }}"
 __trust_store_cert_dir_location:             "{{ '/tmp/' ~ __sudo_user ~ '/cnx-cec/certs' }}"

@@ -1,5 +1,5 @@
 - name:                 Loop over IHS servers for plugin synchronization
-  include_tasks:        sync_ihs_plugins.yml
+  include_tasks:        "{{ playbook_dir }}/../../roles/hcl/docs/tasks/sync_ihs_plugins.yml"
   loop:                 "{{ groups['ihs_servers'] }}"
   loop_control:
     loop_var:           my_ihs_host

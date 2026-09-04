@@ -108,6 +108,7 @@
     state: yes
     persistent: yes
   ignore_errors: true
+  when: ansible_selinux.status | default('disabled') == 'enabled'
 
 - name: "Configure nofile soft = {{ __param_nofile_soft }}"
   pam_limits:

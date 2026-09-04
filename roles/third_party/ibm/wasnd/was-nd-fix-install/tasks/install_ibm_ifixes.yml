@@ -18,6 +18,7 @@
     dest: "{{ __ibm_ifix_tmp_dir }}/{{ item.file_name | basename | splitext | first }}"
     remote_src: true
     validate_certs: false
+    creates: "{{ __ibm_ifix_tmp_dir }}/{{ item.file_name | basename | splitext | first }}/repository.config"
   loop: "{{ __ibm_ifix_files }}"
 
 - name: Stop WebSphere application servers
@@ -31,6 +32,36 @@
 - name: Stop WebSphere node agents
   ansible.builtin.include_role:
     name: roles/third_party/ibm/wasnd/was-nodeagent-stop
+
+- name: Stop IBM HTTP Server
+  ansible.builtin.include_role:
+    name: roles/third_party/ibm/ihs/ibm-http-server-stop
+
+- name: Stop IBM HTTP Server adminctl
+  ansible.builtin.include_role:
+    name: roles/third_party/ibm/ihs/ibm-http-adminctl-stop
+
+- name: Check for remaining WebSphere and IHS processes
+  ansible.builtin.shell: >-
+    pgrep -af 'java|httpd|adminctl' || true
+  register: remaining_ibm_processes
+  changed_when: false
+
+- name: Wait for WebSphere and IHS processes to stop
+  ansible.builtin.shell: >-
+    pgrep -f 'java|httpd|adminctl'
+  register: process_check
+  until: process_check.rc != 0
+  retries: 12
+  delay: 5
+  changed_when: false
+  failed_when: false
+
+- name: Force-stop remaining WebSphere and IHS processes
+  ansible.builtin.shell: >-
+    pkill -9 -f '/opt/IBM/(WebSphere|HTTPServer)' || true
+  when: process_check.rc == 0
+  changed_when: process_check.rc == 0
 
 - name: Apply applicable IBM interim fixes
   ansible.builtin.command:

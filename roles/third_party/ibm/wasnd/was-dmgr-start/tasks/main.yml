@@ -22,10 +22,14 @@
   changed_when:  false
   when:          (dmgr_start.rc is defined) and (dmgr_start.rc == 0)
 
+- name:          Discover DMGR SOAP port
+  ansible.builtin.include_role:
+    name: roles/third_party/ibm/wasnd/was-dmgr-soap-port
+
 - name:          Wait for DMGR SOAP endpoint to become available
   ansible.builtin.wait_for:
     host:         127.0.0.1
-    port:         "{{ __dmgr_soap_port }}"
+    port:         "{{ dmgr_soap_port_effective }}"
     state:        started
     delay:        5
     timeout:      300

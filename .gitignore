@@ -8,3 +8,5 @@ playbooks/third_party/setup-vagrant.yml
 .vscode
 .vault-secret
 .envrc
+artifacts
+.ansible

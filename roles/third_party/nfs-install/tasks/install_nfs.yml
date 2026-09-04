@@ -1,12 +1,13 @@
 - name: Install nfs-server
-  yum:
+  ansible.builtin.package:
     name: ["nfs-utils", "cifs-utils"]
     state: present
+    disablerepo: kubernetes
   when:
     - ansible_facts['distribution']!= "SLES"
 
 - name: Install nfs-server for SUSE
-  zypper:
+  community.general.zypper:
     name: ["nfs-kernel-server", "cifs-utils"]
     state: present
   when:

@@ -1,0 +1,79 @@
+---
+- name: Install required build tools on image builder
+  ansible.builtin.package:
+    name:
+      - git
+      - podman
+    state: present
+
+- name: Clone MongoDB 7 image repository
+  ansible.builtin.git:
+    repo: "{{ mongodb7_repository_url }}"
+    dest: "{{ mongodb7_source_directory }}"
+    version: "{{ mongodb7_repository_version }}"
+    update: true
+
+- name: Build MongoDB 7 image with Podman
+  ansible.builtin.command:
+    cmd: >-
+      podman build --tag {{ mongodb7_image_name }}:{{ mongodb7_image_tag }}
+      {{ mongodb7_source_directory }}
+  register: mongodb7_build
+  changed_when: mongodb7_build.rc == 0
+
+- name: Remove existing MongoDB 7 image archive
+  ansible.builtin.file:
+    path: "{{ mongodb7_image_archive }}"
+    state: absent
+
+- name: Export MongoDB 7 image
+  ansible.builtin.command:
+    cmd: >-
+      podman save --output {{ mongodb7_image_archive }}
+      {{ mongodb7_image_name }}:{{ mongodb7_image_tag }}
+  register: mongodb7_export
+  changed_when: mongodb7_export.rc == 0
+
+- name: Fetch MongoDB 7 image archive to Ansible controller
+  ansible.builtin.fetch:
+    src: "{{ mongodb7_image_archive }}"
+    dest: "/tmp/{{ mongodb7_image_archive | basename }}"
+    flat: true
+  when: groups[mongodb7_nodes_group] | length > 1
+
+- name: Copy MongoDB 7 image to Kubernetes nodes
+  ansible.builtin.copy:
+    src: "/tmp/{{ mongodb7_image_archive | basename }}"
+    dest: "/tmp/{{ mongodb7_image_archive | basename }}"
+    mode: "0644"
+  delegate_to: "{{ item }}"
+  loop: "{{ groups[mongodb7_nodes_group] }}"
+  when: groups[mongodb7_nodes_group] | length > 1
+
+- name: Install nerdctl on Kubernetes nodes
+  ansible.builtin.unarchive:
+    src: "https://github.com/containerd/nerdctl/releases/download/v{{ mongodb7_nerdctl_version }}/nerdctl-{{ mongodb7_nerdctl_version }}-linux-amd64.tar.gz"
+    dest: "{{ mongodb7_nerdctl_path | dirname }}"
+    remote_src: true
+    mode: "0755"
+    creates: "{{ mongodb7_nerdctl_path }}"
+  delegate_to: "{{ item }}"
+  loop: "{{ groups[mongodb7_nodes_group] }}"
+
+- name: Import MongoDB 7 image into containerd
+  ansible.builtin.command:
+    cmd: >-
+      {{ mongodb7_nerdctl_path }} --namespace {{ mongodb7_containerd_namespace }} load
+      --input {{ mongodb7_image_archive if groups[mongodb7_nodes_group] | length == 1 else '/tmp/' ~ mongodb7_image_archive | basename }}
+  delegate_to: "{{ item }}"
+  loop: "{{ groups[mongodb7_nodes_group] }}"
+
+- name: Remove temporary image archives from Kubernetes nodes
+  ansible.builtin.file:
+    path: "/tmp/{{ mongodb7_image_archive | basename }}"
+    state: absent
+  delegate_to: "{{ item }}"
+  loop: "{{ groups[mongodb7_nodes_group] }}"
+  when:
+    - groups[mongodb7_nodes_group] | length > 1
+    - not mongodb7_keep_archive

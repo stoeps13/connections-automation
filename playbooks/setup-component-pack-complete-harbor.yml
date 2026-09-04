@@ -13,5 +13,11 @@
 - name:                  Setup Kubernetes
   import_playbook:       third_party/kubernetes/setup-kubernetes.yml
 
+- name:                  Build and distribute MongoDB 7 image
+  hosts:                 k8s_masters[0]
+  become:                true
+  roles:
+    - roles/stoeps/stoeps.mongodb7
+
 - name:                  Setup Component Pack
   import_playbook:       hcl/harbor/setup-component-pack.yml

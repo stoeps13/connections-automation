@@ -1,5 +1,5 @@
 # Common
-__sudo_user:                                              "{{ kubectl_user | default( ansible_env['SUDO_USER'] ) | default('lcuser') }}"
+__sudo_user:                                              "{{ kubectl_user | default('root') }}"
 __frontend_fqdn:                                          "{{ groups['internal_lb'][0] if 'internal_lb' in groups else frontend_fqdn | default( inventory_hostname ) }}"
 __frontend_domain:                                        "{{ cnx_application_ingress.split('.')[1:] | join('.') }}"
 __load_balancer_fqdn:                                     "{{ load_balancer_dns | default(hostvars[groups['k8s_load_balancers'][0]]['inventory_hostname']) }}"

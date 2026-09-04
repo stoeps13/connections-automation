@@ -1,4 +1,4 @@
-__sudo_user:                          "{{ kubectl_user | default( ansible_env['SUDO_USER'] ) | default('lcuser') }}"
+__sudo_user:                          "{{ kubectl_user | default('root') }}"
 
 __cnx_cec_web_engine_ldap_type:       "{{ cnx_cec_web_engine_ldap_type | default('other') }}"
 __cnx_cec_web_engine_enable_sso:      "{{ cnx_cec_web_engine_enable_sso | default(__cnx_cec_web_engine_ldap_type != 'none') | bool }}"

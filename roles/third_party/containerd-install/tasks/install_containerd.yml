@@ -85,6 +85,7 @@
     name:                   containerd.io-{{ __containerd_version }}
     state:                  present
     allow_downgrade:        yes
+    disablerepo:            kubernetes
   when:
   - ansible_facts['distribution']== "RedHat" or ansible_facts['distribution']== "AlmaLinux"
 

@@ -1,5 +1,5 @@
 ---
-__sudo_user:                                 "{{ kubectl_user | default( ansible_env['SUDO_USER'] ) | default('lcuser') }}"
+__sudo_user:                                 "{{ kubectl_user | default('root') }}"
 
 __ihs_hostname:                              "{{ ihs_hostname | default(inventory_hostname_short) }}"
 __ihs_install_location:                      "{{ ihs_install_location  | default('/opt/IBM/HTTPServer') }}"

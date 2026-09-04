@@ -1,0 +1,8 @@
+---
+- name: Deploy HCL Connections CR only
+  hosts: dmgr
+  become: true
+  roles:
+    - role: roles/hcl/connections
+      tags:
+        - cnx-cr

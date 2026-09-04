@@ -1,0 +1,57 @@
+---
+- name: Create documentation output directory on controller
+  ansible.builtin.file:
+    path: "{{ cnx_documentation_output_directory }}"
+    state: directory
+    mode: "0755"
+  delegate_to: localhost
+  run_once: true
+
+- name: Collect WebSphere maintenance packages
+  ansible.builtin.shell:
+    cmd: "ssh -o BatchMode=yes root@{{ cnx_documentation_was_host }} '{{ cnx_documentation_was_install_location }}/bin/versionInfo.sh -maintenancePackages'"
+  delegate_to: localhost
+  register: cnx_documentation_was_info
+  changed_when: false
+  failed_when: false
+  when: cnx_documentation_was_host | length > 0
+
+- name: Collect IHS maintenance packages
+  ansible.builtin.shell:
+    cmd: "ssh -o BatchMode=yes root@{{ cnx_documentation_ihs_host }} '{{ cnx_documentation_ihs_install_location }}/bin/versionInfo.sh -maintenancePackages'"
+  delegate_to: localhost
+  register: cnx_documentation_ihs_info
+  changed_when: false
+  failed_when: false
+  when: cnx_documentation_ihs_host | length > 0
+
+- name: Collect Installation Manager packages
+  ansible.builtin.shell:
+    cmd: "ssh -o BatchMode=yes root@{{ cnx_documentation_was_host }} '{{ cnx_documentation_iim_install_location }}/eclipse/tools/imcl listInstalledPackages -long'"
+  delegate_to: localhost
+  register: cnx_documentation_iim_info
+  changed_when: false
+  failed_when: false
+  when: cnx_documentation_was_host | length > 0
+
+- name: Display collected documentation command results
+  ansible.builtin.debug:
+    msg:
+      - "WAS host={{ cnx_documentation_was_host }}, result={{ cnx_documentation_was_info | default({}) }}"
+      - "IHS host={{ cnx_documentation_ihs_host }}, result={{ cnx_documentation_ihs_info | default({}) }}"
+      - "IM host={{ cnx_documentation_was_host }}, result={{ cnx_documentation_iim_info | default({}) }}"
+  run_once: true
+
+- name: Write HCL Connections documentation report
+  ansible.builtin.template:
+    src: documentation.md.j2
+    dest: "{{ cnx_documentation_output_directory }}/{{ lookup('pipe', 'date +%Y-%m-%d') }}-hclcnx-documentation.md"
+    mode: "0644"
+  delegate_to: localhost
+  register: cnx_documentation_report
+  run_once: true
+
+- name: Display documentation report path
+  ansible.builtin.debug:
+    msg: "Documentation report: {{ cnx_documentation_report.dest }}"
+  run_once: true

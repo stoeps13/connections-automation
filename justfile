@@ -42,6 +42,37 @@ banner:
     @printf "\n\t\\_/ \\_/\\__,_|\\__\\___/|_| |_| |_|\\__,_|\\__|_|\\___/|_| |_|"
     @printf "\n\t\n"
 
+# Deploy Connections, Component Pack, Docs, and Tiny Editors sequentially
+deploy_all env:
+    just cnx {{env}} && \
+    just componentpack {{env}} && \
+    just docs {{env}} && \
+    just tinyeditors {{env}}
+
+alias deploy := deploy_all
+
+# Deploy only the HCL Connections CR
+cnx-cr env: banner
+  ansible-playbook -i environments/{{ env }}/inventory.ini {{ CMD_VAULT }} playbooks/stoeps/deploy-cnx-cr.yml --tags cnx-cr
+
+# Install WebSphere, IHS, and plug-in fixes
+was-fixes env: banner
+  ansible-playbook -i environments/{{ env }}/inventory.ini {{ CMD_VAULT }} playbooks/stoeps/deploy-was-fixes.yml --tags was-fixes
+
+ihs-fixes env: banner
+  ansible-playbook -i environments/{{ env }}/inventory.ini {{ CMD_VAULT }} playbooks/stoeps/deploy-was-fixes.yml --tags ihs-fixes
+
+plugin-fixes env: banner
+  ansible-playbook -i environments/{{ env }}/inventory.ini {{ CMD_VAULT }} playbooks/stoeps/deploy-was-fixes.yml --tags plugin-fixes
+
+# Install all IBM product fixes
+all-fixes env: banner
+  ansible-playbook -i environments/{{ env }}/inventory.ini {{ CMD_VAULT }} playbooks/stoeps/deploy-was-fixes.yml --tags all-fixes
+
+# Install HCL Connections application iFixes
+cnx-ifixes env: banner
+  ansible-playbook -i environments/{{ env }}/inventory.ini {{ CMD_VAULT }} playbooks/hcl/setup-connections-ifix.yml
+
 # Deploy HCL Connections complete
 cnx env: ensure-file-server banner
     #!/bin/bash
@@ -87,6 +118,10 @@ tinyeditors env: ensure-file-server banner
 # Display facts for debugging
 facts env: ensure-file-server banner
   ansible-playbook -i environments/{{ env }}/inventory.ini {{ CMD_VAULT }} playbooks/ansible_facts.yml
+
+# Generate WebSphere/IHS deployment documentation
+documentation env: banner
+  ansible-playbook -i environments/{{ env }}/inventory.ini {{ CMD_VAULT }} -e cnx_documentation_environment={{ env }} playbooks/stoeps/create-cnx-documentation.yml
 
 # Start Connections
 cnxstart env: ensure-file-server banner

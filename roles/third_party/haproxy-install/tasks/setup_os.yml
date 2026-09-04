@@ -62,6 +62,8 @@
     state:             disabled
   ignore_errors:       true
   notify:              reboot
+  when:
+    - ansible_selinux.status | default('disabled') == 'enabled'
 
 - name:                Stop AppArmor service
   ansible.builtin.systemd_service:

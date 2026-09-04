@@ -68,8 +68,16 @@
     src:                     "{{ __haproxy_cnf_template }}"
     dest:                    "{{ __haproxy_cnf_location }}"
 
+- name:                      Check HAProxy certificate validity
+  ansible.builtin.command:
+    cmd: "openssl x509 -checkend {{ (certificate_regeneration_days | default(30) | int) * 86400 }} -noout -in /etc/haproxy/ssl/nginx-selfsigned.crt"
+  register:                  haproxy_certificate_valid
+  changed_when:              false
+  failed_when:               false
+
 - name:                      Generate self signed certificates
   command:                   "{{ item }}"
+  when:                      haproxy_certificate_valid.rc != 0
   with_items:
    - "openssl req -x509 -nodes -days 1825 -newkey rsa:2048 -keyout /etc/haproxy/ssl/nginx-selfsigned.key -out /etc/haproxy/ssl/nginx-selfsigned.crt -config {{ __haproxy_cnf_location }} -batch"
   become:                    true
@@ -79,12 +87,14 @@
   with_items:
    - "/bin/cat /etc/haproxy/ssl/nginx-selfsigned.crt > /etc/haproxy/ssl/haproxy.pem"
   become:                    true
+  when:                      haproxy_certificate_valid.rc != 0
 
 - name:                      Generate pem 2
   shell:                     "{{ item }}"
   with_items:
    - "/bin/cat /etc/haproxy/ssl/nginx-selfsigned.key >> /etc/haproxy/ssl/haproxy.pem"
   become:                    true
+  when:                      haproxy_certificate_valid.rc != 0
 
 - name:                      Start Haproxy
   systemd:
